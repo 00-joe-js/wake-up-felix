@@ -50,7 +50,7 @@ export default class Director {
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
             if (this.tick % 5 === 0) {
-                range(20).forEach(() => this.makeEnemy());
+                range(1).forEach(() => this.makeEnemy());
             }
         }
     }

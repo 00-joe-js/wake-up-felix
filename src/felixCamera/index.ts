@@ -15,16 +15,17 @@ class FelixCamera {
 
     constructor(felix: Object3D, scene: Scene) {
         this.object = felix;
-        this.camera = new PerspectiveCamera(70, 16 / 9);
+        this.camera = new PerspectiveCamera(80, 16 / 9);
         this.camera.rotateOnAxis(new Vector3(1, 0, 0), -Math.PI / 2 + 0.05);
-        this.camera.position.y = 40;
+        this.camera.position.y = 10;
         this.aura = new PointLight(0xffffff, 1, 50);
+        this.object.position.y = 10;
         scene.add(this.aura);
     }
 
     public runUpdate() {
         this.aura.position.copy(this.object.position);
-        this.aura.position.y = 30;
+        this.aura.position.y = 40;
         this.camera.position.set(this.object.position.x, this.camera.position.y, this.object.position.z);
         if (this.camera.position.y < 120) {
             this.camera.position.y += 0.4;

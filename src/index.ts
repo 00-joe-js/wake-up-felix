@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Scene, AmbientLight, DirectionalLight, MeshPhongMaterial, Color, MathUtils, Vector3, Group, PlaneGeometry, TextureLoader, Material, Vector2, RepeatWrapping } from "three";
+import { Scene, AmbientLight, DirectionalLight, MeshPhongMaterial, Color, MathUtils, Vector3, Group, PlaneGeometry, TextureLoader, Material, Vector2, RepeatWrapping, CylinderGeometry } from "three";
 import { Mesh } from "three";
 
 
@@ -44,7 +44,8 @@ import OGBot from "./enemies/OGBot";
 
 import { renderLoop, shake } from "./renderer";
 import FelixCamera from "./felixCamera";
-import DamageNumbers from "./damageNumbers";
+
+import Clockface from "./clockFace";
 
 import Director from "./Director";
 
@@ -63,13 +64,13 @@ const createStageMaterial = () => {
     specularMap.wrapS = RepeatWrapping;
     specularMap.wrapT = RepeatWrapping;
 
-    const r = 50;
+    const r = 0.5;
     bumpMap.repeat.set(r, r);
     specularMap.repeat.set(r, r);
     const mat = new MeshPhongMaterial({
         color: new Color(0.1, 0.1, 0.1),
-        emissive: new Color(0.05, 0.05, 0.02),
-        specular: new Color(0.7, 0.7, 0.02),
+        emissive: new Color(0.01, 0.01, 0.01),
+        specular: new Color(0.1, 0.1, 0.1),
         shininess: 100,
         bumpMap: bumpMap,
         bumpScale: 0.03,
@@ -101,15 +102,16 @@ const createStageMaterial = () => {
 
             sceneMade = true;
 
+            const amb = new AmbientLight(0xffffff, 1);
+            scene.add(amb);
+
             const dirLight = new DirectionalLight(0xcc99ff, 0.01);
             dirLight.position.set(-5, 10, 0);
             scene.add(dirLight);
 
-            const STAGE_HEIGHT = 4000;
-            const groundG = new PlaneGeometry(STAGE_HEIGHT * 10, STAGE_HEIGHT, 32, 8);
+            const groundG = new CylinderGeometry(350, 350, 2, 12, 2);
             let groundMat: Material = createStageMaterial();
             const ground = new Mesh(groundG, groundMat);
-            ground.rotateX(-Math.PI / 2);
             ground.name = "ground";
 
             ground.rotation.z = Math.PI;
@@ -166,6 +168,15 @@ const createStageMaterial = () => {
 
             loopHooks.push((dt) => {
                 theDirector.update(dt);
+            });
+
+            const clockFace = new Clockface(dt);
+            scene.add(clockFace.secondsHand);
+            scene.add(clockFace.minuteHand);
+            scene.add(clockFace.mSecondsHand);
+
+            loopHooks.push((dt) => {
+                clockFace.update(dt);
             });
 
         }

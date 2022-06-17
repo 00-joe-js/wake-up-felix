@@ -26,7 +26,7 @@ export default class OGBot {
             _v2.dot(_right)
         );
 
-        _v2.divideScalar(3);
+        _v2.divideScalar(4.5);
         this.object.position.x += _v2.x;
         this.object.position.z += _v2.y;
         this.object.rotation.y = _v2.y > 0 ? -angleBetween : angleBetween;
