@@ -57,24 +57,8 @@ let sceneMade = false;
 let loopHooks: Array<(dt: number) => void> = [];
 
 const createStageMaterial = () => {
-    const bumpMap = new TextureLoader().load("https://s3-us-west-2.amazonaws.com/s.cdpn.io/33170/egyptian_friz_2.png");
-    const specularMap = new TextureLoader().load("https://s3-us-west-2.amazonaws.com/s.cdpn.io/33170/specular_map.jpg");
-    bumpMap.wrapS = RepeatWrapping;
-    bumpMap.wrapT = RepeatWrapping;
-    specularMap.wrapS = RepeatWrapping;
-    specularMap.wrapT = RepeatWrapping;
-
-    const r = 0.5;
-    bumpMap.repeat.set(r, r);
-    specularMap.repeat.set(r, r);
     const mat = new MeshPhongMaterial({
-        color: new Color(0.1, 0.1, 0.1),
-        emissive: new Color(0.01, 0.01, 0.01),
-        specular: new Color(0.1, 0.1, 0.1),
-        shininess: 100,
-        bumpMap: bumpMap,
-        bumpScale: 0.03,
-        map: specularMap
+        color: new Color(1.0, 1.0, 1.0),
     });
     return mat;
 };
@@ -109,7 +93,7 @@ const createStageMaterial = () => {
             dirLight.position.set(-5, 10, 0);
             scene.add(dirLight);
 
-            const groundG = new CylinderGeometry(350, 350, 2, 12, 2);
+            const groundG = new CylinderGeometry(300, 300, 2, 12, 2);
             let groundMat: Material = createStageMaterial();
             const ground = new Mesh(groundG, groundMat);
             ground.name = "ground";

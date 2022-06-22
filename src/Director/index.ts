@@ -49,8 +49,8 @@ export default class Director {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 5 === 0) {
-                range(1).forEach(() => this.makeEnemy());
+            if (this.tick % 7 === 0) {
+                range(15).forEach(() => this.makeEnemy());
             }
         }
     }

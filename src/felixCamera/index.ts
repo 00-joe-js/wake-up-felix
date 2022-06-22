@@ -14,12 +14,15 @@ class FelixCamera {
     private lastDamageTakenTime: number = -1;
 
     constructor(felix: Object3D, scene: Scene) {
+        
         this.object = felix;
+        this.object.position.y = 10;
+        
         this.camera = new PerspectiveCamera(80, 16 / 9);
         this.camera.rotateOnAxis(new Vector3(1, 0, 0), -Math.PI / 2 + 0.05);
         this.camera.position.y = 10;
-        this.aura = new PointLight(0xffffff, 1, 50);
-        this.object.position.y = 10;
+        
+        this.aura = new PointLight(0xaaaaaa, 1, 50);
         scene.add(this.aura);
     }
 

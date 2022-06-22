@@ -81,7 +81,7 @@ export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) =>
     const renderPass = new RenderPass(scene, camera);
 
     composer.addPass(renderPass);
-    composer.addPass(bloomPass);
+    // composer.addPass(bloomPass);
     composer.addPass(colorifyPass);
     composer.addPass(shakePass);
     composer.addPass(copyPass);

@@ -30,19 +30,19 @@ export default class Clockface {
 
     constructor(dt: number) {
 
-        this.minuteHand = new Mesh(new BoxGeometry(320, 5, 5), new MeshPhongMaterial({ color: 0x000000 }))
-        this.secondsHand = new Mesh(new BoxGeometry(330, 5, 5), new MeshPhongMaterial({ color: 0x770000, shininess: 100 }));
-        this.mSecondsHand = new Mesh(new BoxGeometry(340, 3, 0.2), new MeshBasicMaterial({ color: 0x770033 }))
+        this.minuteHand = new Mesh(new BoxGeometry(260, 5, 5), new MeshPhongMaterial({ color: 0x000000 }))
+        this.secondsHand = new Mesh(new BoxGeometry(280, 5, 5), new MeshPhongMaterial({ color: 0x770000, shininess: 100 }));
+        this.mSecondsHand = new Mesh(new BoxGeometry(300, 3, 0.2), new MeshBasicMaterial({ color: 0x770033 }))
 
         this.minuteHand.rotation.y = -Math.PI / 2;
-        this.minuteHand.position.z = -320 / 2;
+        this.minuteHand.position.z = -260 / 2;
         this.minuteHand.position.y = 1;
 
         this.secondsHand.rotation.y = -Math.PI / 2;
-        this.secondsHand.position.z = -330 / 2;
+        this.secondsHand.position.z = -280 / 2;
 
         this.mSecondsHand.rotation.y = -Math.PI / 2;
-        this.mSecondsHand.position.z = -340 / 2;
+        this.mSecondsHand.position.z = -300 / 2;
 
         this.lastTime = dt;
 
@@ -59,7 +59,7 @@ export default class Clockface {
 
         const secondsD = (-Math.PI * 2) / (60 * 60);
         const minuteD = (-Math.PI * 2) / (60 * 60 * 12);
-        const msD = (-Math.PI * 2) / 60;
+        const msD = (-Math.PI * 2) / 60 / 4;
 
         const t = elapsed / 16.667;
 
