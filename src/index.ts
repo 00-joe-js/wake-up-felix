@@ -58,7 +58,7 @@ let loopHooks: Array<(dt: number) => void> = [];
 
 const createStageMaterial = () => {
     const mat = new MeshPhongMaterial({
-        color: new Color(1.0, 1.0, 1.0),
+        color: new Color(0.1, 0.05, 0.2),
     });
     return mat;
 };
@@ -105,7 +105,7 @@ const createStageMaterial = () => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 0.5;
+            const FELIX_SPEED = 0.75;
             loopHooks.push((dt) => {
                 let xDelta = 0;
                 let zDelta = 0;

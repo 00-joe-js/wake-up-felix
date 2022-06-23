@@ -1,25 +1,32 @@
 import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture } from "three";
 
+const textureLoaderCache: { [url: string]: Texture } = {};
+
 class TexturedPlane {
 
     texture: Texture;
     mesh: Mesh;
     flipped: boolean;
 
+    private animationSpeed: number;
     private frameAmount: number;
     private currentlyAppliedFlip: boolean;
     private lastFrame: number;
     private lastFrameTime: number;
 
-    constructor(textureUrl: string, width: number, height: number, distanceFromFloor: number = 5, frameAmount: number = 5) {
+    constructor(textureUrl: string, width: number, height: number, distanceFromFloor: number = 5, frameAmount: number = 5, animationSpeed: number = 50) {
 
         this.frameAmount = frameAmount;
-
+        this.animationSpeed = animationSpeed;
 
         this.flipped = false;
         this.currentlyAppliedFlip = false;
 
-        this.texture = new TextureLoader().load(textureUrl);
+        if (!textureLoaderCache[textureUrl]) {
+            textureLoaderCache[textureUrl] = new TextureLoader().load(textureUrl);
+        }
+
+        this.texture = textureLoaderCache[textureUrl].clone();
 
         this.mesh = new Mesh(
             new PlaneGeometry(width, height),
@@ -68,7 +75,7 @@ class TexturedPlane {
         if (!playing) {
             this.resetPlay();
         } else {
-            if (dt - this.lastFrameTime > 50) {
+            if (dt - this.lastFrameTime > this.animationSpeed) {
                 this.lastFrameTime = dt;
                 this.lastFrame = this.lastFrame + 1;
                 this.setFrame(this.lastFrame, flipped);

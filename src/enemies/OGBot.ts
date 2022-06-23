@@ -14,7 +14,8 @@ export default class OGBot {
         this.object.position.x = Math.random() > 0.5 ? MathUtils.randInt(-200, -100) : MathUtils.randInt(100, 200);
         this.object.position.z = Math.random() > 0.5 ? MathUtils.randInt(-200, -100) : MathUtils.randInt(100, 200);
     }
-    moveTowards(felix: Object3D, dt: number) {
+
+    moveTowards(felix: Object3D, dt: number) {  
 
         _v2.set(
             felix.position.x - this.object.position.x,

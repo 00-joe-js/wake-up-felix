@@ -1,4 +1,5 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3 } from "three";
+import { everyNthFrame } from "../utils";
 
 const rotateAboutPoint = (obj: Object3D, point: Vector3, axis: Vector3, theta: number, pointIsWorld: boolean = false) => {
 
@@ -46,11 +47,8 @@ export default class Clockface {
 
         this.lastTime = dt;
 
-        setInterval(() => {
-            // this.secondsHand.position.z = 0;
-            // this.secondsHand.rotation.y += -0.1;
-            // this.secondsHand.position.z = -350 / 2;
-        }, 200);
+        this.update = everyNthFrame(this.update.bind(this), 3);
+
     }
 
     update(dt: number) {
@@ -64,7 +62,6 @@ export default class Clockface {
         const t = elapsed / 16.667;
 
         this.timeElapsed += elapsed;
-        // console.log(this.timeElapsed);
 
         const minuteTheta = minuteD * t;
         const secondsTheta = secondsD * t;

@@ -3,3 +3,18 @@ export const withinDistance2D = (distance: number, u1: number, u2: number, v1: n
     if (Math.abs(v1 - v2) > distance) return false;
     return true;
 };
+
+export function everyNthFrame<T>(frameFn: Function, nth: number): () => T | null {
+    let c = 0;
+    return (...args) => {
+        if (c === 0) {
+            c++;
+            return frameFn(...args);
+        } else {
+            c++;
+            if (c === nth) {
+                c = 0;
+            }
+        }
+    };
+};
