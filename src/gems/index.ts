@@ -1,4 +1,4 @@
-import { Color, Group, MathUtils, Mesh, MeshBasicMaterial, Object3D, PointLight, RingGeometry, Scene, TorusGeometry, Vector3 } from "three";
+import { Color, Group, MathUtils, Mesh, MeshBasicMaterial, Object3D, PointLight, RingGeometry, Scene, TorusGeometry, Vector2, Vector3 } from "three";
 
 import { withinDistance2D, everyNthFrame } from "../utils"
 
@@ -49,14 +49,12 @@ export default class GemsManager {
 
         this.scene.add(g);
 
-        return everyNthFrame<boolean>((dt: number, felix: Object3D) => {
-
-            const felixPos = felix.position;
+        return everyNthFrame<boolean>((dt: number, felixPos: Vector2) => {
 
             const felixPickingUp = withinDistance2D(
                 15,
                 felixPos.x, g.position.x,
-                felixPos.z, g.position.z
+                felixPos.y, g.position.z
             );
 
             if (felixPickingUp) {

@@ -1,4 +1,4 @@
-import { MathUtils, Object3D, Scene } from "three";
+import { MathUtils, Object3D, Scene, Vector2 } from "three";
 
 
 import Weapon from "../weapons/OGBullet";
@@ -29,7 +29,7 @@ export default class Director {
     private damageNumbers: DamagePlane;
 
     private gemsManager: GemsManager;
-    private gemFnCollection: ((dt: number, felix: Object3D) => boolean | null)[] = [];
+    private gemFnCollection: ((dt: number, p: Vector2) => boolean | null)[] = [];
 
     constructor(creationTime: number, scene: Scene, felix: FelixCamera) {
         this.startTime = creationTime;
@@ -49,18 +49,18 @@ export default class Director {
         this.allWeapons.push(weapon);
     }
 
-    private runTick(dt: number) {
+    private runWorldTick(dt: number) {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 5 === 0) {
-                range(5).forEach(() => this.makeEnemy());
+            if (this.tick % 10 === 0) {
+                range(2).forEach(() => this.makeEnemy());
             }
         }
     }
 
-    private runWeaponMovement(dt: number) {
-        this.allWeapons.forEach(w => w.update(dt, this.felix.object));
+    private runWeaponMovement(dt: number, felixPos: Vector2) {
+        this.allWeapons.forEach(w => w.update(dt, felixPos));
     }
 
     private processWeaponCollisions(enemy: TwoDEnemy, dt: number, destroyedEnemies: TwoDEnemy[]): boolean {
@@ -69,13 +69,12 @@ export default class Director {
 
         this.allWeapons.forEach(weapon => {
 
-            const enemyX = enemy.object.position.x;
-            const enemyY = enemy.object.position.z;
-            const weaponCollide = weapon.detectCollision(enemyX, enemyY);
+            const weaponCollide = weapon.detectCollision(enemy);
 
             if (weaponCollide) {
 
-                const weaponDamage = MathUtils.randInt(10, 15); // To be replaced with weapon properties.
+                // To be replaced with weapon properties.
+                const weaponDamage = MathUtils.randInt(5, 8);
 
                 const hitTakenAndShouldDie = enemy.takeDamage(weaponDamage, weapon, dt);
 
@@ -94,13 +93,11 @@ export default class Director {
                             this.scene.remove(enemy.object);
                         });
                         destroyedEnemies.push(enemy);
-                        this.gemFnCollection.push(this.gemsManager.placeGem(enemyX, enemyY));
+                        this.gemFnCollection.push(this.gemsManager.placeGem(enemy.object.position.x, enemy.object.position.z));
                         killed = true;
                     }
 
                 }
-
-
 
             }
 
@@ -111,10 +108,8 @@ export default class Director {
     }
 
     private processFelixCollision(enemy: TwoDEnemy, dt: number) {
-
-        const enemyX = enemy.object.position.x;
-        const enemyY = enemy.object.position.z;
-        const felixCollide = withinDistance2D(5, enemyX, this.felix.object.position.x, enemyY, this.felix.object.position.z);
+        const felixPosition = this.felix.getPosition();
+        const felixCollide = enemy.collidesWith(felixPosition);
 
         if (felixCollide) {
             this.felix.takeDamage(dt);
@@ -123,7 +118,9 @@ export default class Director {
 
     update(dt: number) {
 
-        this.runWeaponMovement(dt);
+        const felixPos = this.felix.getPosition();
+
+        this.runWeaponMovement(dt, felixPos);
 
         const destroyedEnemiesThisFrame: TwoDEnemy[] = [];
 
@@ -140,7 +137,7 @@ export default class Director {
             const killedThisFrame = this.processWeaponCollisions(enemy, dt, destroyedEnemiesThisFrame);
 
             if (!killedThisFrame) {
-                enemy.moveTowards(this.felix.object, dt);
+                enemy.moveTowards(felixPos, dt);
                 this.processFelixCollision(enemy, dt);
             }
 
@@ -154,14 +151,14 @@ export default class Director {
         }
 
         this.gemFnCollection.forEach((checkPickup) => {
-            const gemPickedUp = checkPickup(dt, this.felix.object);
+            const gemPickedUp = checkPickup(dt, felixPos);
             if (gemPickedUp === true) {
                 console.log("You got XP. :)");
                 this.gemFnCollection = this.gemFnCollection.filter(f => f !== checkPickup);
             }
         });
 
-        this.runTick(dt);
+        this.runWorldTick(dt);
 
     }
 

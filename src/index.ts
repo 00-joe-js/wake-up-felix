@@ -76,7 +76,7 @@ const createStageMaterial = () => {
         6
     );
 
-    const fCam = new FelixCamera(itsMeFelix.mesh, scene);
+    const fCam = new FelixCamera(itsMeFelix, scene);
 
     renderLoop(scene, fCam.camera, (dt) => {
 

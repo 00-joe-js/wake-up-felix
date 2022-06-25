@@ -53,8 +53,8 @@ class TexturedPlane {
     public flashRed() {
         this.mat.color.set(_red);
         setTimeout(() => {
-            this.mat.color.set(_white); 
-        }, 300)
+            this.mat.color.set(_white);
+        }, 500);
     }
 
     private setFlipped(f: boolean) {
@@ -96,6 +96,7 @@ class TexturedPlane {
                 }
             }
         }
+
     }
 
 }

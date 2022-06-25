@@ -1,5 +1,6 @@
-import { Mesh, Object3D, Vector2, MathUtils, Vector3 } from "three";
+import { Mesh, Object3D, Vector2, MathUtils, Vector3, Box3 } from "three";
 import SpritePlane from "../SpritePlane";
+import { withinDistance2D } from "../utils";
 import Weapon from "../weapons/OGBullet";
 
 const _v2 = new Vector2();
@@ -18,6 +19,9 @@ export default class TwoDEnemy {
     sprite: SpritePlane;
     object: Mesh;
 
+    private width: number;
+    private height: number;
+
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
     private reverseFlip: boolean = false;
     private health: number = 15;
@@ -26,6 +30,10 @@ export default class TwoDEnemy {
         this.sprite = new SpritePlane(textureUrl, width, height, 20, frameAmount, animationSpeed);
         this.health = health;
         this.object = this.sprite.mesh;
+
+        this.width = width;
+        this.height = height;
+
         // TODO: make this based on clock dimensions.
         this.object.position.x = Math.random() > 0.5 ? MathUtils.randInt(-200, -100) : MathUtils.randInt(100, 200);
         this.object.position.z = Math.random() > 0.5 ? MathUtils.randInt(-200, -100) : MathUtils.randInt(100, 200);
@@ -35,11 +43,11 @@ export default class TwoDEnemy {
         this.reverseFlip = true;
     }
 
-    moveTowards(felix: Object3D, dt: number) {
+    moveTowards(pos: Vector2, dt: number) {
 
         _v2.set(
-            felix.position.x - this.object.position.x,
-            felix.position.z - this.object.position.z
+            pos.x - this.object.position.x,
+            pos.y - this.object.position.z
         );
         _v2.normalize();
 
@@ -77,6 +85,20 @@ export default class TwoDEnemy {
         this.sprite.flashRed();
 
         return this.health < 0; // should die, Director.
+    }
+
+    collidesWith(pos: Vector2, padding: number = 0) {
+
+        const { x, z } = this.sprite.mesh.position;
+
+        const inRangeH = Math.abs(x - padding - pos.x) < this.width / 2;
+        if (!inRangeH) return false;
+
+        const inRangeV = Math.abs(z - padding - pos.y) < this.height / 2;
+        if (!inRangeV) return false;
+
+        return true;
+
     }
 
 
