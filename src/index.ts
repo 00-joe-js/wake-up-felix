@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Scene, AmbientLight, DirectionalLight, MeshPhongMaterial, Color, MathUtils, Vector3, Group, PlaneGeometry, TextureLoader, Material, Vector2, RepeatWrapping, CylinderGeometry } from "three";
+import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry } from "three";
 import { Mesh } from "three";
 
 
@@ -29,12 +29,10 @@ window.getDOMOne = getDOMOne;
 
 // ---
 
-import { withinDistance2D } from "./utils";
 import loadModels from "./importHelpers/gltfLoader";
 
 import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
-import Gems from "./gems";
 import { OGBullet as Bullet } from "./weapons/OGBullet";
 import SpritePlane from "./SpritePlane";
 
@@ -42,7 +40,7 @@ import felixWalkSheetUrl from "../assets/felix-walk.png";
 
 import OGBot from "./enemies/OGBot";
 
-import { renderLoop, shake } from "./renderer";
+import { renderLoop } from "./renderer";
 import FelixCamera from "./felixCamera";
 
 import Clockface from "./clockFace";
@@ -99,7 +97,7 @@ const createStageMaterial = () => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 0.75;
+            const FELIX_SPEED = 2;
 
             loopHooks.push((dt) => {
                 let xDelta = 0;

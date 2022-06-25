@@ -24,7 +24,7 @@ class FelixCamera {
         this.sprite.mesh.position.z = -200;
 
         this.camera = new PerspectiveCamera(80, 16 / 9);
-        this.camera.rotateOnAxis(new Vector3(1, 0, 0), -Math.PI / 2 + 0.05);
+        this.camera.rotation.x = -Math.PI / 2;
         this.camera.position.y = 10;
 
         this.aura = new PointLight(0xaaaaaa, 10, 50);
@@ -45,6 +45,16 @@ class FelixCamera {
         this.aura.position.copy(this.sprite.mesh.position);
         this.aura.position.y = 45;
         this.camera.position.set(this.sprite.mesh.position.x, this.camera.position.y, this.sprite.mesh.position.z);
+
+        const spriteY = this.sprite.mesh.position.z; // lol yep pretty much
+        console.log(spriteY);
+
+        if (spriteY < 0) {
+            this.camera.rotation.x = (-Math.PI / 2) + ((this.sprite.mesh.position.z / 2) * 0.001);
+        } else {
+            this.camera.rotation.x = (-Math.PI / 2) + ((this.sprite.mesh.position.z / 2) * 0.0035);
+        }
+
         if (this.camera.position.y < 120) {
             this.camera.position.y += 0.4;
         }
