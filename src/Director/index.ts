@@ -63,48 +63,69 @@ export default class Director {
         this.allWeapons.forEach(w => w.update(dt, this.felix.object));
     }
 
-    private processWeaponCollisions(enemy: TwoDEnemy, dt: number) {
-        const destroyedEnemies: TwoDEnemy[] = [];
+    private processWeaponCollisions(enemy: TwoDEnemy, dt: number, destroyedEnemies: TwoDEnemy[]): boolean {
+
+        let killed = false;
 
         this.allWeapons.forEach(weapon => {
+
             const enemyX = enemy.object.position.x;
             const enemyY = enemy.object.position.z;
             const weaponCollide = weapon.detectCollision(enemyX, enemyY);
+
             if (weaponCollide) {
 
-                const { x: viewPortX, y: viewPortY } = enemy.object.position.project(this.felix.camera);
+                const weaponDamage = MathUtils.randInt(10, 15); // To be replaced with weapon properties.
 
-                this.damageNumbers.showNumber(MathUtils.randInt(10, 15), viewPortX, viewPortY);
-                weapon.onEnemyCollide();
+                const hitTakenAndShouldDie = enemy.takeDamage(weaponDamage, weapon, dt);
 
-                enemy.object.visible = false;
-                requestAnimationFrame(() => {
-                    this.scene.remove(enemy.object);
-                });
-                destroyedEnemies.push(enemy);
+                if (hitTakenAndShouldDie !== null) {
 
-                this.gemFnCollection.push(this.gemsManager.placeGem(enemyX, enemyY));
+                    // This logic can be moved to damageNumbers.
+                    const enemyPos = enemy.object.position.clone();
+                    const { x: viewPortX, y: viewPortY } = enemyPos.project(this.felix.camera);
+                    this.damageNumbers.showNumber(weaponDamage, viewPortX, viewPortY);
 
-            } else {
+                    weapon.onEnemyCollide();
 
-                const felixCollide = withinDistance2D(5, enemyX, this.felix.object.position.x, enemyY, this.felix.object.position.z);
+                    if (hitTakenAndShouldDie) {
+                        enemy.object.visible = false;
+                        requestAnimationFrame(() => {
+                            this.scene.remove(enemy.object);
+                        });
+                        destroyedEnemies.push(enemy);
+                        this.gemFnCollection.push(this.gemsManager.placeGem(enemyX, enemyY));
+                        killed = true;
+                    }
 
-                if (felixCollide) {
-                    this.felix.takeDamage(dt);
                 }
 
+
+
             }
+
         });
 
-        if (destroyedEnemies.length > 0) {
-            this.allEnemies = this.allEnemies.filter(enemy => {
-                return !destroyedEnemies.includes(enemy);
-            });
+        return killed;
+
+    }
+
+    private processFelixCollision(enemy: TwoDEnemy, dt: number) {
+
+        const enemyX = enemy.object.position.x;
+        const enemyY = enemy.object.position.z;
+        const felixCollide = withinDistance2D(5, enemyX, this.felix.object.position.x, enemyY, this.felix.object.position.z);
+
+        if (felixCollide) {
+            this.felix.takeDamage(dt);
         }
     }
 
     update(dt: number) {
+
         this.runWeaponMovement(dt);
+
+        const destroyedEnemiesThisFrame: TwoDEnemy[] = [];
 
         this.allEnemies.forEach((enemy) => {
 
@@ -116,11 +137,21 @@ export default class Director {
                 Move towards Felix the Cat.
             */
 
-            this.processWeaponCollisions(enemy, dt);
+            const killedThisFrame = this.processWeaponCollisions(enemy, dt, destroyedEnemiesThisFrame);
 
-            enemy.moveTowards(this.felix.object, dt);
+            if (!killedThisFrame) {
+                enemy.moveTowards(this.felix.object, dt);
+                this.processFelixCollision(enemy, dt);
+            }
+
 
         });
+
+        if (destroyedEnemiesThisFrame.length > 0) {
+            this.allEnemies = this.allEnemies.filter(enemy => {
+                return !destroyedEnemiesThisFrame.includes(enemy);
+            });
+        }
 
         this.gemFnCollection.forEach((checkPickup) => {
             const gemPickedUp = checkPickup(dt, this.felix.object);
@@ -131,6 +162,7 @@ export default class Director {
         });
 
         this.runTick(dt);
+
     }
 
 }

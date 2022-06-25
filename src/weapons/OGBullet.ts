@@ -37,8 +37,8 @@ export class OGBullet extends Weapon {
         const r = Math.sin(dt / 1000);
         const c = Math.cos(dt / 1000);
         this.mesh.position.x = felix.position.x + (r * 100);
-        this.sprite.update(dt, c < 0, true);
         this.mesh.position.z = felix.position.z + (Math.sin(dt / 700) * 50);
+        this.sprite.update(dt, c < 0, true);
     }
 
     detectCollision(x: number, y: number): boolean {

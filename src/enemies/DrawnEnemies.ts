@@ -84,7 +84,7 @@ export default class DrawnEnemies extends TwoDEnemy {
         }
         super(enemy.textureUrl, enemy.width, enemy.height, enemy.frameAmount, enemy.animationSpeed);
         if (enemy.reverseFlip === true) {
-            this.setReverseFlip(true);
+            this.setReverseFlip();
         }
     }
 }

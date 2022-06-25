@@ -51,8 +51,6 @@ import Director from "./Director";
 
 const scene = new Scene();
 
-// randos.
-
 let sceneMade = false;
 let loopHooks: Array<(dt: number) => void> = [];
 
@@ -89,10 +87,6 @@ const createStageMaterial = () => {
             const amb = new AmbientLight(0xffffff, 1);
             scene.add(amb);
 
-            const dirLight = new DirectionalLight(0xcc99ff, 0.01);
-            dirLight.position.set(-5, 10, 0);
-            scene.add(dirLight);
-
             const groundG = new CylinderGeometry(300, 300, 2, 12, 2);
             let groundMat: Material = createStageMaterial();
             const ground = new Mesh(groundG, groundMat);
@@ -106,6 +100,7 @@ const createStageMaterial = () => {
             let felixWalking = false;
             let felixFlipped = false;
             const FELIX_SPEED = 0.75;
+
             loopHooks.push((dt) => {
                 let xDelta = 0;
                 let zDelta = 0;
