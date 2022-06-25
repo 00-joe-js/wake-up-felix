@@ -1,12 +1,16 @@
-import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture } from "three";
+import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture, Material, BufferGeometry, Color } from "three";
 
 const textureLoaderCache: { [url: string]: Texture } = {};
+
+const _red = new Color(1, 0, 0);
+const _white = new Color(1, 1, 1);
 
 class TexturedPlane {
 
     texture: Texture;
     mesh: Mesh;
     flipped: boolean;
+    mat: MeshBasicMaterial;
 
     private animationSpeed: number;
     private frameAmount: number;
@@ -28,9 +32,11 @@ class TexturedPlane {
 
         this.texture = textureLoaderCache[textureUrl].clone();
 
+        this.mat = new MeshBasicMaterial({ map: this.texture, transparent: true })
+
         this.mesh = new Mesh(
             new PlaneGeometry(width, height),
-            new MeshBasicMaterial({ map: this.texture, transparent: true })
+            this.mat
         );
 
         this.setFlipped(true);
@@ -45,7 +51,10 @@ class TexturedPlane {
     }
 
     public flashRed() {
-        console.log(this.mesh.material);
+        this.mat.color.set(_red);
+        setTimeout(() => {
+            this.mat.color.set(_white); 
+        }, 300)
     }
 
     private setFlipped(f: boolean) {
