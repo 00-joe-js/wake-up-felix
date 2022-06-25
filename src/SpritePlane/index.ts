@@ -44,6 +44,9 @@ class TexturedPlane {
         this.mesh.position.y = distanceFromFloor;
     }
 
+    public flashRed() {
+        console.log(this.mesh.material);
+    }
 
     private setFlipped(f: boolean) {
         if (this.currentlyAppliedFlip === f) return;

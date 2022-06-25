@@ -36,7 +36,7 @@ import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
 import Gems from "./gems";
 import { OGBullet as Bullet } from "./weapons/OGBullet";
-import SpritePlane from "./TexturedPlane";
+import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
 

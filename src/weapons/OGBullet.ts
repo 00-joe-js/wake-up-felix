@@ -3,7 +3,7 @@ import bulletUrl from "../../assets/bullet.png";
 import { Mesh, Object3D } from "three";
 
 import { shake } from "../renderer";
-import SpritePlane from "../TexturedPlane";
+import SpritePlane from "../SpritePlane";
 import { withinDistance2D } from "../utils";
 
 export default class Weapon {

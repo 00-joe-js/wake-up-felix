@@ -16,8 +16,9 @@ type DrawnEnemyConfig = {
     height: number;
     frameAmount: number;
     era: Era;
+    health: number;
+    animationSpeed: number;
     reverseFlip?: boolean;
-    animationSpeed?: number;
 };
 
 export const ENEMIES: DrawnEnemyConfig[] = [
@@ -28,7 +29,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         height: 32,
         frameAmount: 4,
         era: "prohibition",
-        animationSpeed: 500
+        animationSpeed: 500,
+        health: 30,
     },
     {
         name: "Wine Bottle",
@@ -37,7 +39,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         height: 20,
         frameAmount: 5,
         era: "prohibition",
-        animationSpeed: 200
+        animationSpeed: 200,
+        health: 5
     },
     {
         name: "Roman Soldier",
@@ -47,7 +50,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 4,
         era: "ancient",
         reverseFlip: true,
-        animationSpeed: 100
+        animationSpeed: 100,
+        health: 14
     },
     {
         name: "Steggodog",
@@ -57,7 +61,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 3,
         era: "stoneage",
         reverseFlip: true,
-        animationSpeed: 50
+        animationSpeed: 50,
+        health: 13
     },
     {
         name: "Mammoth",
@@ -67,7 +72,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 4,
         era: "stoneage",
         reverseFlip: true,
-        animationSpeed: 1000
+        animationSpeed: 1000,
+        health: 50
     }
 ];
 
@@ -82,7 +88,7 @@ export default class DrawnEnemies extends TwoDEnemy {
         if (!enemy) {
             throw new Error(`Asking to make unknown enemy: ${enemyName}`);
         }
-        super(enemy.textureUrl, enemy.width, enemy.height, enemy.frameAmount, enemy.animationSpeed);
+        super(enemy);
         if (enemy.reverseFlip === true) {
             this.setReverseFlip();
         }
