@@ -32,7 +32,7 @@ class TexturedPlane {
 
         this.texture = textureLoaderCache[textureUrl].clone();
 
-        this.mat = new MeshBasicMaterial({ map: this.texture, transparent: true })
+        this.mat = new MeshBasicMaterial({ map: this.texture, alphaTest: 0.1 });
 
         this.mesh = new Mesh(
             new PlaneGeometry(width, height),

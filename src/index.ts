@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry } from "three";
+import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry } from "three";
 import { Mesh } from "three";
 
 
@@ -54,7 +54,7 @@ let loopHooks: Array<(dt: number) => void> = [];
 
 const createStageMaterial = () => {
     const mat = new MeshPhongMaterial({
-        color: new Color(0.1, 0.05, 0.2),
+        color: new Color(0.7, 0.7, 0.7),
     });
     return mat;
 };
@@ -90,6 +90,13 @@ const createStageMaterial = () => {
             const ground = new Mesh(groundG, groundMat);
             ground.name = "ground";
 
+            groundG.computeBoundingSphere();
+            const boundingSphere = groundG.boundingSphere;
+            
+            if (boundingSphere) {
+                boundingSphere.radius = boundingSphere.radius * 0.975;
+            }
+
             ground.rotation.z = Math.PI;
 
             scene.add(ground);
@@ -97,11 +104,13 @@ const createStageMaterial = () => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 2;
+            const FELIX_SPEED = 1;
 
             loopHooks.push((dt) => {
+
                 let xDelta = 0;
                 let zDelta = 0;
+
                 if (keyboard.dDown) {
                     xDelta += FELIX_SPEED;
                 }
@@ -114,18 +123,48 @@ const createStageMaterial = () => {
                 if (keyboard.sDown) {
                     zDelta += FELIX_SPEED;
                 }
+
                 if (xDelta !== 0 || zDelta !== 0) {
 
-                    felixWalking = true;
-                    itsMeFelix.mesh.position.x += xDelta;
-                    itsMeFelix.mesh.position.z += zDelta;
+                    const posCopy = itsMeFelix.mesh.position.clone();
 
-                    if (xDelta !== 0) {
-                        felixFlipped = xDelta < 0;
+                    posCopy.x += xDelta;
+                    posCopy.z += zDelta;
+
+                    if (boundingSphere && boundingSphere.containsPoint(posCopy)) {
+                        
+                        felixWalking = true;
+                        itsMeFelix.mesh.position.copy(posCopy);
+
+                        if (xDelta !== 0) {
+                            felixFlipped = xDelta < 0;
+                        }
+
+                    } else {
+                        felixWalking = false;
                     }
 
                 } else {
                     felixWalking = false;
+                }
+
+                const TURN_DELTA = 10;
+                if (felixWalking && zDelta !== 0) {
+                    if (zDelta > 0) {
+                        if (felixFlipped) {
+                            itsMeFelix.mesh.rotation.z = Math.PI / TURN_DELTA;
+                        } else {
+                            itsMeFelix.mesh.rotation.z = -Math.PI / TURN_DELTA;
+                        }
+                    } else if (zDelta < 0) {
+                        if (felixFlipped) {
+                            itsMeFelix.mesh.rotation.z = -Math.PI / TURN_DELTA;
+                        } else {
+                            itsMeFelix.mesh.rotation.z = Math.PI / TURN_DELTA;
+                        }
+                    }
+                } else {
+                    itsMeFelix.mesh.rotation.z = 0;
                 }
 
             });

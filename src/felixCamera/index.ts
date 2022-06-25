@@ -47,7 +47,6 @@ class FelixCamera {
         this.camera.position.set(this.sprite.mesh.position.x, this.camera.position.y, this.sprite.mesh.position.z);
 
         const spriteY = this.sprite.mesh.position.z; // lol yep pretty much
-        console.log(spriteY);
 
         if (spriteY < 0) {
             this.camera.rotation.x = (-Math.PI / 2) + ((this.sprite.mesh.position.z / 2) * 0.001);
