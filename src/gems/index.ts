@@ -52,7 +52,7 @@ export default class GemsManager {
         return everyNthFrame<boolean>((dt: number, felixPos: Vector2) => {
 
             const felixPickingUp = withinDistance2D(
-                15,
+                20,
                 felixPos.x, g.position.x,
                 felixPos.y, g.position.z
             );

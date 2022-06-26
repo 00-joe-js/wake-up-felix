@@ -92,7 +92,7 @@ const createStageMaterial = () => {
 
             groundG.computeBoundingSphere();
             const boundingSphere = groundG.boundingSphere;
-            
+
             if (boundingSphere) {
                 boundingSphere.radius = boundingSphere.radius * 0.975;
             }
@@ -132,7 +132,7 @@ const createStageMaterial = () => {
                     posCopy.z += zDelta;
 
                     if (boundingSphere && boundingSphere.containsPoint(posCopy)) {
-                        
+
                         felixWalking = true;
                         itsMeFelix.mesh.position.copy(posCopy);
 
@@ -170,7 +170,7 @@ const createStageMaterial = () => {
             });
 
             loopHooks.push((dt) => {
-                fCam.runUpdate();
+                fCam.runUpdate(dt);
                 itsMeFelix.update(dt, felixFlipped, felixWalking);
             });
 

@@ -27,6 +27,7 @@ export default class Clockface {
 
     public timeElapsed: number = 0;
 
+    private startTime: number;
     private lastTime: number;
 
     constructor(dt: number) {
@@ -45,6 +46,7 @@ export default class Clockface {
         this.mSecondsHand.rotation.y = -Math.PI / 2;
         this.mSecondsHand.position.z = -300 / 2;
 
+        this.startTime = dt;
         this.lastTime = dt;
 
         this.update = everyNthFrame(this.update.bind(this), 3);

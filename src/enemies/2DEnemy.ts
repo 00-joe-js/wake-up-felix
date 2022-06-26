@@ -12,6 +12,7 @@ type EnemyConfig = {
     frameAmount: number,
     animationSpeed: number,
     health: number,
+    speed?: number
 };
 
 export default class TwoDEnemy {
@@ -21,18 +22,20 @@ export default class TwoDEnemy {
 
     private width: number;
     private height: number;
+    private speed: number;
 
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
     private reverseFlip: boolean = false;
     private health: number = 15;
 
-    constructor({ textureUrl, width, height, frameAmount, animationSpeed, health }: EnemyConfig) {
+    constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5 }: EnemyConfig) {
         this.sprite = new SpritePlane(textureUrl, width, height, 20, frameAmount, animationSpeed);
         this.health = health;
         this.object = this.sprite.mesh;
 
         this.width = width;
         this.height = height;
+        this.speed = speed;
 
         // TODO: make this based on clock dimensions.
         this.object.position.x = Math.random() > 0.5 ? MathUtils.randInt(-200, -100) : MathUtils.randInt(100, 200);
@@ -51,7 +54,7 @@ export default class TwoDEnemy {
         );
         _v2.normalize();
 
-        _v2.divideScalar(4.5);
+        _v2.divideScalar(this.speed);
         this.object.position.x += _v2.x;
         this.object.position.z += _v2.y;
 
@@ -60,7 +63,6 @@ export default class TwoDEnemy {
         } else {
             this.sprite.update(dt, _v2.x < 0, true);
         }
-
 
     }
 
@@ -78,7 +80,7 @@ export default class TwoDEnemy {
 
         this.hitCache.set(weapon, {
             time: dt,
-            untilNextAllowableHit: 2000, // TBD by weapon properties.
+            untilNextAllowableHit: 1000, // TBD by weapon properties.
         });
 
         this.health = this.health - amount;

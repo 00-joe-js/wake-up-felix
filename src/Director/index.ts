@@ -3,12 +3,11 @@ import { MathUtils, Object3D, Scene, Vector2 } from "three";
 
 import Weapon from "../weapons/OGBullet";
 import TwoDEnemy from "../enemies/2DEnemy";
-import DrawnEnemy, { getRandomEnemyName } from "../enemies/DrawnEnemies";
+import DrawnEnemy, { getRandomEnemyName, getRandomEnemyFromEra, Era } from "../enemies/DrawnEnemies";
 
 import DamagePlane from "../damageNumbers";
 import GemsManager from "../gems";
 
-import { withinDistance2D } from "../utils";
 
 import FelixCamera from "../felixCamera";
 
@@ -39,10 +38,18 @@ export default class Director {
         this.gemsManager = new GemsManager(this.scene);
     }
 
-    private makeEnemy() {
-        const newEnemy = new DrawnEnemy(getRandomEnemyName());
+    private makeEraEnemy(era: string) {
+        const newEnemy = new DrawnEnemy(getRandomEnemyFromEra(era));
         this.scene.add(newEnemy.object);
         this.allEnemies.push(newEnemy);
+    }
+
+    private getCurrentEra(dt: number) {
+        const ERA_TIME = (1000) * (60) * (3);
+        const timeSinceStart = dt - this.startTime;
+        const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
+        const currentEra = ["stoneage", "ancient", "industrial", "prohibition"][eraIndex];
+        return currentEra;
     }
 
     public addWeapon(weapon: Weapon) {
@@ -54,7 +61,7 @@ export default class Director {
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
             if (this.tick % 10 === 0) {
-                range(2).forEach(() => this.makeEnemy());
+                range(5).forEach(() => this.makeEraEnemy(this.getCurrentEra(dt)));
             }
         }
     }
@@ -140,7 +147,6 @@ export default class Director {
                 enemy.moveTowards(felixPos, dt);
                 this.processFelixCollision(enemy, dt);
             }
-
 
         });
 
