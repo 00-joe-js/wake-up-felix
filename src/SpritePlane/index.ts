@@ -1,4 +1,4 @@
-import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture, Material, BufferGeometry, Color } from "three";
+import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture, Material, BufferGeometry, Color, DoubleSide } from "three";
 
 const textureLoaderCache: { [url: string]: Texture } = {};
 
@@ -30,9 +30,9 @@ class TexturedPlane {
             textureLoaderCache[textureUrl] = new TextureLoader().load(textureUrl);
         }
 
-        this.texture = textureLoaderCache[textureUrl].clone();
+        this.texture = textureLoaderCache[textureUrl];
 
-        this.mat = new MeshBasicMaterial({ map: this.texture, alphaTest: 0.1 });
+        this.mat = new MeshBasicMaterial({ map: this.texture, alphaTest: 0.1, side: DoubleSide });
 
         this.mesh = new Mesh(
             new PlaneGeometry(width, height),
@@ -45,7 +45,7 @@ class TexturedPlane {
 
         // Face overhead.
         this.mesh.rotateOnAxis(new Vector3(1, 0, 0), -Math.PI / 2);
-        this.mesh.rotateOnAxis(new Vector3(1, 0, 0), Math.PI / 8);
+        this.mesh.rotateOnAxis(new Vector3(1, 0, 0), Math.PI / 7);
 
         this.mesh.position.y = distanceFromFloor;
     }

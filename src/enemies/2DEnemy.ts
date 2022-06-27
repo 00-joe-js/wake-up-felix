@@ -4,6 +4,7 @@ import { withinDistance2D } from "../utils";
 import Weapon from "../weapons/OGBullet";
 
 const _v2 = new Vector2();
+const _v3 = new Vector3();
 
 type EnemyConfig = {
     textureUrl: string,

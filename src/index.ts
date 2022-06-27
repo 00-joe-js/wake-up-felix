@@ -69,7 +69,7 @@ const findWithName = (group: Group, name: string): Mesh => {
 const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
     const clockNumberNames = [
-        "OneNormal", "TwoNormal", "ThreeNormal"
+        "OneNormal", "TwoNormal", "ThreeNormal", "FourNormal"
     ];
 
     const clockNumberMeshes = clockNumberNames.map(name => {
@@ -150,7 +150,7 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 4;
+            const FELIX_SPEED = 1;
 
             loopHooks.push((dt) => {
 

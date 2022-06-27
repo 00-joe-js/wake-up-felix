@@ -8,7 +8,6 @@ import DrawnEnemy, { getRandomEnemyName, getRandomEnemyFromEra, Era } from "../e
 import DamagePlane from "../damageNumbers";
 import GemsManager from "../gems";
 
-
 import FelixCamera from "../felixCamera";
 
 const range = (n: number) => {
@@ -60,9 +59,9 @@ export default class Director {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 10 === 0) {
+            if (this.tick % 2 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(2).forEach(() => this.makeEraEnemy(era));
+                range(1).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
