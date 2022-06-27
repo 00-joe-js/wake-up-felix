@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry } from "three";
+import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group } from "three";
 import { Mesh } from "three";
 
 
@@ -54,16 +54,55 @@ let loopHooks: Array<(dt: number) => void> = [];
 
 const createStageMaterial = () => {
     const mat = new MeshPhongMaterial({
-        color: new Color(0.7, 0.7, 0.7),
+        color: new Color(0.8, 0.8, 0.8),
     });
     return mat;
+};
+
+const findWithName = (group: Group, name: string): Mesh => {
+    const mesh = group.children.find(m => m.name === name);
+    if (!mesh) throw new Error(`Crash error for unknown model name ${name}`);
+    if (!(mesh instanceof Mesh)) throw new Error(`Found non-mesh by name`);
+    return mesh;
+};
+
+const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
+
+    const oneNormalMesh = findWithName(gltfGroup, "OneNormal");
+    const twoNormalMesh = findWithName(gltfGroup, "TwoNormal");
+    oneNormalMesh.position.set(0, 0, 0);
+    twoNormalMesh.position.set(0, 0, 0);
+
+    oneNormalMesh.scale.set(2, 2, 2);
+    twoNormalMesh.scale.set(2, 2, 2);
+
+    // oneNormalMesh.position.y = 20;
+    // twoNormalMesh.position.y = 20;
+    twoNormalMesh.position.x += 20;
+
+    const radius = 275;
+
+    for (let i = 0; i < 12; i++) {
+        const numMesh = Math.random() > .5 ? oneNormalMesh.clone() : twoNormalMesh.clone();
+        const d = (-Math.PI / 2) + ((Math.PI / 6) * i);
+        numMesh.position.z = Math.sin(d) * radius;
+        numMesh.position.x = Math.cos(d) * radius;
+        numMesh.rotation.y = i * (-Math.PI / 6) + (Math.PI / 2);
+        scene.add(numMesh);
+    }
+
+    const oneWeaponMesh = findWithName(gltfGroup, "OneWeapon");
 };
 
 (async () => {
 
     const models = await loadModels();
     const masterCylinderGroup = models[0].scene;
+    const oneWeaponModelGroup = models[1].scene;
+
     masterCylinderGroup.scale.set(5, 5, 5);
+    oneWeaponModelGroup.scale.set(2, 2, 2);
+
 
     const keyboard = new KeyboardInterface();
     const FELIX_SIZE = 16;
@@ -100,11 +139,14 @@ const createStageMaterial = () => {
             ground.rotation.z = Math.PI;
 
             scene.add(ground);
+
+            decipherAndSetClockNumberOne(scene, oneWeaponModelGroup);
+
             scene.add(itsMeFelix.mesh);
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 1;
+            const FELIX_SPEED = 4;
 
             loopHooks.push((dt) => {
 

@@ -2,8 +2,9 @@ import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 const sweetBabyLoader = new GLTFLoader();
 
 import masterCylinderUrl from "../../assets/mastercylinder.glb";
+import clockNumsUrl from "../../assets/clockNumbers.glb";
 
-const modelUrls = [masterCylinderUrl];
+const modelUrls = [masterCylinderUrl, clockNumsUrl];
 
 const loadOneModel = (url: string) => {
     return new Promise<GLTF>((resolvePromise, rejectPromise) => {

@@ -21,7 +21,7 @@ class FelixCamera {
         this.sprite.mesh.position.y = 10;
 
         this.sprite.mesh.position.x = 0;
-        this.sprite.mesh.position.z = -200;
+        this.sprite.mesh.position.z = -180;
 
         this.camera = new PerspectiveCamera(80, 16 / 9);
         this.camera.position.y = 10;
@@ -55,7 +55,7 @@ class FelixCamera {
         this.camera.updateProjectionMatrix();
 
         if (this.camera.position.y < 120) {
-            this.camera.position.y += 0.4;
+            this.camera.position.y += 1;
         }
     }
 

@@ -52,3 +52,7 @@ export class OGBullet extends Weapon {
         shake(200);
     }
 }
+
+export class One extends Weapon {
+
+}
