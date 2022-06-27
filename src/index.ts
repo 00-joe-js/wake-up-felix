@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group } from "three";
+import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils } from "three";
 import { Mesh } from "three";
 
 
@@ -68,27 +68,32 @@ const findWithName = (group: Group, name: string): Mesh => {
 
 const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
-    const oneNormalMesh = findWithName(gltfGroup, "OneNormal");
-    const twoNormalMesh = findWithName(gltfGroup, "TwoNormal");
-    oneNormalMesh.position.set(0, 0, 0);
-    twoNormalMesh.position.set(0, 0, 0);
+    const clockNumberNames = [
+        "OneNormal", "TwoNormal", "ThreeNormal"
+    ];
 
-    oneNormalMesh.scale.set(2, 2, 2);
-    twoNormalMesh.scale.set(2, 2, 2);
-
-    // oneNormalMesh.position.y = 20;
-    // twoNormalMesh.position.y = 20;
-    twoNormalMesh.position.x += 20;
+    const clockNumberMeshes = clockNumberNames.map(name => {
+        const mesh = findWithName(gltfGroup, name);
+        mesh.position.set(0, 0, 0);
+        mesh.scale.set(2, 2, 2);
+        return mesh;
+    });
 
     const radius = 275;
 
+    let c = 0;
+
     for (let i = 0; i < 12; i++) {
-        const numMesh = Math.random() > .5 ? oneNormalMesh.clone() : twoNormalMesh.clone();
+        const numMesh = clockNumberMeshes[c].clone();
+        c = c + 1;
         const d = (-Math.PI / 2) + ((Math.PI / 6) * i);
         numMesh.position.z = Math.sin(d) * radius;
         numMesh.position.x = Math.cos(d) * radius;
         numMesh.rotation.y = i * (-Math.PI / 6) + (Math.PI / 2);
         scene.add(numMesh);
+        if (c > clockNumberMeshes.length - 1) {
+            c = 0;
+        }
     }
 
     const oneWeaponMesh = findWithName(gltfGroup, "OneWeapon");
@@ -102,7 +107,6 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
     masterCylinderGroup.scale.set(5, 5, 5);
     oneWeaponModelGroup.scale.set(2, 2, 2);
-
 
     const keyboard = new KeyboardInterface();
     const FELIX_SIZE = 16;
