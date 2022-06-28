@@ -21,7 +21,7 @@ class FelixCamera {
         this.sprite.mesh.position.y = 10;
 
         this.sprite.mesh.position.x = 0;
-        this.sprite.mesh.position.z = 275;
+        this.sprite.mesh.position.z = 0;
 
         setTimeout(() => {
             location.reload();

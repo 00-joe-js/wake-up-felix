@@ -1,6 +1,6 @@
 export type Era = "stoneage" | "ancient" | "industrial" | "prohibition";
 
-import { MathUtils } from "three";
+import { MathUtils, Texture } from "three";
 import tubaGuyUrl from "../../assets/tuba_man.png";
 import bottleUrl from "../../assets/wine_bottle.png";
 import steggodogUrl from "../../assets/steggodog.png";
@@ -26,6 +26,18 @@ type DrawnEnemyConfig = {
     speed?: number;
     reverseFlip?: boolean;
 };
+
+// Struggles with enemy textures.
+// Three.js has an expensive FIRST RENDER for all new image textures,
+// so every enemy has to share a texture with all others.
+// Keep this in mind with resizing stuff because it may not be possible. (There could be a third/fourth texture)
+
+// The plan is, preload all enemy textures on game start,
+// and have its repeat offset (aka animation) managed by the director (basically make sure all textures run).
+
+// No, the plan is to give every enemy of the same type ONE texture.
+// It will render that texture with a shadermaterial, which has a uniform of flipped
+// and reverse map the texture if 1.
 
 export const ENEMIES: DrawnEnemyConfig[] = [
     // Steggodog's come for your throat, fast, but are easy to kill.

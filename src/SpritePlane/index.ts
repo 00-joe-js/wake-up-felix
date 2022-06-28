@@ -1,4 +1,4 @@
-import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture, Material, BufferGeometry, Color, DoubleSide } from "three";
+import { TextureLoader, Mesh, PlaneGeometry, MeshBasicMaterial, Vector3, Texture, Material, BufferGeometry, Color, DoubleSide, ShaderMaterial } from "three";
 
 const textureLoaderCache: { [url: string]: Texture } = {};
 
@@ -10,7 +10,7 @@ class TexturedPlane {
     texture: Texture;
     mesh: Mesh;
     flipped: boolean;
-    mat: MeshBasicMaterial;
+    mat: ShaderMaterial;
 
     private animationSpeed: number;
     private frameAmount: number;
@@ -32,7 +32,54 @@ class TexturedPlane {
 
         this.texture = textureLoaderCache[textureUrl];
 
-        this.mat = new MeshBasicMaterial({ map: this.texture, alphaTest: 0.1, side: DoubleSide });
+        this.mat = new ShaderMaterial({
+            uniforms: {
+                uTex: { value: this.texture },
+                uTexWidth: { value: 0 },
+                uBlendColor: { value: new Color(1, 1, 1) },
+                uFrameAmount: { value: frameAmount },
+                uCurrentFrame: { value: 0 },
+                uFlipped: { value: 0 },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D uTex;
+                uniform float uFlipped;
+                uniform float uFrameAmount;
+                uniform float uCurrentFrame;
+                uniform float uTexWidth;
+                uniform vec3 uBlendColor;
+                varying vec2 vUv;
+                void main() {
+
+                    float windowSize = 1.0 / uFrameAmount;
+
+                    vec2 viewedRange = vec2(windowSize * uCurrentFrame, windowSize * (uCurrentFrame + 1.0));
+
+                    vec2 adjustedUv = (vUv / vec2(uFrameAmount, 1.0)) + vec2(1.0 / uFrameAmount * uCurrentFrame, 0.0);
+
+                    vec2 orientedUv = uFlipped == 0.0 ? adjustedUv : vec2(viewedRange.x + (viewedRange.y - adjustedUv.x), adjustedUv.y);
+
+                    vec4 texel = texture2D(
+                        uTex, 
+                        orientedUv
+                    );
+
+                    gl_FragColor = vec4(texel) * vec4(uBlendColor, 1.0);
+
+                    if (gl_FragColor.a < 0.1) {
+                        discard;
+                    }
+
+                }
+            `,
+        });
 
         this.mesh = new Mesh(
             new PlaneGeometry(width, height),
@@ -51,9 +98,9 @@ class TexturedPlane {
     }
 
     public flashRed() {
-        this.mat.color.set(_red);
+        this.mat.uniforms.uBlendColor.value = _red;
         setTimeout(() => {
-            this.mat.color.set(_white);
+            this.mat.uniforms.uBlendColor.value = _white;
         }, 500);
     }
 
@@ -62,10 +109,7 @@ class TexturedPlane {
         this.currentlyAppliedFlip = f;
         this.flipped = f;
 
-        this.texture.repeat.set(
-            (1 / (this.frameAmount)) * (this.flipped ? -1 : 1), // x
-            1 // y
-        );
+        this.mat.uniforms.uFlipped.value = f ? 1.0 : 0.0;
 
         this.resetPlay();
 
@@ -76,13 +120,17 @@ class TexturedPlane {
         this.lastFrame = -1;
     }
 
-    private setFrame(nthFrame: number, flipped: boolean) {
-        this.texture.offset.x = (1 / this.frameAmount) * nthFrame + (flipped ? (1 / this.frameAmount) : 0);
+    private setFrame(nthFrame: number) {
+        this.mat.uniforms.uCurrentFrame.value = nthFrame;
     }
 
     update(dt: number, flipped: boolean, playing: boolean) {
 
         this.setFlipped(flipped);
+
+        if (this.texture.image && this.mat.uniforms.uTexWidth.value === 0) {
+            this.mat.uniforms.uTexWidth.value = this.texture.image.width;
+        }
 
         if (!playing) {
             this.resetPlay();
@@ -90,7 +138,7 @@ class TexturedPlane {
             if (dt - this.lastFrameTime > this.animationSpeed) {
                 this.lastFrameTime = dt;
                 this.lastFrame = this.lastFrame + 1;
-                this.setFrame(this.lastFrame, flipped);
+                this.setFrame(this.lastFrame);
                 if (this.lastFrame === this.frameAmount - 1) {
                     this.lastFrame = -1;
                 }
