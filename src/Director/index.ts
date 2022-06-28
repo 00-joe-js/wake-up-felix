@@ -1,9 +1,9 @@
 import { MathUtils, Object3D, Scene, Vector2 } from "three";
 
 
-import Weapon from "../weapons/OGBullet";
+import Weapon from "../weapons";
 import TwoDEnemy from "../enemies/2DEnemy";
-import DrawnEnemy, { getRandomEnemyName, getRandomEnemyFromEra, Era } from "../enemies/DrawnEnemies";
+import DrawnEnemy, { getRandomEnemyFromEra } from "../enemies/DrawnEnemies";
 
 import DamagePlane from "../damageNumbers";
 import GemsManager from "../gems";
@@ -81,7 +81,9 @@ export default class Director {
             if (weaponCollide) {
 
                 // To be replaced with weapon properties.
-                const weaponDamage = MathUtils.randInt(5, 8);
+                // MAYBE this should come from detectCollision,
+                // for reasons like the scaling of II
+                const weaponDamage = MathUtils.randInt(weapon.minDamage, weapon.maxDamage);
 
                 const hitTakenAndShouldDie = enemy.takeDamage(weaponDamage, weapon, dt);
 
@@ -92,7 +94,7 @@ export default class Director {
                     const { x: viewPortX, y: viewPortY } = enemyPos.project(this.felix.camera);
                     this.damageNumbers.showNumber(weaponDamage, viewPortX, viewPortY);
 
-                    weapon.onEnemyCollide();
+                    weapon.onEnemyCollide(enemy);
 
                     if (hitTakenAndShouldDie) {
                         enemy.object.visible = false;

@@ -33,7 +33,7 @@ import loadModels from "./importHelpers/gltfLoader";
 
 import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
-import { OGBullet as Bullet } from "./weapons/OGBullet";
+import { OGBullet as Bullet, One, Two } from "./weapons";
 import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
@@ -54,7 +54,8 @@ let loopHooks: Array<(dt: number) => void> = [];
 
 const createStageMaterial = () => {
     const mat = new MeshPhongMaterial({
-        color: new Color(0.8, 0.8, 0.8),
+        color: new Color(0.7, 0.7, 0.7),
+        shininess: 1000,
     });
     return mat;
 };
@@ -95,18 +96,21 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
             c = 0;
         }
     }
+};
 
-    const oneWeaponMesh = findWithName(gltfGroup, "OneWeapon");
+const getWeaponMeshes = (gltfGroup: Group) => {
+    const names = ["One", "Two"].map(s => `${s}Weapon`);
+    return names.map(n => findWithName(gltfGroup, n));
 };
 
 (async () => {
 
     const models = await loadModels();
     const masterCylinderGroup = models[0].scene;
-    const oneWeaponModelGroup = models[1].scene;
+    const clockNumsGroup = models[1].scene;
 
     masterCylinderGroup.scale.set(5, 5, 5);
-    oneWeaponModelGroup.scale.set(2, 2, 2);
+    clockNumsGroup.scale.set(2, 2, 2);
 
     const keyboard = new KeyboardInterface();
     const FELIX_SIZE = 16;
@@ -144,7 +148,7 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
             scene.add(ground);
 
-            decipherAndSetClockNumberOne(scene, oneWeaponModelGroup);
+            decipherAndSetClockNumberOne(scene, clockNumsGroup);
 
             scene.add(itsMeFelix.mesh);
 
@@ -220,13 +224,23 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
                 itsMeFelix.update(dt, felixFlipped, felixWalking);
             });
 
-            const bullet = new Bullet();
-            scene.add(bullet.mesh);
 
             OGBot.MODEL_GROUP = masterCylinderGroup;
             const theDirector = new Director(dt, scene, fCam);
 
+            const bullet = new Bullet();
+            scene.add(bullet.mesh);
             theDirector.addWeapon(bullet);
+
+            const clockWeaponMeshes = getWeaponMeshes(clockNumsGroup);
+
+            const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
+            scene.add(numberOneWeapon.group);
+            theDirector.addWeapon(numberOneWeapon);
+
+            const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
+            scene.add(numberTwoWeapon.group);
+            theDirector.addWeapon(numberTwoWeapon);
 
             loopHooks.push((dt) => {
                 theDirector.update(dt);

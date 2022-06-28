@@ -1,7 +1,7 @@
 import { Mesh, Object3D, Vector2, MathUtils, Vector3, Box3 } from "three";
 import SpritePlane from "../SpritePlane";
 import { withinDistance2D } from "../utils";
-import Weapon from "../weapons/OGBullet";
+import Weapon from "../weapons";
 
 const _v2 = new Vector2();
 const _v3 = new Vector3();
@@ -29,6 +29,8 @@ export default class TwoDEnemy {
     private reverseFlip: boolean = false;
     private health: number = 15;
 
+    private latestStunTime: number = 0;
+
     constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5 }: EnemyConfig) {
         this.sprite = new SpritePlane(textureUrl, width, height, 20, frameAmount, animationSpeed);
         this.health = health;
@@ -48,6 +50,12 @@ export default class TwoDEnemy {
     }
 
     moveTowards(pos: Vector2, dt: number) {
+
+        if (dt - this.latestStunTime < 1000) {
+            this.object.position.x += MathUtils.randFloat(-1, 1);
+            this.object.position.z += MathUtils.randFloat(-1, 1);
+            return;
+        }
 
         _v2.set(
             pos.x - this.object.position.x,
@@ -81,11 +89,12 @@ export default class TwoDEnemy {
 
         this.hitCache.set(weapon, {
             time: dt,
-            untilNextAllowableHit: 1000, // TBD by weapon properties.
+            untilNextAllowableHit: weapon.hitDelay, // TBD by weapon properties.
         });
 
         this.health = this.health - amount;
         this.sprite.flashRed();
+        this.latestStunTime = dt;
 
         return this.health < 0; // should die, Director.
     }

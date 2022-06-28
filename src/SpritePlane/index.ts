@@ -92,7 +92,7 @@ class TexturedPlane {
 
         // Face overhead.
         this.mesh.rotateOnAxis(new Vector3(1, 0, 0), -Math.PI / 2);
-        this.mesh.rotateOnAxis(new Vector3(1, 0, 0), Math.PI / 7);
+        this.mesh.rotateOnAxis(new Vector3(1, 0, 0), Math.PI / 5);
 
         this.mesh.position.y = distanceFromFloor;
     }

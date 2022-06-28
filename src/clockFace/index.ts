@@ -19,6 +19,9 @@ const rotateAboutPoint = (obj: Object3D, point: Vector3, axis: Vector3, theta: n
 
 };
 
+const _zero = new Vector3(0, 0, 0);
+const _up = new Vector3(0, 1, 0);
+
 export default class Clockface {
 
     public secondsHand: Mesh;
@@ -69,9 +72,9 @@ export default class Clockface {
         const secondsTheta = secondsD * t;
         const msTheta = msD * t;
 
-        rotateAboutPoint(this.secondsHand, new Vector3(0, 0, 0), new Vector3(0, 1, 0), secondsTheta, true);
-        rotateAboutPoint(this.minuteHand, new Vector3(0, 0, 0), new Vector3(0, 1, 0), minuteTheta, true);
-        rotateAboutPoint(this.mSecondsHand, new Vector3(0, 0, 0), new Vector3(0, 1, 0), msTheta, true);
+        rotateAboutPoint(this.secondsHand, _zero, _up, secondsTheta, true);
+        rotateAboutPoint(this.minuteHand, _zero, _up, minuteTheta, true);
+        rotateAboutPoint(this.mSecondsHand, _zero, _up, msTheta, true);
     }
 
 }
