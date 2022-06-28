@@ -1,6 +1,6 @@
 export type Era = "stoneage" | "ancient" | "industrial" | "prohibition";
 
-import { MathUtils, Texture } from "three";
+import { MathUtils } from "three";
 import tubaGuyUrl from "../../assets/tuba_man.png";
 import bottleUrl from "../../assets/wine_bottle.png";
 import steggodogUrl from "../../assets/steggodog.png";
@@ -10,7 +10,10 @@ import sweepUrl from "../../assets/chimney_sweep.png";
 import flapperUrl from "../../assets/flapper_cat.png";
 import smokeStackUrl from "../../assets/smoke_stack.png";
 import tRexUrl from "../../assets/t_rex.png";
-
+import caveCatUrl from "../../assets/cave_cat.png";
+import ostrichUrl from "../../assets/ostrich.png";
+import ratsUrl from "../../assets/rats.png";
+import steamEngineUrl from "../../assets/steam_engine.png";
 
 import TwoDEnemy from "./2DEnemy";
 
@@ -27,15 +30,7 @@ type DrawnEnemyConfig = {
     reverseFlip?: boolean;
 };
 
-// Struggles with enemy textures.
-// Three.js has an expensive FIRST RENDER for all new image textures,
-// so every enemy has to share a texture with all others.
-// Keep this in mind with resizing stuff because it may not be possible. (There could be a third/fourth texture)
-
-// The plan is, preload all enemy textures on game start,
-// and have its repeat offset (aka animation) managed by the director (basically make sure all textures run).
-
-// No, the plan is to give every enemy of the same type ONE texture.
+// The plan is to give every enemy of the same type ONE texture.
 // It will render that texture with a shadermaterial, which has a uniform of flipped
 // and reverse map the texture if 1.
 
@@ -62,8 +57,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "T-Rex",
         textureUrl: tRexUrl,
-        width: 45 * 1.4,
-        height: 45,
+        width: 100 * 1.4,
+        height: 100,
         frameAmount: 4,
         era: "stoneage",
         reverseFlip: true,
@@ -72,6 +67,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         speed: 3
     },
     // Slow, hulking. Get anywhere near and you will feel pain.
+    // Todo: add particle effect to describe mammoths stepping range.
     // But it's easy to not get near.
     // These will stay on the clock for a while, and are worth killing sooner.
     // But you'll have to hit them 5 or 6 times.
@@ -87,6 +83,19 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         health: 30,
         speed: 7
     },
+    // Lots of these ...
+    {
+        name: "Cave Cat",
+        textureUrl: caveCatUrl,
+        width: 25,
+        height: 25,
+        frameAmount: 6,
+        era: "stoneage",
+        reverseFlip: false,
+        animationSpeed: 1000,
+        health: 15,
+        speed: 3
+    },
     {
         name: "Roman Soldier",
         textureUrl: soldierUrl,
@@ -98,6 +107,18 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 100,
         health: 15,
         speed: 3
+    },
+    {
+        name: "Ostrich",
+        textureUrl: ostrichUrl,
+        width: 40 * 0.762,
+        height: 40,
+        frameAmount: 4,
+        era: "ancient",
+        reverseFlip: true,
+        animationSpeed: 1000,
+        health: 20,
+        speed: 2
     },
     {
         name: "Chimney Sweep",
@@ -120,6 +141,29 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 50,
         health: 10,
         speed: 3.5,
+        reverseFlip: true
+    },
+    {
+        name: "Rats",
+        textureUrl: ratsUrl,
+        width: 15 * 1.332,
+        height: 15,
+        frameAmount: 2,
+        era: "industrial",
+        animationSpeed: 100,
+        health: 50,
+        speed: 1,
+    },
+    {
+        name: "Steam Engine",
+        textureUrl: steamEngineUrl,
+        width: 30 * 2.245,
+        height: 30,
+        frameAmount: 3,
+        era: "industrial",
+        animationSpeed: 50,
+        health: 30,
+        speed: 2,
         reverseFlip: true
     },
     {

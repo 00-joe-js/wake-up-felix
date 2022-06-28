@@ -47,7 +47,7 @@ export default class Director {
         const ERA_TIME = (1000) * (60) * (1);
         const timeSinceStart = dt - this.startTime;
         const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
-        const currentEra = ["stoneage", "ancient", "industrial", "prohibition"][eraIndex];
+        const currentEra = ["industrial", "ancient", "stoneage", "prohibition"][eraIndex];
         return currentEra;
     }
 
