@@ -1,6 +1,6 @@
 import bulletUrl from "../../assets/bullet.png";
 
-import { Group, MathUtils, Mesh, Object3D, PointLight, Scene, Vector2, Vector3 } from "three";
+import { BoxGeometry, Group, MathUtils, Mesh, MeshBasicMaterial, Object3D, PointLight, Scene, Vector2, Vector3 } from "three";
 
 import { shake } from "../renderer";
 import SpritePlane from "../SpritePlane";
@@ -213,10 +213,6 @@ export class Three extends Weapon {
     hitDelay = 600;
 
     private lastPlace: number = 0;
-    
-    static TWO_DIR: Vector3 =
-        new Vector3(0, 0, -1)
-            .applyAxisAngle(new Vector3(0, 1, 0), -Math.PI / 6 * 2);
 
     constructor(mesh: Mesh, scene: Scene) {
         super();
@@ -257,6 +253,53 @@ export class Three extends Weapon {
                 trap.mesh.position.z, enemy.object.position.z,
             );
         });
+    }
+
+    onEnemyCollide(enemy: TwoDEnemy): void {
+    }
+}
+
+export class Four extends Weapon {
+
+    group: Group;
+    modelMesh: Mesh;
+    scene: Scene;
+
+    private hitboxMesh: Mesh;
+
+    minDamage = 15;
+    maxDamage = 25;
+    stunValue = 1000;
+    hitDelay = 1000;
+
+    constructor(mesh: Mesh, scene: Scene) {
+        super();
+        this.group = new Group();
+        this.scene = scene;
+        this.modelMesh = mesh;
+        this.group.add(this.modelMesh);
+
+        this.modelMesh.position.x = -30;
+        this.modelMesh.scale.set(1.5, 1.5, 1.5);
+        rotateAboutPoint(this.modelMesh, new Vector3(0, 0, 0), new Vector3(0, 1, 0), Math.PI / 6 * 4, true);
+
+        this.hitboxMesh = new Mesh(new BoxGeometry(12, 12, 12, 1, 1, 1));
+        this.hitboxMesh.visible = false;
+        this.group.add(this.hitboxMesh);
+        this.hitboxMesh.position.x = -40;
+        rotateAboutPoint(this.hitboxMesh, new Vector3(0, 0, 0), new Vector3(0, 1, 0), Math.PI / 6 * 4, true);
+    }
+
+    update(dt: number, felixPos: Vector2) {
+        this.group.position.set(felixPos.x, 5, felixPos.y);
+    }
+
+    detectCollision(enemy: TwoDEnemy): boolean {
+        const hitBoxWorldPos = this.hitboxMesh.position.clone().applyMatrix4(this.group.matrixWorld);
+        return withinDistance2D(10, 
+            hitBoxWorldPos.x, enemy.object.position.x,
+            hitBoxWorldPos.z, enemy.object.position.z,
+        );
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {

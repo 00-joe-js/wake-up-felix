@@ -33,7 +33,7 @@ import loadModels from "./importHelpers/gltfLoader";
 
 import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
-import { OGBullet as Bullet, One, Two, Three } from "./weapons";
+import { OGBullet as Bullet, One, Two, Three, Four } from "./weapons";
 import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
@@ -70,11 +70,12 @@ const findWithName = (group: Group, name: string): Mesh => {
 const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
     const clockNumberNames = [
-        "OneNormal", "TwoNormal", "ThreeNormal", "FourNormal"
-    ];
+        "Twelve", "One", "Two", "Three", "Four", 
+        "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"
+    ].map(s => `${s}Normal`);
 
     const clockNumberMeshes = clockNumberNames.map(name => {
-        const mesh = findWithName(gltfGroup, name);
+        const mesh = findWithName(gltfGroup, name).clone();
         mesh.position.set(0, 0, 0);
         mesh.scale.set(2, 2, 2);
         return mesh;
@@ -99,7 +100,7 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 };
 
 const getWeaponMeshes = (gltfGroup: Group) => {
-    const names = ["One", "Two", "Three"].map(s => `${s}Weapon`);
+    const names = ["One", "Two", "Three", "Four"].map(s => `${s}Weapon`);
     return names.map(n => findWithName(gltfGroup, n));
 };
 
@@ -238,15 +239,19 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
             scene.add(numberOneWeapon.group);
-            theDirector.addWeapon(numberOneWeapon);
+            // theDirector.addWeapon(numberOneWeapon);
 
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
             scene.add(numberTwoWeapon.group);
-            theDirector.addWeapon(numberTwoWeapon);
+            // theDirector.addWeapon(numberTwoWeapon);
 
             const numberThreeWeapon = new Three(clockWeaponMeshes[2], scene);
             scene.add(numberThreeWeapon.group);
             theDirector.addWeapon(numberThreeWeapon);
+
+            const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
+            scene.add(numberFourWeapon.group);
+            theDirector.addWeapon(numberFourWeapon);
 
             loopHooks.push((dt) => {
                 theDirector.update(dt);
