@@ -104,6 +104,14 @@ class TexturedPlane {
         }, 500);
     }
 
+    public setRed() {
+        this.mat.uniforms.uBlendColor.value = _red;
+    }
+
+    public setWhite() {
+        this.mat.uniforms.uBlendColor.value = _white;
+    }
+
     private setFlipped(f: boolean) {
         if (this.currentlyAppliedFlip === f) return;
         this.currentlyAppliedFlip = f;

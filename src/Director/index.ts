@@ -58,9 +58,9 @@ export default class Director {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 2 === 0) {
+            if (this.tick % 5 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(1).forEach(() => this.makeEraEnemy(era));
+                range(10).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
@@ -146,7 +146,9 @@ export default class Director {
 
             if (!killedThisFrame) {
                 enemy.moveTowards(felixPos, dt);
-                this.processFelixCollision(enemy, dt);
+                if (enemy.stun <= 0) {
+                    this.processFelixCollision(enemy, dt);
+                }
             }
 
         });

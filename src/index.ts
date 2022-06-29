@@ -33,7 +33,7 @@ import loadModels from "./importHelpers/gltfLoader";
 
 import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
-import { OGBullet as Bullet, One, Two } from "./weapons";
+import { OGBullet as Bullet, One, Two, Three } from "./weapons";
 import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
@@ -99,7 +99,7 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 };
 
 const getWeaponMeshes = (gltfGroup: Group) => {
-    const names = ["One", "Two"].map(s => `${s}Weapon`);
+    const names = ["One", "Two", "Three"].map(s => `${s}Weapon`);
     return names.map(n => findWithName(gltfGroup, n));
 };
 
@@ -243,6 +243,10 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
             scene.add(numberTwoWeapon.group);
             theDirector.addWeapon(numberTwoWeapon);
+
+            const numberThreeWeapon = new Three(clockWeaponMeshes[2], scene);
+            scene.add(numberThreeWeapon.group);
+            theDirector.addWeapon(numberThreeWeapon);
 
             loopHooks.push((dt) => {
                 theDirector.update(dt);

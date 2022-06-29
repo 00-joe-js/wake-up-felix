@@ -21,15 +21,17 @@ export default class TwoDEnemy {
     sprite: SpritePlane;
     object: Mesh;
 
+    public health: number = 15;
+    public stun: number = 0;
+
     private width: number;
     private height: number;
     private speed: number;
 
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
     private reverseFlip: boolean = false;
-    private health: number = 15;
 
-    private latestStunTime: number = 0;
+    private lastTickTime: number = 0;
 
     constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5 }: EnemyConfig) {
         this.sprite = new SpritePlane(textureUrl, width, height, 20, frameAmount, animationSpeed);
@@ -51,10 +53,19 @@ export default class TwoDEnemy {
 
     moveTowards(pos: Vector2, dt: number) {
 
-        if (dt - this.latestStunTime < 1000) {
+        const lastTick = this.lastTickTime;
+        this.lastTickTime = dt;
+        const elapsed = dt - lastTick;
+
+        if (this.stun > 0) {
             this.object.position.x += MathUtils.randFloat(-1, 1);
             this.object.position.z += MathUtils.randFloat(-1, 1);
+            this.stun -= elapsed;
+            this.sprite.setRed();
             return;
+        } else if (this.stun !== 0) {
+            this.sprite.setWhite();
+            this.stun = 0;
         }
 
         _v2.set(
@@ -93,8 +104,7 @@ export default class TwoDEnemy {
         });
 
         this.health = this.health - amount;
-        this.sprite.flashRed();
-        this.latestStunTime = dt;
+        this.stun += weapon.stunValue;
 
         return this.health < 0; // should die, Director.
     }

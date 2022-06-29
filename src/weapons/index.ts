@@ -12,6 +12,7 @@ export default class Weapon {
     public minDamage: number = 0;
     public maxDamage: number = 0;
     public hitDelay: number = 1000;
+    public stunValue: number = 500;
     update(dt: number, pos: Vector2) {
         throw new Error("Not implemented");
     }
@@ -29,6 +30,8 @@ export class OGBullet extends Weapon {
 
     sprite: SpritePlane;
     mesh: Mesh;
+
+    stunValue = 1000;
 
     public minDamage: number = 5;
     public maxDamage: number = 8;
@@ -63,6 +66,8 @@ export class OGBullet extends Weapon {
 export class One extends Weapon {
     group: Group;
     modelMesh: Mesh;
+
+    stunValue = 20;
 
     static ONE_DIR: Vector3 =
         new Vector3(0, 0, -1)
@@ -135,6 +140,8 @@ export class Two extends Weapon {
     group: Group;
     modelMesh: Mesh;
 
+    stunValue = 2000;
+
     private swingLight: PointLight = new PointLight(0xffff00, 0.4, 100);
 
     public minDamage: number = 10;
@@ -189,5 +196,69 @@ export class Two extends Weapon {
 
     onEnemyCollide(enemy: TwoDEnemy): void {
         shake(500);
+    }
+}
+
+export class Three extends Weapon {
+
+    group: Group;
+    modelMesh: Mesh;
+    scene: Scene;
+
+    traps: { mesh: Mesh }[] = [];
+
+    minDamage = 3;
+    maxDamage = 3;
+    stunValue = 300;
+    hitDelay = 600;
+
+    private lastPlace: number = 0;
+    
+    static TWO_DIR: Vector3 =
+        new Vector3(0, 0, -1)
+            .applyAxisAngle(new Vector3(0, 1, 0), -Math.PI / 6 * 2);
+
+    constructor(mesh: Mesh, scene: Scene) {
+        super();
+        this.group = new Group();
+        this.scene = scene;
+        this.modelMesh = mesh;
+        this.modelMesh.scale.set(2, 2, 2);
+        this.modelMesh.position.y = 5;
+    }
+
+    placeTrap(dt: number, felixPos: Vector2) {
+        const m = this.modelMesh.clone();
+        this.scene.add(m);
+        m.position.set(felixPos.x + 30, 5, felixPos.y);
+        this.traps.push({ mesh: m });
+        this.lastPlace = dt;
+    }
+
+    removeOldestTrap() {
+        this.scene.remove(this.traps[0].mesh);
+        this.traps = this.traps.slice(1);
+    }
+
+    update(dt: number, felixPos: Vector2) {
+        if (dt - this.lastPlace > 3000) {
+            this.placeTrap(dt, felixPos);
+            if (this.traps.length > 3) {
+                this.removeOldestTrap();
+            }
+        }
+    }
+
+    detectCollision(enemy: TwoDEnemy): boolean {
+        return this.traps.some(trap => {
+            return withinDistance2D(
+                25,
+                trap.mesh.position.x, enemy.object.position.x,
+                trap.mesh.position.z, enemy.object.position.z,
+            );
+        });
+    }
+
+    onEnemyCollide(enemy: TwoDEnemy): void {
     }
 }

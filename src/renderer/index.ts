@@ -59,7 +59,7 @@ renderer.setClearColor(0x000000);
 
 const screenRes = new Vector2(canvasElement.clientWidth, canvasElement.clientHeight);
 
-const bloomPass = new UnrealBloomPass(screenRes, 0.2, 0.02, 0.7);
+const bloomPass = new UnrealBloomPass(screenRes, 0.1, 0.002, 0.7);
 const shakePass = new ShaderPass(ShakeShader);
 shakePass.enabled = false;
 
@@ -81,7 +81,7 @@ export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) =>
     const renderPass = new RenderPass(scene, camera);
 
     composer.addPass(renderPass);
-    // composer.addPass(bloomPass);
+    composer.addPass(bloomPass);
     composer.addPass(colorifyPass);
     composer.addPass(shakePass);
     composer.addPass(copyPass);
