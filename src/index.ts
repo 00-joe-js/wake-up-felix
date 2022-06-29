@@ -253,6 +253,29 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             scene.add(numberFourWeapon.group);
             theDirector.addWeapon(numberFourWeapon);
 
+            // Next weapons:
+
+            // Five: a shield that orbits like bible, grants extra health or chance to mitigate damage
+            // would be cool if it bashed enemies as they entered range and cooled down with its enemy hit delay
+            // extra stun?
+
+            // Six: a staff/wand that hovers at Math.PI and fires homing projectiles 
+            // (starry wisps if I have time)
+
+            // Seven: Garlic something 
+
+            // Eight: smoke stacks that appear on random enemies every 8 seconds 
+            // and emit a light cloud/damage zone, like santa water
+
+            // Nine: lightning ring instant area explosion on
+            // random enemy who's x is less than felix's
+
+            // Ten: cross/boomerang
+
+            // Eleven: clock lancet clone
+
+            // Twelve: No weapon, lots of points.
+
             loopHooks.push((dt) => {
                 theDirector.update(dt);
             });

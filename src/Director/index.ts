@@ -9,9 +9,13 @@ import GemsManager from "../gems";
 
 import FelixCamera from "../felixCamera";
 
+import shuffle from "shuffle-array";
+
 const range = (n: number) => {
     return new Array(n).fill("").map((_, i) => i);
 };
+
+const ERAS = shuffle(["prohibition", "ancient", "industrial", "stoneage"]);
 
 export default class Director {
 
@@ -46,7 +50,7 @@ export default class Director {
         const ERA_TIME = (1000) * (60) * (1);
         const timeSinceStart = dt - this.startTime;
         const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
-        const currentEra = ["prohibition", "ancient", "industrial", "stoneage"][eraIndex];
+        const currentEra = ERAS[eraIndex];
         return currentEra;
     }
 
