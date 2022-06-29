@@ -14,6 +14,9 @@ import caveCatUrl from "../../assets/cave_cat.png";
 import ostrichUrl from "../../assets/ostrich.png";
 import ratsUrl from "../../assets/rats.png";
 import steamEngineUrl from "../../assets/steam_engine.png";
+import troubleClefUrl from "../../assets/treble_clef.png";
+import vikingCatUrl from "../../assets/viking_cat.png";
+import warElephant from "../../assets/war_elephant.png";
 
 import TwoDEnemy from "./2DEnemy";
 
@@ -121,6 +124,30 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         speed: 2
     },
     {
+        name: "Viking Cat",
+        textureUrl: vikingCatUrl,
+        width: 25 * 0.75,
+        height: 25,
+        frameAmount: 6,
+        era: "ancient",
+        reverseFlip: false,
+        animationSpeed: 500,
+        health: 30,
+        speed: 2.5
+    },
+    {
+        name: "War Elephant",
+        textureUrl: warElephant,
+        width: 60 * 1.26,
+        height: 60,
+        frameAmount: 4,
+        era: "ancient",
+        reverseFlip: true,
+        animationSpeed: 500,
+        health: 50,
+        speed: 5
+    },
+    {
         name: "Chimney Sweep",
         textureUrl: sweepUrl,
         width: 16,
@@ -199,6 +226,18 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 200,
         health: 5,
         speed: 2.5
+    },
+    {
+        name: "Trouble Clef",
+        textureUrl: troubleClefUrl,
+        width: 40 * 0.49,
+        height: 40,
+        frameAmount: 3,
+        era: "prohibition",
+        animationSpeed: 750,
+        reverseFlip: true,
+        health: 100,
+        speed: 3.5
     }
 ];
 

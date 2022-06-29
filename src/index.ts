@@ -113,12 +113,14 @@ const getWeaponMeshes = (gltfGroup: Group) => {
     clockNumsGroup.scale.set(2, 2, 2);
 
     const keyboard = new KeyboardInterface();
-    const FELIX_SIZE = 16;
+    const FELIX_SIZE = 18;
+
     const itsMeFelix = new SpritePlane(
         felixWalkSheetUrl,
-        FELIX_SIZE * 0.875647668, FELIX_SIZE,
+        FELIX_SIZE * 0.69, FELIX_SIZE,
         5,
-        6
+        6,
+        175 / 2
     );
 
     const fCam = new FelixCamera(itsMeFelix, scene);

@@ -1,5 +1,4 @@
-import { MathUtils, Object3D, Scene, Vector2 } from "three";
-
+import { MathUtils, Scene, Vector2 } from "three";
 
 import Weapon from "../weapons";
 import TwoDEnemy from "../enemies/2DEnemy";
@@ -47,7 +46,7 @@ export default class Director {
         const ERA_TIME = (1000) * (60) * (1);
         const timeSinceStart = dt - this.startTime;
         const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
-        const currentEra = ["industrial", "ancient", "stoneage", "prohibition"][eraIndex];
+        const currentEra = ["prohibition", "ancient", "industrial", "stoneage"][eraIndex];
         return currentEra;
     }
 
