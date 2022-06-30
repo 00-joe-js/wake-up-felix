@@ -62,9 +62,9 @@ export default class Director {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 0.5 === 0) {
+            if (this.tick % 2 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(5).forEach(() => this.makeEraEnemy(era));
+                range(20).forEach(() => this.makeEraEnemy(era));
             }
         }
     }

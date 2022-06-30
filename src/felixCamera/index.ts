@@ -58,7 +58,7 @@ class FelixCamera {
         this.camera.fov = 80 + (Math.max(0, spriteY) * 0.01);
         this.camera.updateProjectionMatrix();
 
-        if (this.camera.position.y < 120) {
+        if (this.camera.position.y < 150) {
             this.camera.position.y += 1;
         }
     }

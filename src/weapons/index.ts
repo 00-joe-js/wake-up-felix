@@ -1,6 +1,6 @@
 import bulletUrl from "../../assets/bullet.png";
 
-import { BoxGeometry, Group, MathUtils, Mesh, MeshBasicMaterial, Object3D, PointLight, Scene, Vector2, Vector3 } from "three";
+import { BoxGeometry, Group, Mesh, PointLight, Scene, Vector2, Vector3 } from "three";
 
 import { shake } from "../renderer";
 import SpritePlane from "../SpritePlane";
@@ -145,7 +145,7 @@ export class Two extends Weapon {
     stunValue = 2000;
     minDamage: number = 10;
     maxDamage: number = 20;
-    
+
     private swingLight: PointLight = new PointLight(0xffff00, 0.4, 100);
 
     static TWO_DIR: Vector3 =
@@ -300,6 +300,59 @@ export class Four extends Weapon {
             this.hitboxPosV.x, enemy.object.position.x,
             this.hitboxPosV.z, enemy.object.position.z,
         );
+    }
+
+    onEnemyCollide(enemy: TwoDEnemy): void {
+    }
+}
+
+export class Five extends Weapon {
+
+    group: Group;
+    modelMesh: Mesh;
+    scene: Scene;
+
+    minDamage = 15;
+    maxDamage = 25;
+    stunValue = 1000;
+    hitDelay = 1000;
+
+    private shields: Mesh[] = [];
+
+    private _v: Vector3 = new Vector3();
+
+    constructor(mesh: Mesh, scene: Scene) {
+        super();
+        this.group = new Group();
+        this.scene = scene;
+        this.modelMesh = mesh;
+        this.modelMesh.scale.set(1.5, 1.5, 1.5);
+        this.modelMesh.rotation.y = Math.PI / 2;
+
+        this.shields = new Array(5).fill("").map(() => this.modelMesh.clone());
+
+        this.shields.forEach(s => this.group.add(s));
+    }
+
+    update(dt: number, elapsed: number, felixPos: Vector2) {
+        this.group.position.set(felixPos.x, 5, felixPos.y);
+        let r = -dt / 300;
+        this.shields.forEach((s, i) => {
+            let d = r + (i * (1000 / 4));
+            const xOffset = Math.sin(d) * 50;
+            const zOffset = Math.cos(d) * 50;
+            s.position.set(xOffset, 5, zOffset);
+        });
+    }
+
+    detectCollision(enemy: TwoDEnemy): boolean {
+        return this.shields.some(shield => {
+            this._v.copy(shield.position).applyMatrix4(this.group.matrixWorld);
+            return withinDistance2D(20,
+                this._v.x, enemy.object.position.x,
+                this._v.z, enemy.object.position.z,
+            );
+        });
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {

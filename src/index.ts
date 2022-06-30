@@ -33,7 +33,7 @@ import loadModels from "./importHelpers/gltfLoader";
 
 import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
-import { OGBullet as Bullet, One, Two, Three, Four } from "./weapons";
+import { OGBullet as Bullet, One, Two, Three, Four, Five } from "./weapons";
 import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
@@ -102,7 +102,7 @@ const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 };
 
 const getWeaponMeshes = (gltfGroup: Group) => {
-    const names = ["One", "Two", "Three", "Four"].map(s => `${s}Weapon`);
+    const names = ["One", "Two", "Three", "Four", "Five"].map(s => `${s}Weapon`);
     return names.map(n => findWithName(gltfGroup, n));
 };
 
@@ -262,10 +262,9 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             scene.add(numberFourWeapon.group);
             theDirector.addWeapon(numberFourWeapon);
 
-            // Next weapons:
-
-            // Five: a shield that orbits like bible, grants 1 extra health (to 5)
-            // extra stun?
+            const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
+            scene.add(numberFiveWeapon.group);
+            theDirector.addWeapon(numberFiveWeapon);
 
             // Six: a staff/wand that hovers at 6 and fires homing projectiles.
 
