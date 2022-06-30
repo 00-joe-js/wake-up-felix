@@ -283,8 +283,8 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             // Twelve: Clock lancet.
 
-            loopHooks.push((dt) => {
-                theDirector.update(dt);
+            loopHooks.push((dt, elapsed) => {
+                theDirector.update(dt, elapsed);
             });
 
             const clockFace = new Clockface(dt);

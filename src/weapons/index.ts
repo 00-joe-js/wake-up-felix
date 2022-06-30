@@ -6,14 +6,13 @@ import { shake } from "../renderer";
 import SpritePlane from "../SpritePlane";
 import { rotateAboutPoint, withinDistance2D } from "../utils";
 import TwoDEnemy from "../enemies/2DEnemy";
-import { textChangeRangeIsUnchanged } from "typescript";
 
 export default class Weapon {
     public minDamage: number = 0;
     public maxDamage: number = 0;
     public hitDelay: number = 1000;
     public stunValue: number = 500;
-    update(dt: number, pos: Vector2) {
+    update(dt: number, elapsed: number, pos: Vector2) {
         throw new Error("Not implemented");
     }
     detectCollision(enemy: TwoDEnemy): boolean {
@@ -44,7 +43,7 @@ export class OGBullet extends Weapon {
         this.mesh = this.sprite.mesh;
     }
 
-    update(dt: number, felixPos: Vector2) {
+    update(dt: number, elapsed: number, felixPos: Vector2) {
         const r = Math.sin(dt / 1000);
         const c = Math.cos(dt / 1000);
         this.mesh.position.x = felixPos.x + (r * 100);
@@ -68,6 +67,8 @@ export class One extends Weapon {
     modelMesh: Mesh;
 
     stunValue = 20;
+    minDamage: number = 3;
+    maxDamage: number = 6;
 
     static ONE_DIR: Vector3 =
         new Vector3(0, 0, -1)
@@ -82,8 +83,7 @@ export class One extends Weapon {
 
     private scene: Scene;
 
-    public minDamage: number = 3;
-    public maxDamage: number = 6;
+    private movementVector: Vector3 = new Vector3();
 
     constructor(mesh: Mesh, scene: Scene) {
         super();
@@ -94,7 +94,7 @@ export class One extends Weapon {
         this.scene.add(this.collisionLight);
     }
 
-    update(dt: number, felixPos: Vector2) {
+    update(dt: number, elapsed: number, felixPos: Vector2) {
         this.group.position.set(felixPos.x, 20, felixPos.y);
         if (dt - this.lastThrowTime > 1000) {
             const newProjectile = this.modelMesh.clone();
@@ -109,7 +109,9 @@ export class One extends Weapon {
             this.lastThrowTime = dt;
         }
         this.activeProjectiles.forEach((proj) => {
-            proj.mesh.position.add(One.ONE_DIR);
+            this.movementVector.copy(One.ONE_DIR);
+            this.movementVector.multiplyScalar(elapsed / 16.667);
+            proj.mesh.position.add(this.movementVector);
             if (dt - proj.thrownTime > 5000) {
                 this.activeProjectiles = this.activeProjectiles.filter(i => i !== proj);
                 this.scene.remove(proj.mesh);
@@ -141,11 +143,10 @@ export class Two extends Weapon {
     modelMesh: Mesh;
 
     stunValue = 2000;
-
+    minDamage: number = 10;
+    maxDamage: number = 20;
+    
     private swingLight: PointLight = new PointLight(0xffff00, 0.4, 100);
-
-    public minDamage: number = 10;
-    public maxDamage: number = 20;
 
     static TWO_DIR: Vector3 =
         new Vector3(0, 0, -1)
@@ -162,13 +163,12 @@ export class Two extends Weapon {
         this.modelMesh.rotation.y = -Math.PI / 2;
     }
 
-    update(dt: number, felixPos: Vector2) {
-
+    update(dt: number, elapsed: number, felixPos: Vector2) {
         this.group.position.set(felixPos.x, 20, felixPos.y);
         this.swingLight.position.copy(this.modelMesh.position);
         this.swingLight.position.y = 30;
 
-        this.group.rotation.y -= 0.075; // TODO: delta time!!!
+        this.group.rotation.y -= 0.075 * (elapsed / 16.667);
 
         if (this.group.rotation.y < -Math.PI * 2) {
             this.group.rotation.y = 0;
@@ -177,9 +177,6 @@ export class Two extends Weapon {
         let s = (1 + (1 - Math.sin(this.group.rotation.y))) / 2;
         s = s * 2;
         this.modelMesh.scale.set(s, s, s);
-
-
-
     }
 
     detectCollision(enemy: TwoDEnemy): boolean {
@@ -236,7 +233,7 @@ export class Three extends Weapon {
         this.traps = this.traps.slice(1);
     }
 
-    update(dt: number, felixPos: Vector2) {
+    update(dt: number, elapsed: number, felixPos: Vector2) {
         if (dt - this.lastPlace > 3000) {
             this.placeTrap(dt, felixPos);
             if (this.traps.length > 3) {
@@ -267,6 +264,8 @@ export class Four extends Weapon {
 
     private hitboxMesh: Mesh;
 
+    private hitboxPosV: Vector3 = new Vector3();
+
     minDamage = 15;
     maxDamage = 25;
     stunValue = 1000;
@@ -290,15 +289,16 @@ export class Four extends Weapon {
         rotateAboutPoint(this.hitboxMesh, new Vector3(0, 0, 0), new Vector3(0, 1, 0), Math.PI / 6 * 4, true);
     }
 
-    update(dt: number, felixPos: Vector2) {
+    update(dt: number, elapsed: number, felixPos: Vector2) {
         this.group.position.set(felixPos.x, 5, felixPos.y);
     }
 
     detectCollision(enemy: TwoDEnemy): boolean {
-        const hitBoxWorldPos = this.hitboxMesh.position.clone().applyMatrix4(this.group.matrixWorld);
-        return withinDistance2D(10, 
-            hitBoxWorldPos.x, enemy.object.position.x,
-            hitBoxWorldPos.z, enemy.object.position.z,
+        this.hitboxPosV.copy(this.hitboxMesh.position);
+        this.hitboxPosV.applyMatrix4(this.group.matrixWorld);
+        return withinDistance2D(10,
+            this.hitboxPosV.x, enemy.object.position.x,
+            this.hitboxPosV.z, enemy.object.position.z,
         );
     }
 

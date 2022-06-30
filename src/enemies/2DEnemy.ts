@@ -1,10 +1,8 @@
-import { Mesh, Object3D, Vector2, MathUtils, Vector3, Box3 } from "three";
+import { Mesh, Vector2, MathUtils, Vector3 } from "three";
 import SpritePlane from "../SpritePlane";
-import { withinDistance2D } from "../utils";
 import Weapon from "../weapons";
 
 const _v2 = new Vector2();
-const _v3 = new Vector3();
 
 type EnemyConfig = {
     textureUrl: string,
@@ -55,6 +53,7 @@ export default class TwoDEnemy {
 
         const lastTick = this.lastTickTime;
         this.lastTickTime = dt;
+        // TODO: this is known by the renderer now, it can be passed down.
         const elapsed = dt - lastTick;
 
         if (this.stun > 0) {
@@ -75,6 +74,11 @@ export default class TwoDEnemy {
         _v2.normalize();
 
         _v2.divideScalar(this.speed);
+
+        const movementTimeScale = elapsed / 16.667;
+
+        _v2.multiplyScalar(movementTimeScale);
+
         this.object.position.x += _v2.x;
         this.object.position.z += _v2.y;
 

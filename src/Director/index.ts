@@ -64,13 +64,13 @@ export default class Director {
             this.tick = secondRoundedDown;
             if (this.tick % 5 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(2).forEach(() => this.makeEraEnemy(era));
+                range(4).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
 
-    private runWeaponMovement(dt: number, felixPos: Vector2) {
-        this.allWeapons.forEach(w => w.update(dt, felixPos));
+    private runWeaponMovement(dt: number, elapsed: number, felixPos: Vector2) {
+        this.allWeapons.forEach(w => w.update(dt, elapsed, felixPos));
     }
 
     private processWeaponCollisions(enemy: TwoDEnemy, dt: number, destroyedEnemies: TwoDEnemy[]): boolean {
@@ -128,11 +128,11 @@ export default class Director {
         }
     }
 
-    update(dt: number) {
+    update(dt: number, elapsed: number) {
 
         const felixPos = this.felix.getPosition();
 
-        this.runWeaponMovement(dt, felixPos);
+        this.runWeaponMovement(dt, elapsed, felixPos);
 
         const destroyedEnemiesThisFrame: TwoDEnemy[] = [];
 
