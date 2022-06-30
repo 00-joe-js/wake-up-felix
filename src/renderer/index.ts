@@ -66,7 +66,9 @@ export const resumeRendering = () => {
     pauseRendering(false);
 };
 
-export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) => void) => {
+let lastDrawnFrameDt = 0;
+
+export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number, elapsed: number) => void) => {
 
     const renderPass = new RenderPass(scene, camera);
 
@@ -90,7 +92,12 @@ export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) =>
 
             setFrameFlashColor();
 
-            onLoop(absoluteCurrentTime - deltaTimePauseOffset);
+            const thisFrameDt = absoluteCurrentTime - deltaTimePauseOffset;
+            const timeElapsedSinceLastFrame = thisFrameDt - lastDrawnFrameDt;
+
+            lastDrawnFrameDt = thisFrameDt;
+
+            onLoop(absoluteCurrentTime - deltaTimePauseOffset, timeElapsedSinceLastFrame);
             composer.render();
 
         } else {
@@ -107,14 +114,6 @@ export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) =>
     };
 
     window.requestAnimationFrame(internalLoop);
-
-    setInterval(() => {
-        if (renderPaused) {
-            resumeRendering();
-        } else {
-            pauseRendering();
-        }
-    }, 2000);
 
 };
 

@@ -50,7 +50,9 @@ import Director from "./Director";
 const scene = new Scene();
 
 let sceneMade = false;
-let loopHooks: Array<(dt: number) => void> = [];
+let loopHooks: Array<(dt: number, elapsed: number) => void> = [];
+
+const _barrierCheckV = new Vector3();
 
 const createStageMaterial = () => {
     const mat = new MeshPhongMaterial({
@@ -126,9 +128,10 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
     const fCam = new FelixCamera(itsMeFelix, scene);
 
-    renderLoop(scene, fCam.camera, (dt) => {
+    renderLoop(scene, fCam.camera, (dt, elapsed) => {
 
-        console.log(dt);
+        // console.log(dt);
+        // console.log(elapsed);
 
         if (sceneMade === false) {
 
@@ -161,35 +164,39 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             let felixFlipped = false;
             const FELIX_SPEED = 1;
 
-            loopHooks.push((dt) => {
+            loopHooks.push((dt, elapsed) => {
+
+                const movementToTimeScale = elapsed / 16.66667; // A smooth 60fps.
 
                 let xDelta = 0;
                 let zDelta = 0;
 
+                const speedThisFrame = FELIX_SPEED * movementToTimeScale;
+
                 if (keyboard.dDown) {
-                    xDelta += FELIX_SPEED;
+                    xDelta += speedThisFrame;
                 }
                 if (keyboard.aDown) {
-                    xDelta -= FELIX_SPEED;
+                    xDelta -= speedThisFrame;
                 }
                 if (keyboard.wDown) {
-                    zDelta -= FELIX_SPEED;
+                    zDelta -= speedThisFrame;
                 }
                 if (keyboard.sDown) {
-                    zDelta += FELIX_SPEED;
+                    zDelta += speedThisFrame;
                 }
 
                 if (xDelta !== 0 || zDelta !== 0) {
 
-                    const posCopy = itsMeFelix.mesh.position.clone();
+                    _barrierCheckV.copy(itsMeFelix.mesh.position);
 
-                    posCopy.x += xDelta;
-                    posCopy.z += zDelta;
+                    _barrierCheckV.x += xDelta;
+                    _barrierCheckV.z += zDelta;
 
-                    if (boundingSphere && boundingSphere.containsPoint(posCopy)) {
+                    if (boundingSphere && boundingSphere.containsPoint(_barrierCheckV)) {
 
                         felixWalking = true;
-                        itsMeFelix.mesh.position.copy(posCopy);
+                        itsMeFelix.mesh.position.copy(_barrierCheckV);
 
                         if (xDelta !== 0) {
                             felixFlipped = xDelta < 0;
@@ -291,7 +298,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
         }
 
-        loopHooks.forEach(fn => fn(dt));
+        loopHooks.forEach(fn => fn(dt, elapsed));
 
     });
 
