@@ -1,8 +1,11 @@
-import { MathUtils, Scene, Vector2 } from "three";
+import { MathUtils, Mesh, Scene, Vector2 } from "three";
 
 import Weapon from "../weapons";
 import TwoDEnemy from "../enemies/2DEnemy";
 import DrawnEnemy, { getRandomEnemyFromEra } from "../enemies/DrawnEnemies";
+import ClockNumEnemy from "../enemies/ClockNum";
+
+type GameEnemy = TwoDEnemy | ClockNumEnemy;
 
 import DamagePlane from "../damageNumbers";
 import GemsManager from "../gems";
@@ -20,23 +23,27 @@ const ERAS = shuffle(["prohibition", "ancient", "industrial", "stoneage"]);
 
 export default class Director {
 
-    public allEnemies: TwoDEnemy[] = [];
+    public allEnemies: (GameEnemy)[] = [];
     public allWeapons: Weapon[] = [];
     public felix: FelixCamera;
+
+    public canonicalGameMinute = 0;
 
     private startTime: number;
     private scene: Scene;
     private tick: number = -1;
 
     private damageNumbers: DamagePlane;
+    private clockNumMeshes: Mesh[];
 
     private gemsManager: GemsManager;
     private gemFnCollection: ((dt: number, p: Vector2) => boolean | null)[] = [];
 
-    constructor(creationTime: number, scene: Scene, felix: FelixCamera, ui: UIMethods) {
+    constructor(creationTime: number, scene: Scene, felix: FelixCamera, ui: UIMethods, clockNumMeshes: Mesh[]) {
         this.startTime = creationTime;
         this.scene = scene;
         this.felix = felix;
+        this.clockNumMeshes = clockNumMeshes;
         this.damageNumbers = new DamagePlane();
         this.gemsManager = new GemsManager(this.scene, ui);
     }
@@ -45,6 +52,10 @@ export default class Director {
         const newEnemy = new DrawnEnemy(getRandomEnemyFromEra(era));
         this.scene.add(newEnemy.object);
         this.allEnemies.push(newEnemy);
+    }
+
+    private getCurrentMinute(dt: number) {
+        return Math.floor(dt / (1000 * 5));
     }
 
     private getCurrentEra(dt: number) {
@@ -59,13 +70,33 @@ export default class Director {
         this.allWeapons.push(weapon);
     }
 
+    private activateMinuteReached(newMinute: number) {
+        this.canonicalGameMinute = newMinute;
+        this.createClockNumberEnemy();
+    }
+
+    private createClockNumberEnemy() {
+
+        const correctMesh = this.clockNumMeshes[this.canonicalGameMinute];
+
+        const clockEnemy = new ClockNumEnemy(correctMesh);
+
+        this.allEnemies.push(clockEnemy);        
+
+    }
+
     private runWorldTick(dt: number) {
+        const thisMinute = this.getCurrentMinute(dt);
+        if (thisMinute > this.canonicalGameMinute) {
+            this.activateMinuteReached(thisMinute);
+            return;
+        }
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
             if (this.tick % 2 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(7).forEach(() => this.makeEraEnemy(era));
+                range(0).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
@@ -74,7 +105,7 @@ export default class Director {
         this.allWeapons.forEach(w => w.update(dt, elapsed, felixPos));
     }
 
-    private processWeaponCollisions(enemy: TwoDEnemy, dt: number, destroyedEnemies: TwoDEnemy[]): boolean {
+    private processWeaponCollisions(enemy: GameEnemy, dt: number, destroyedEnemies: TwoDEnemy[]): boolean {
 
         let killed = false;
 
@@ -120,7 +151,7 @@ export default class Director {
 
     }
 
-    private processFelixCollision(enemy: TwoDEnemy, dt: number) {
+    private processFelixCollision(enemy: GameEnemy, dt: number) {
         const felixPosition = this.felix.getPosition();
         const felixCollide = enemy.collidesWith(felixPosition);
 
@@ -135,7 +166,7 @@ export default class Director {
 
         this.runWeaponMovement(dt, elapsed, felixPos);
 
-        const destroyedEnemiesThisFrame: TwoDEnemy[] = [];
+        const destroyedEnemiesThisFrame: GameEnemy[] = [];
 
         this.allEnemies.forEach((enemy) => {
 
@@ -167,7 +198,6 @@ export default class Director {
         this.gemFnCollection.forEach((checkPickup) => {
             const gemPickedUp = checkPickup(dt, felixPos);
             if (gemPickedUp === true) {
-                console.log("You got XP. :)");
                 this.gemFnCollection = this.gemFnCollection.filter(f => f !== checkPickup);
             }
         });

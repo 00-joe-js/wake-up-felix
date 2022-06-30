@@ -41,7 +41,6 @@ export default class TwoDEnemy {
         this.height = height;
         this.speed = speed;
 
-        // TODO: make this based on clock dimensions.
         _v3.set(0, 0, 1);
         _v3.applyAxisAngle(_up, MathUtils.randFloat(0, Math.PI * 2));
         _v3.multiplyScalar(275);

@@ -9,7 +9,6 @@ export default class GemsManager {
 
     private scene: Scene;
     private ui: UIMethods;
-    private gems: Array<Function> = [];
 
     constructor(scene: Scene, ui: UIMethods) {
         this.scene = scene;
