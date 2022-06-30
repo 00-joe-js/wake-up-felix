@@ -95,6 +95,13 @@ export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number, el
             const thisFrameDt = absoluteCurrentTime - deltaTimePauseOffset;
             const timeElapsedSinceLastFrame = thisFrameDt - lastDrawnFrameDt;
 
+            // Handling frame drop. This is important because of weapon collisions.
+            // Especially weapons like II hammer.
+            if (timeElapsedSinceLastFrame > 500) {
+                // Adding this offset should factor heavy frame drops as being in pause state.
+                deltaTimePauseOffset += timeElapsedSinceLastFrame;
+            }
+
             lastDrawnFrameDt = thisFrameDt;
 
             onLoop(absoluteCurrentTime - deltaTimePauseOffset, timeElapsedSinceLastFrame);
