@@ -70,7 +70,7 @@ const findWithName = (group: Group, name: string): Mesh => {
 const decipherAndSetClockNumberOne = (scene: Scene, gltfGroup: Group) => {
 
     const clockNumberNames = [
-        "Twelve", "One", "Two", "Three", "Four", 
+        "Twelve", "One", "Two", "Three", "Four",
         "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"
     ].map(s => `${s}Normal`);
 
@@ -127,6 +127,8 @@ const getWeaponMeshes = (gltfGroup: Group) => {
     const fCam = new FelixCamera(itsMeFelix, scene);
 
     renderLoop(scene, fCam.camera, (dt) => {
+
+        console.log(dt);
 
         if (sceneMade === false) {
 
@@ -227,8 +229,8 @@ const getWeaponMeshes = (gltfGroup: Group) => {
                 itsMeFelix.update(dt, felixFlipped, felixWalking);
             });
 
-
             OGBot.MODEL_GROUP = masterCylinderGroup;
+
             const theDirector = new Director(dt, scene, fCam);
 
             const bullet = new Bullet();
@@ -239,11 +241,11 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
             scene.add(numberOneWeapon.group);
-            // theDirector.addWeapon(numberOneWeapon);
+            theDirector.addWeapon(numberOneWeapon);
 
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
             scene.add(numberTwoWeapon.group);
-            // theDirector.addWeapon(numberTwoWeapon);
+            theDirector.addWeapon(numberTwoWeapon);
 
             const numberThreeWeapon = new Three(clockWeaponMeshes[2], scene);
             scene.add(numberThreeWeapon.group);
@@ -255,26 +257,24 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             // Next weapons:
 
-            // Five: a shield that orbits like bible, grants extra health or chance to mitigate damage
-            // would be cool if it bashed enemies as they entered range and cooled down with its enemy hit delay
+            // Five: a shield that orbits like bible, grants 1 extra health (to 5)
             // extra stun?
 
-            // Six: a staff/wand that hovers at Math.PI and fires homing projectiles 
-            // (starry wisps if I have time)
+            // Six: a staff/wand that hovers at 6 and fires homing projectiles.
 
-            // Seven: Garlic something 
+            // Seven: Garlic+attract orb combo
 
             // Eight: smoke stacks that appear on random enemies every 8 seconds 
             // and emit a light cloud/damage zone, like santa water
 
             // Nine: lightning ring instant area explosion on
-            // random enemy who's x is less than felix's
+            // random enemy who's X is less than Felix's
 
-            // Ten: cross/boomerang
+            // Ten: cross/boomerang that fly out at 10
 
-            // Eleven: clock lancet clone
+            // Eleven: vamp survivors axes that fly out at 11oclock angle
 
-            // Twelve: No weapon, lots of points.
+            // Twelve: Clock lancet.
 
             loopHooks.push((dt) => {
                 theDirector.update(dt);

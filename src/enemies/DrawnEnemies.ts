@@ -60,8 +60,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "T-Rex",
         textureUrl: tRexUrl,
-        width: 100 * 1.4,
-        height: 100,
+        width: 50 * 1.4,
+        height: 50,
         frameAmount: 4,
         era: "stoneage",
         reverseFlip: true,

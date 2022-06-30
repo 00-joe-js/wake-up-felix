@@ -8,34 +8,7 @@ import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
 
 import colorifyPass, { setFrameFlashColor } from "./flashShader";
 
-const ShakeShader = {
-    uniforms: {
-        time: { value: 0 },
-        tDiffuse: { value: null },
-    },
-    vertexShader: `
-        varying vec2 vUv;
-		void main() {
-    		vUv = uv;
-			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-		}
-    `,
-    fragmentShader: `
-        float rand(float n){return fract(sin(n) * 43758.5453123);}
-        uniform float time;
-        uniform sampler2D tDiffuse;
-
-        varying vec2 vUv;
-
-        void main() {
-            vec2 shakeOffset = vec2(rand(time * 2.0) / 250.0);
-            vec4 texel = texture2D(tDiffuse, vUv + shakeOffset);
-            gl_FragColor = texel;
-        }
-    `
-};
-
-
+import ShakeShader from "./shakeShader";
 
 import { Scene, Camera, Vector2, Color, Vector3 } from "three";
 
@@ -76,6 +49,23 @@ export const shake = (duration: number) => {
     }, duration);
 };
 
+let renderPaused = false;
+let runDuringPause: Function | null = null;
+let deltaTimePaused: number | null = null;
+let deltaTimePauseOffset = 0;
+export const pauseRendering = (pause: boolean = true, fn?: Function) => {
+    renderPaused = pause;
+    if (pause === false) {
+        runDuringPause = null
+    } else if (pause === true && fn) {
+        runDuringPause = fn;
+    }
+};
+
+export const resumeRendering = () => {
+    pauseRendering(false);
+};
+
 export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) => void) => {
 
     const renderPass = new RenderPass(scene, camera);
@@ -86,14 +76,45 @@ export const renderLoop = (scene: Scene, camera: Camera, onLoop: (dt: number) =>
     composer.addPass(shakePass);
     composer.addPass(copyPass);
 
-    const internalLoop = (deltaTime: number) => {
-        shakePass.uniforms.time.value = Math.random();
-        setFrameFlashColor();
+    const internalLoop = (absoluteCurrentTime: number) => {
+        if (!renderPaused) {
+
+            if (deltaTimePaused !== null) {
+                deltaTimePauseOffset += absoluteCurrentTime - deltaTimePaused;
+                deltaTimePaused = null;
+            }
+
+            if (shakePass.enabled) {
+                shakePass.uniforms.time.value = Math.random();
+            }
+
+            setFrameFlashColor();
+
+            onLoop(absoluteCurrentTime - deltaTimePauseOffset);
+            composer.render();
+
+        } else {
+            if (deltaTimePaused === null) {
+                deltaTimePaused = absoluteCurrentTime;
+            }
+            if (runDuringPause) {
+                runDuringPause(absoluteCurrentTime);
+            }
+        }
+
         window.requestAnimationFrame(internalLoop);
-        onLoop(deltaTime);
-        composer.render(deltaTime);
+
     };
+
     window.requestAnimationFrame(internalLoop);
+
+    setInterval(() => {
+        if (renderPaused) {
+            resumeRendering();
+        } else {
+            pauseRendering();
+        }
+    }, 2000);
 
 };
 
