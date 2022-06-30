@@ -1,0 +1,56 @@
+#game-ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  color: white;
+  background: rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1rem;
+}
+
+#time-display {
+  background: rgba(0, 0, 0, 0.5);
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 2rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+#time-display h1 {
+  margin: 0;
+}
+
+#beneath-timer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+#health-bar {
+  display: flex;
+}
+
+.felix-face {
+  width: 5rem;
+  height: 5rem;
+  background-size: 400%;
+}
+
+.felix-face.mad-hurt {
+  background-position: 153px 2px;
+}
+
+.felix-face.feeling-good {
+  background-position: 236px 2px;
+}
+
+.felix-face.uh-oh {
+  background-position: 320px 2px;
+}
+
+.felix-face.anger {
+  background-position: 399px 2px;
+}

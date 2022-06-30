@@ -6,7 +6,8 @@
         "lib": ["ESNext", "DOM"],
         "moduleResolution": "Node",
         "preserveConstEnums": true,
-        "types": ["three"]
+        "types": ["three"],
+        "jsx": "react"
     },
     "include": ["src"]
 }

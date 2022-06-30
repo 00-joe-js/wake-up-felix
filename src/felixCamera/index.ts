@@ -5,17 +5,20 @@ import SpritePlane from "../SpritePlane";
 import { flash } from "../renderer/flashShader";
 import { shake } from "../renderer";
 
+import type { UIMethods } from "../gameUI";
+
 class FelixCamera {
 
     public sprite: SpritePlane;
     public camera: PerspectiveCamera;
 
-    public health: number = 5000;
+    public health: number = 4;
 
     private aura: Object3D;
+    private ui: UIMethods;
     private lastDamageTakenTime: number = -1;
 
-    constructor(felix: SpritePlane, scene: Scene) {
+    constructor(felix: SpritePlane, scene: Scene, ui: UIMethods) {
 
         this.sprite = felix;
         this.sprite.mesh.position.y = 10;
@@ -32,6 +35,8 @@ class FelixCamera {
 
         this.aura = new PointLight(0xaaaaaa, 10, 50);
         scene.add(this.aura);
+
+        this.ui = ui;
     }
 
     public getPosition() {
@@ -66,6 +71,7 @@ class FelixCamera {
     public takeDamage(dt: number) {
         if (dt - this.lastDamageTakenTime > 2000) {
             this.health = this.health - 1;
+            this.ui.setFelixHP(this.health);
             this.lastDamageTakenTime = dt;
             flash([1, 0, 0], 0.2, 0.001);
             shake(400);

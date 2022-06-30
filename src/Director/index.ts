@@ -10,6 +10,7 @@ import GemsManager from "../gems";
 import FelixCamera from "../felixCamera";
 
 import shuffle from "shuffle-array";
+import { UIMethods } from "../gameUI";
 
 const range = (n: number) => {
     return new Array(n).fill("").map((_, i) => i);
@@ -32,12 +33,12 @@ export default class Director {
     private gemsManager: GemsManager;
     private gemFnCollection: ((dt: number, p: Vector2) => boolean | null)[] = [];
 
-    constructor(creationTime: number, scene: Scene, felix: FelixCamera) {
+    constructor(creationTime: number, scene: Scene, felix: FelixCamera, ui: UIMethods) {
         this.startTime = creationTime;
         this.scene = scene;
         this.felix = felix;
         this.damageNumbers = new DamagePlane();
-        this.gemsManager = new GemsManager(this.scene);
+        this.gemsManager = new GemsManager(this.scene, ui);
     }
 
     private makeEraEnemy(era: string) {
@@ -64,7 +65,7 @@ export default class Director {
             this.tick = secondRoundedDown;
             if (this.tick % 2 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(20).forEach(() => this.makeEraEnemy(era));
+                range(7).forEach(() => this.makeEraEnemy(era));
             }
         }
     }

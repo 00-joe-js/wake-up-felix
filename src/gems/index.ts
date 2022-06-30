@@ -3,18 +3,17 @@ import { Color, Group, MathUtils, Mesh, MeshBasicMaterial, Object3D, PointLight,
 import { withinDistance2D, everyNthFrame } from "../utils"
 
 import { flash } from "../renderer/flashShader";
+import { UIMethods } from "../gameUI";
 
 export default class GemsManager {
 
     private scene: Scene;
+    private ui: UIMethods;
     private gems: Array<Function> = [];
 
-    constructor(scene: Scene) {
+    constructor(scene: Scene, ui: UIMethods) {
         this.scene = scene;
-    }
-
-    getGems() {
-        return this.gems;
+        this.ui = ui;
     }
 
     placeGem(x: number, z: number) {
@@ -33,9 +32,9 @@ export default class GemsManager {
         }
 
         const rarityDetails = [
-            { color: new Color(0, 0, 0) },
-            { color: new Color(0, 0, 1) },
-            { color: new Color(0.5, 0, 0.7) },
+            { color: new Color(0, 0, 0), amount: 1 },
+            { color: new Color(0, 0, 1), amount: 5 },
+            { color: new Color(0.5, 0, 0.7), amount: 10 },
         ];
 
         const gem = new Mesh(new TorusGeometry(3, 0.5, 16, 100), new MeshBasicMaterial({ color: rarityDetails[rarity].color }))
@@ -58,8 +57,10 @@ export default class GemsManager {
             );
 
             if (felixPickingUp) {
-                flash(rarityDetails[rarity].color.toArray(), 0.02, 0.0001);
+                const rarityDeets = rarityDetails[rarity];
+                flash(rarityDeets.color.toArray(), 0.02, 0.0001);
                 this.scene.remove(g);
+                this.ui.addXP(rarityDeets.amount);
                 return true;
             }
 
@@ -69,7 +70,7 @@ export default class GemsManager {
 
             return false;
 
-        }, 5);
+        }, 10);
 
     }
 

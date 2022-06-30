@@ -5,6 +5,7 @@
 html, body {
     padding: 0; margin: 0;
     background: rgb(219, 219, 219);
+    font-size: 16px;
 }
 
 #app {
@@ -37,8 +38,6 @@ html, body {
 
 .damage-number {
     position: absolute;
-    width: 50px;
-    height: 50px;
     font-size: 4rem;
     font-weight: bold;
     color: black;

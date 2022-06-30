@@ -1,4 +1,5 @@
 import "./style.css";
+import "./game-ui.css";
 
 import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils } from "three";
 import { Mesh } from "three";
@@ -27,6 +28,10 @@ const getDOMOne = (selector: string): HTMLElement => {
 };
 window.getDOMOne = getDOMOne;
 
+import startUI from "./gameUI";
+const uiMethods = startUI();
+
+
 // ---
 
 import loadModels from "./importHelpers/gltfLoader";
@@ -46,6 +51,8 @@ import FelixCamera from "./felixCamera";
 import Clockface from "./clockFace";
 
 import Director from "./Director";
+import { everyNthFrame } from "./utils";
+import gameUI from "./gameUI";
 
 const scene = new Scene();
 
@@ -126,7 +133,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
         175 / 2
     );
 
-    const fCam = new FelixCamera(itsMeFelix, scene);
+    const fCam = new FelixCamera(itsMeFelix, scene, uiMethods);
 
     renderLoop(scene, fCam.camera, (dt, elapsed) => {
 
@@ -238,7 +245,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             OGBot.MODEL_GROUP = masterCylinderGroup;
 
-            const theDirector = new Director(dt, scene, fCam);
+            const theDirector = new Director(dt, scene, fCam, uiMethods);
 
             const bullet = new Bullet();
             scene.add(bullet.mesh);
@@ -293,6 +300,17 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             loopHooks.push((dt) => {
                 clockFace.update(dt);
+            });
+
+            const TIME_UPDATE_FR = 10;
+            let lastUpdateFramesAgo = TIME_UPDATE_FR;
+            loopHooks.push((dt) => {
+                if (lastUpdateFramesAgo === TIME_UPDATE_FR) {
+                    uiMethods.setTime(dt);
+                    lastUpdateFramesAgo = 0;
+                } else {
+                    lastUpdateFramesAgo++;
+                }
             });
 
         }
