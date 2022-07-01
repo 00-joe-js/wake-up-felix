@@ -1,7 +1,7 @@
 import "./style.css";
 import "./game-ui.css";
 
-import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils, BufferGeometry, MeshStandardMaterial } from "three";
+import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils, BufferGeometry, MeshStandardMaterial, Mapping } from "three";
 import { Mesh } from "three";
 
 
@@ -244,30 +244,29 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const theDirector = new Director(dt, scene, fCam, uiMethods, staticClockMeshes);
 
             const bullet = new Bullet();
-            scene.add(bullet.mesh);
+            scene.add(bullet.group);
             theDirector.addWeapon(bullet);
 
             const clockWeaponMeshes = getWeaponMeshes(clockNumsGroup);
 
             const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
-            // scene.add(numberOneWeapon.group);
-            // theDirector.addWeapon(numberOneWeapon);
 
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
-            // scene.add(numberTwoWeapon.group);
-            // theDirector.addWeapon(numberTwoWeapon);
 
             const numberThreeWeapon = new Three(clockWeaponMeshes[2], scene);
-            // scene.add(numberThreeWeapon.group);
-            // theDirector.addWeapon(numberThreeWeapon);
 
             const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
-            scene.add(numberFourWeapon.group);
-            theDirector.addWeapon(numberFourWeapon);
 
             const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
-            // scene.add(numberFiveWeapon.group);
-            // theDirector.addWeapon(numberFiveWeapon);
+
+            const arsenal = new Map();
+            arsenal.set(1, numberOneWeapon);
+            arsenal.set(2, numberTwoWeapon);
+            arsenal.set(3, numberThreeWeapon);
+            arsenal.set(4, numberFourWeapon);
+            arsenal.set(5, numberFiveWeapon);
+
+            theDirector.provideClockWeapons(arsenal);
 
             // Six: a staff/wand that hovers at 6 and fires homing projectiles.
 

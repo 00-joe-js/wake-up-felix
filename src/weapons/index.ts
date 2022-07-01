@@ -1,6 +1,6 @@
 import bulletUrl from "../../assets/bullet.png";
 
-import { BoxGeometry, Group, Mesh, PointLight, Scene, Vector2, Vector3 } from "three";
+import { BoxGeometry, Group, Mesh, Object3D, PointLight, Scene, Vector2, Vector3 } from "three";
 
 import { shake } from "../renderer";
 import SpritePlane from "../SpritePlane";
@@ -9,6 +9,7 @@ import TwoDEnemy from "../enemies/2DEnemy";
 import ClockNumEnemy from "../enemies/ClockNum";
 
 export default class Weapon {
+    public group: Object3D = new Group(); 
     public minDamage: number = 0;
     public maxDamage: number = 0;
     public hitDelay: number = 1000;
@@ -29,33 +30,33 @@ export class OGBullet extends Weapon {
     static COLLIDE_DISTANCE: number = 18;
 
     sprite: SpritePlane;
-    mesh: Mesh;
+    group: Mesh;
 
     stunValue = 1000;
 
-    public minDamage: number = 5;
-    public maxDamage: number = 8;
+    public minDamage: number = 15;
+    public maxDamage: number = 20;
 
     constructor() {
         super();
         const BULLET_SIZE = 30;
         const BULLET_RATIO = 101 / (664 / 3);
         this.sprite = new SpritePlane(bulletUrl, BULLET_SIZE, BULLET_SIZE * BULLET_RATIO, 5, 3);
-        this.mesh = this.sprite.mesh;
+        this.group = this.sprite.mesh;
     }
 
     update(dt: number, elapsed: number, felixPos: Vector2) {
         const r = Math.sin(dt / 1000);
         const c = Math.cos(dt / 1000);
-        this.mesh.position.x = felixPos.x + (r * 100);
-        this.mesh.position.z = felixPos.y + (Math.sin(dt / 700) * 50);
+        this.group.position.x = felixPos.x + (r * 100);
+        this.group.position.z = felixPos.y + (Math.sin(dt / 700) * 50);
         this.sprite.update(dt, c < 0, true);
     }
 
     detectCollision(enemy: TwoDEnemy | ClockNumEnemy): boolean {
         return withinDistance2D(OGBullet.COLLIDE_DISTANCE,
-            this.mesh.position.x, enemy.object.position.x,
-            this.mesh.position.z, enemy.object.position.z);
+            this.group.position.x, enemy.object.position.x,
+            this.group.position.z, enemy.object.position.z);
     }
 
     onEnemyCollide() {

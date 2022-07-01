@@ -1,5 +1,7 @@
 import { BufferGeometry, MathUtils, Mesh, MeshStandardMaterial, Scene, Vector2 } from "three";
 
+import { pauseRendering, resumeRendering } from "../renderer";
+
 import Weapon from "../weapons";
 import TwoDEnemy from "../enemies/2DEnemy";
 import DrawnEnemy, { getRandomEnemyFromEra } from "../enemies/DrawnEnemies";
@@ -23,6 +25,7 @@ const range = (n: number) => {
 const ERAS = shuffle(["stoneage", "ancient", "industrial", "prohibition"]);
 
 type BagEntry = { mesh: Mesh, forMinute: number };
+type Arsenal = Map<number, Weapon>;
 
 export default class Director {
 
@@ -31,6 +34,8 @@ export default class Director {
     public felix: FelixCamera;
 
     public canonicalGameMinute = 0;
+
+    private arsenal: Arsenal = new Map();
 
     private ui: UIMethods;
 
@@ -65,7 +70,7 @@ export default class Director {
     }
 
     private getCurrentMinute(dt: number) {
-        return Math.floor(dt / (1000 * 5));
+        return Math.floor(dt / (1000 * 20));
     }
 
     private getCurrentEra(dt: number) {
@@ -77,12 +82,26 @@ export default class Director {
     }
 
     public addWeapon(weapon: Weapon) {
+        this.scene.add(weapon.group);
         this.allWeapons.push(weapon);
+    }
+
+    public provideClockWeapons(arsenal: Arsenal) {
+        this.arsenal = arsenal;
+    }
+
+    private activateWeapon(minute: number) {
+        const weapon = this.arsenal.get(minute);
+        if (!weapon) {
+            throw new Error(`Failure to activate unknown weapon: ${minute}`);
+        }
+        this.addWeapon(weapon);
     }
 
     private activateMinuteReached(newMinute: number) {
         this.canonicalGameMinute = newMinute;
         this.createClockNumberEnemy();
+        this.ui.storeCurrentXPInBag(this.canonicalGameMinute);
     }
 
     private createClockNumberEnemy() {
@@ -108,9 +127,9 @@ export default class Director {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 2 === 0) {
+            if (this.tick % 5 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(0).forEach(() => this.makeEraEnemy(era));
+                range(2).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
@@ -199,8 +218,22 @@ export default class Director {
         );
 
         if (pickedupBags.length > 0) {
-            const pickedupBag = pickedupBags[0]; // Almost always just 1, and if not the next frame will get the next.
-            this.ui.setFelixHP(1);
+            // Almost always just 1, and if not the next frame will get the next.
+            const pickedupBag = pickedupBags[0];
+            pauseRendering();
+            this.ui.showUpgradeScreen(pickedupBag.forMinute, (choseWeapon: boolean, upgradeId: string | null) => {
+                if (choseWeapon) {
+                    this.activateWeapon(pickedupBag.forMinute);
+                } else {
+                    console.log(`One ${upgradeId}, coming right up!`);
+                }
+                this.scene.remove(pickedupBag.mesh);
+                this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
+                this.ui.hideUpgradeScreen();
+                setTimeout(() => {
+                    resumeRendering();
+                }, 200);
+            });
         }
 
 

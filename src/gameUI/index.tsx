@@ -2,21 +2,40 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 
 import felixFacesUrl from "../../assets/felix-faces.png";
+import Upgrade from "./Upgrade";
+
+export type UpgradeSelectionFn = (
+  choseWeapon: boolean,
+  upgradeId: string | null
+) => any;
+
+export type BagXp = {
+  minute: number;
+  total: number;
+};
 
 // todo: isolate obv
 type GameState = {
   elapsedTime: number;
   felixHP: number;
   felixMaxHP: number;
-  xp: number;
+  totalXp: number;
+  currentXp: number;
+  bagXps: BagXp[];
+  chosenWeapons: number[];
+  onUpgradeScreen: number | null;
+  upgradeSelectionFn: UpgradeSelectionFn | null;
 };
 
 export type UIMethods = {
   setTime: (ms: number) => void;
   setFelixHP: (newHP: number) => void;
   addXP: (a: number) => void;
-  replaceXPTotal: (t: number) => void;
+  replaceCurrentXP: (t: number) => void;
   getGameState: () => GameState;
+  showUpgradeScreen: (n: number, fn: UpgradeSelectionFn) => void;
+  hideUpgradeScreen: () => void;
+  storeCurrentXPInBag: (n: number) => void;
 };
 
 const zeroPad = (s: string): string => {
@@ -44,7 +63,6 @@ const HealthBar = ({
   return (
     <div id="health-bar">
       {faceClasses.map((className, i) => {
-
         let useClass = className;
         if (currentHP - 1 > i) {
           useClass = faceClasses[currentHP - 1];
@@ -82,15 +100,24 @@ const GemCount = ({ currentGemTotal }: { currentGemTotal: number }) => {
 };
 
 const UI = ({ gameState }: { gameState: GameState }) => {
+  const onUpgradeScreen = gameState.onUpgradeScreen;
+  const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
+      {onUpgradeScreen && onSelect && (
+        <Upgrade
+        bagXps={gameState.bagXps}
+        minute={onUpgradeScreen} 
+        onSelect={onSelect} 
+        />
+      )}
       <Timer time={gameState.elapsedTime} />
       <div id="beneath-timer">
         <HealthBar
           currentHP={gameState.felixHP}
           totalHP={gameState.felixMaxHP}
         />
-        <GemCount currentGemTotal={gameState.xp} />
+        <GemCount currentGemTotal={gameState.currentXp} />
       </div>
     </div>
   );
@@ -101,7 +128,12 @@ export default (): UIMethods => {
     elapsedTime: 0,
     felixHP: 4,
     felixMaxHP: 4,
-    xp: 0,
+    totalXp: 0,
+    currentXp: 0,
+    bagXps: [],
+    chosenWeapons: [],
+    onUpgradeScreen: null,
+    upgradeSelectionFn: null,
   };
 
   const uiContainer = window.getDOMOne("#game-ui");
@@ -138,17 +170,31 @@ export default (): UIMethods => {
       gameState.felixHP = newHP;
       setStateDirty();
     },
-    replaceXPTotal(newTotal) {
-      if (gameState.xp === newTotal) return;
-      gameState.xp = newTotal;
+    replaceCurrentXP(newTotal) {
+      if (gameState.currentXp === newTotal) return;
+      gameState.currentXp = newTotal;
       setStateDirty();
     },
     addXP(amount) {
-      gameState.xp += amount;
+      gameState.currentXp += amount;
+      setStateDirty();
+    },
+    storeCurrentXPInBag(minute) {
+      gameState.bagXps.push({ minute, total: gameState.currentXp });
+      gameState.currentXp = 0;
       setStateDirty();
     },
     getGameState() {
       return gameState;
+    },
+    showUpgradeScreen(minute: number, onSelection: UpgradeSelectionFn) {
+      gameState.onUpgradeScreen = minute;
+      gameState.upgradeSelectionFn = onSelection;
+      setStateDirty();
+    },
+    hideUpgradeScreen() {
+      gameState.onUpgradeScreen = null;
+      gameState.upgradeSelectionFn = null;
     },
   };
 };
