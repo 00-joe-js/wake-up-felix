@@ -70,7 +70,7 @@ export default class Director {
     }
 
     private getCurrentMinute(dt: number) {
-        return Math.floor(dt / (1000 * 20));
+        return Math.floor(dt / (1000 * 10));
     }
 
     private getCurrentEra(dt: number) {
@@ -100,11 +100,23 @@ export default class Director {
 
     private activateMinuteReached(newMinute: number) {
         this.canonicalGameMinute = newMinute;
-        this.createClockNumberEnemy();
+        const clockEnemy = this.createClockNumberEnemy();
+
+        const currentXP = this.ui.getGameState().currentXp;
+
+        this.gemsManager.playBaggingEffect(
+            this.scene,
+            currentXP, 
+            this.felix, 
+            clockEnemy.object.position
+        );
+
         this.ui.storeCurrentXPInBag(this.canonicalGameMinute);
+
+        
     }
 
-    private createClockNumberEnemy() {
+    private createClockNumberEnemy(): ClockNumEnemy {
 
         const correctMesh = this.clockNumMeshes[this.canonicalGameMinute];
 
@@ -115,6 +127,8 @@ export default class Director {
         );
 
         this.allEnemies.push(clockEnemy);
+
+        return clockEnemy;
 
     }
 

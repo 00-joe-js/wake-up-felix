@@ -4,6 +4,7 @@ import { withinDistance2D, everyNthFrame } from "../utils"
 
 import { flash } from "../renderer/flashShader";
 import { UIMethods } from "../gameUI";
+import FelixCamera from "../felixCamera";
 
 export default class GemsManager {
 
@@ -13,6 +14,13 @@ export default class GemsManager {
     constructor(scene: Scene, ui: UIMethods) {
         this.scene = scene;
         this.ui = ui;
+    }
+
+    createGemMesh(color: Color): Mesh<TorusGeometry, MeshBasicMaterial> {
+        return new Mesh(
+            new TorusGeometry(3, 0.5, 16, 100),
+            new MeshBasicMaterial({ color })
+        );
     }
 
     placeGem(x: number, z: number) {
@@ -36,7 +44,7 @@ export default class GemsManager {
             { color: new Color(0.5, 0, 0.7), amount: 10 },
         ];
 
-        const gem = new Mesh(new TorusGeometry(3, 0.5, 16, 100), new MeshBasicMaterial({ color: rarityDetails[rarity].color }))
+        const gem = this.createGemMesh(rarityDetails[rarity].color);
         g.add(gem);
 
         g.position.x = x;
@@ -70,6 +78,35 @@ export default class GemsManager {
             return false;
 
         }, 10);
+
+    }
+
+    playBaggingEffect(scene: Scene, gemTotal: number, felix: FelixCamera, numberPos: Vector3) {
+
+        const newMeshes = new Array(Math.min(gemTotal, 100)).fill(null).map(() => this.createGemMesh(new Color(0, 0, 0)));
+
+        const meshesWithDelay = newMeshes.map(m => ({ mesh: m, delay: MathUtils.randFloat(0, 1) }));
+
+        const padding = 50;
+
+        // todo: is it worth hooking this up to true delta time?
+        meshesWithDelay.forEach(({ mesh, delay }) => {
+            setTimeout(() => {
+                const { x, y } = felix.getPosition();
+                mesh.position.y = 20;
+                mesh.position.x = x + MathUtils.randInt(-padding, padding);
+                mesh.position.z = y + MathUtils.randInt(-padding, padding);
+                const directionToDestination = new Vector3().subVectors(numberPos, mesh.position);
+                directionToDestination.normalize().multiplyScalar(5);
+                scene.add(mesh);
+                const flying = setInterval(() => {
+                    mesh.position.add(directionToDestination);
+                }, 17);
+                setTimeout(() => {
+                    clearInterval(flying);
+                }, 2000);
+            }, delay * 1500);
+        });
 
     }
 
