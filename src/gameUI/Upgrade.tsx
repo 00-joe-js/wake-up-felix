@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 
+import fatherTimeContent from "../../assets/father_time_content.png";
+import fatherTimeLaugh from "../../assets/father_time_laughter.png";
+import fatherTimeUpset from "../../assets/father_time_upset.png";
+import fatherTimeRage from "../../assets/father_time_rage.png";
+
 import { UpgradeSelectionFn, BagXp } from ".";
 import upgrades from "../Baggie/upgrades";
 
@@ -29,16 +34,52 @@ const Upgrade = ({
 
   return (
     <div id="upgrade-container" style={{ opacity }}>
-      <h1>Minute: {minute}</h1>
-      <h1>XP for this minute: {xpForThisBag}</h1>
-      <button onClick={() => onSelect(true, null)}>Choose Weapon</button>
-      {upgrades.map((u) => {
-        return (
-          <button key={u.id} onClick={() => onSelect(false, u.id)}>
-            Upgrade: {u.name}
-          </button>
-        );
-      })}
+      <div className="got-the-bag">
+        <h1>You got the {minute}:00 bag!</h1>
+        <div className="xp-stats">
+          <h3>
+            XP collected during this minute: <strong>{xpForThisBag}</strong>
+          </h3>
+          <div className="scaling-result">
+            <img className="father-time" src={fatherTimeContent} />
+            <h2>
+              This weapon or upgrade will be <strong>1.25x</strong> as powerful!
+            </h2>
+          </div>
+        </div>
+      </div>
+
+      <div className="divider" />
+
+      <div className="selection-section">
+        <div className="choose-weapon">
+          <div className="weapon-description">
+            <div className="weapon-gif">WEAPON GIF HERE</div>
+            <h3>Fire an arrow out from the 1:00 angle on a clock.</h3>
+            <p>
+              This arrow doesn't stun enemies much, but it fires fast and has
+              huge range!
+            </p>
+          </div>
+          <h2 onClick={() => onSelect(true, null)}>
+            Claim <br />
+            <strong>I</strong>
+            <br /> as your weapon
+          </h2>
+        </div>
+        <div className="divider-vertical" />
+        <div className="choose-upgrade">
+          <h1>Or, have an upgrade ...</h1>
+          {upgrades.map((u) => {
+            return (
+              <div className="one-upgrade" key={u.id} onClick={() => onSelect(false, u.id)}>
+                <h2>{u.name}</h2>
+                <p>{u.description}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

@@ -106,9 +106,9 @@ const UI = ({ gameState }: { gameState: GameState }) => {
     <div id="game-ui-content">
       {onUpgradeScreen && onSelect && (
         <Upgrade
-        bagXps={gameState.bagXps}
-        minute={onUpgradeScreen} 
-        onSelect={onSelect} 
+          bagXps={gameState.bagXps}
+          minute={onUpgradeScreen}
+          onSelect={onSelect}
         />
       )}
       <Timer time={gameState.elapsedTime} />
@@ -130,7 +130,7 @@ export default (): UIMethods => {
     felixMaxHP: 4,
     totalXp: 0,
     currentXp: 0,
-    bagXps: [],
+    bagXps: [{ minute: 1, total: 200 }],
     chosenWeapons: [],
     onUpgradeScreen: null,
     upgradeSelectionFn: null,

@@ -9,7 +9,7 @@ import TwoDEnemy from "../enemies/2DEnemy";
 import ClockNumEnemy from "../enemies/ClockNum";
 
 export default class Weapon {
-    public group: Object3D = new Group(); 
+    public group: Object3D = new Group();
     public minDamage: number = 0;
     public maxDamage: number = 0;
     public hitDelay: number = 1000;
@@ -34,8 +34,8 @@ export class OGBullet extends Weapon {
 
     stunValue = 1000;
 
-    public minDamage: number = 15;
-    public maxDamage: number = 20;
+    public minDamage: number = 50;
+    public maxDamage: number = 100;
 
     constructor() {
         super();
@@ -114,7 +114,7 @@ export class One extends Weapon {
             this.movementVector.copy(One.ONE_DIR);
             this.movementVector.multiplyScalar(elapsed / 16.667);
             proj.mesh.position.add(this.movementVector);
-            if (dt - proj.thrownTime > 5000) {
+            if (dt - proj.thrownTime > 2500 ) {
                 this.activeProjectiles = this.activeProjectiles.filter(i => i !== proj);
                 this.scene.remove(proj.mesh);
             }

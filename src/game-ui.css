@@ -57,9 +57,132 @@
 
 #upgrade-container {
   position: absolute;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 15, 0.9);
+  background: rgba(0, 0, 15, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#upgrade-container p {
+  font-weight: lighter;
+  font-size: 1.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.got-the-bag {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.got-the-bag h3,
+.got-the-bag h2,
+.got-the-bag h1 {
+  margin: 0;
+}
+
+.got-the-bag h1 {
+  font-size: 5rem;
+  margin-top: 2rem;
+}
+
+.got-the-bag strong {
+  font-weight: bold;
+  font-size: 2rem;
+  color: rgb(220, 220, 255);
+}
+
+.got-the-bag h2 strong {
+  font-size: 3rem;
+}
+
+.got-the-bag .father-time {
+  margin: 1rem;
+  width: 10rem;
+}
+
+.got-the-bag .scaling-result {
+  display: flex;
+  align-items: center;
+}
+
+.divider {
+  width: 100%;
+  height: 0.2rem;
+  background: white;
+  margin: 2rem 0;
+  margin-bottom: 0;
+}
+
+.divider-vertical {
+  height: 100%;
+  width: 0.2rem;
+  background: white;
+}
+
+.selection-section {
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.choose-weapon {
+  width: 50%;
+  text-align: center;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.choose-weapon h2 {
+  cursor: pointer;
+  background: white;
+  color: rgb(40, 40, 0);
+  border: 3px solid black;
+  padding: 1.5rem;
+  width: 80%;
+}
+
+.choose-weapon h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.choose-weapon strong {
+  font-size: 3rem;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.choose-upgrade {
+  width: 50%;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.one-upgrade {
+  cursor: pointer;
+  text-align: center;
+  background: rgba(100, 100, 0, 0.9);
+  width: 90%;
+  padding: 0.25rem;
+}
+
+.one-upgrade h2, .one-upgrade p {
+  margin: 0;
+}
+
+.one-upgrade h2 {
+  font-size: 2rem;
 }

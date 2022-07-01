@@ -250,13 +250,9 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const clockWeaponMeshes = getWeaponMeshes(clockNumsGroup);
 
             const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
-
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
-
             const numberThreeWeapon = new Three(clockWeaponMeshes[2], scene);
-
             const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
-
             const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
 
             const arsenal = new Map();
