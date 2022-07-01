@@ -92,9 +92,18 @@ export default class Director {
 
     private activateWeapon(minute: number) {
         const weapon = this.arsenal.get(minute);
+
         if (!weapon) {
             throw new Error(`Failure to activate unknown weapon: ${minute}`);
         }
+
+        // Special effects.
+        if (minute === 5) {
+            this.felix.health += 1;
+            this.ui.setFelixHP(this.felix.health);
+            this.ui.increaseFelixMaxHP();
+        }
+
         this.addWeapon(weapon);
     }
 

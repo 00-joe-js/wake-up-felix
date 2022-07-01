@@ -30,6 +30,7 @@ type GameState = {
 export type UIMethods = {
   setTime: (ms: number) => void;
   setFelixHP: (newHP: number) => void;
+  increaseFelixMaxHP: () => void;
   addXP: (a: number) => void;
   replaceCurrentXP: (t: number) => void;
   getGameState: () => GameState;
@@ -59,6 +60,11 @@ const HealthBar = ({
   totalHP: number;
 }) => {
   const faceClasses = ["mad-hurt", "uh-oh", "anger", "feeling-good"];
+
+  if (totalHP === 5) {
+    // Todo: replace with Roman.
+    faceClasses.push("feeling-good");
+  }
 
   return (
     <div id="health-bar">
@@ -168,6 +174,10 @@ export default (): UIMethods => {
     },
     setFelixHP(newHP) {
       gameState.felixHP = newHP;
+      setStateDirty();
+    },
+    increaseFelixMaxHP() {
+      gameState.felixMaxHP = 5;
       setStateDirty();
     },
     replaceCurrentXP(newTotal) {
