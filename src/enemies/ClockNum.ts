@@ -8,13 +8,15 @@ export default class ClockNumEnemy {
 
     object: Mesh<BufferGeometry, MeshStandardMaterial>;
 
+    public minute: number;
     public health: number = 20;
     public stun: number = 0;
 
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
 
-    constructor(mesh: Mesh<BufferGeometry, MeshStandardMaterial>) {
+    constructor(minute: number, mesh: Mesh<BufferGeometry, MeshStandardMaterial>) {
         this.object = mesh;
+        this.minute = minute;
     }
 
     moveTowards(felixPos: Vector2, dt: number, elapsed: number) {

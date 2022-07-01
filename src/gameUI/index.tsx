@@ -44,10 +44,16 @@ const HealthBar = ({
   return (
     <div id="health-bar">
       {faceClasses.map((className, i) => {
+
+        let useClass = className;
+        if (currentHP - 1 > i) {
+          useClass = faceClasses[currentHP - 1];
+        }
+
         return (
           <div
-            className={`felix-face ${className}`}
-            key={className}
+            className={`felix-face ${useClass}`}
+            key={i}
             style={{
               backgroundImage: `url(${felixFacesUrl})`,
               opacity: currentHP - 1 < i ? 0.1 : 1,

@@ -250,8 +250,8 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const clockWeaponMeshes = getWeaponMeshes(clockNumsGroup);
 
             const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
-            scene.add(numberOneWeapon.group);
-            theDirector.addWeapon(numberOneWeapon);
+            // scene.add(numberOneWeapon.group);
+            // theDirector.addWeapon(numberOneWeapon);
 
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
             // scene.add(numberTwoWeapon.group);
@@ -262,12 +262,12 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             // theDirector.addWeapon(numberThreeWeapon);
 
             const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
-            // scene.add(numberFourWeapon.group);
-            // theDirector.addWeapon(numberFourWeapon);
+            scene.add(numberFourWeapon.group);
+            theDirector.addWeapon(numberFourWeapon);
 
             const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
-            scene.add(numberFiveWeapon.group);
-            theDirector.addWeapon(numberFiveWeapon);
+            // scene.add(numberFiveWeapon.group);
+            // theDirector.addWeapon(numberFiveWeapon);
 
             // Six: a staff/wand that hovers at 6 and fires homing projectiles.
 

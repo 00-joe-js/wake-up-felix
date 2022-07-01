@@ -52,13 +52,13 @@ export class OGBullet extends Weapon {
         this.sprite.update(dt, c < 0, true);
     }
 
-    detectCollision(enemy: TwoDEnemy): boolean {
+    detectCollision(enemy: TwoDEnemy | ClockNumEnemy): boolean {
         return withinDistance2D(OGBullet.COLLIDE_DISTANCE,
             this.mesh.position.x, enemy.object.position.x,
             this.mesh.position.z, enemy.object.position.z);
     }
 
-    onEnemyCollide(enemy: TwoDEnemy): void {
+    onEnemyCollide() {
         shake(200);
     }
 }

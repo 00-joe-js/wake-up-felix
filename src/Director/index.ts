@@ -14,12 +14,15 @@ import FelixCamera from "../felixCamera";
 
 import shuffle from "shuffle-array";
 import { UIMethods } from "../gameUI";
+import Baggie from "../Baggie";
 
 const range = (n: number) => {
     return new Array(n).fill("").map((_, i) => i);
 };
 
-const ERAS = shuffle(["prohibition", "ancient", "industrial", "stoneage"]);
+const ERAS = shuffle(["stoneage", "ancient", "industrial", "prohibition"]);
+
+type BagEntry = { mesh: Mesh, forMinute: number };
 
 export default class Director {
 
@@ -29,12 +32,17 @@ export default class Director {
 
     public canonicalGameMinute = 0;
 
+    private ui: UIMethods;
+
     private startTime: number;
     private scene: Scene;
     private tick: number = -1;
 
     private damageNumbers: DamagePlane;
     private clockNumMeshes: Mesh<BufferGeometry, MeshStandardMaterial>[];
+
+    private baggie: Baggie;
+    private bagCollection: BagEntry[] = [];
 
     private gemsManager: GemsManager;
     private gemFnCollection: ((dt: number, p: Vector2) => boolean | null)[] = [];
@@ -43,9 +51,11 @@ export default class Director {
         this.startTime = creationTime;
         this.scene = scene;
         this.felix = felix;
+        this.ui = ui;
         this.clockNumMeshes = clockNumMeshes;
         this.damageNumbers = new DamagePlane();
-        this.gemsManager = new GemsManager(this.scene, ui);
+        this.baggie = new Baggie(this.scene);
+        this.gemsManager = new GemsManager(this.scene, this.ui);
     }
 
     private makeEraEnemy(era: string) {
@@ -79,7 +89,11 @@ export default class Director {
 
         const correctMesh = this.clockNumMeshes[this.canonicalGameMinute];
 
-        const clockEnemy = new ClockNumEnemy(correctMesh);
+        const clockEnemy = new ClockNumEnemy(
+            // @ts-ignore
+            this.canonicalGameMinute,
+            correctMesh,
+        );
 
         this.allEnemies.push(clockEnemy);
 
@@ -137,7 +151,16 @@ export default class Director {
                             this.scene.remove(enemy.object);
                         });
                         destroyedEnemies.push(enemy);
-                        this.gemFnCollection.push(this.gemsManager.placeGem(enemy.object.position.x, enemy.object.position.z));
+
+                        if (enemy instanceof ClockNumEnemy) {
+                            const mesh = this.baggie.dropBagForPickup(enemy.object.position);
+                            this.bagCollection.push({ mesh, forMinute: enemy.minute });
+                        } else {
+                            this.gemFnCollection.push(
+                                this.gemsManager.placeGem(enemy.object.position.x, enemy.object.position.z)
+                            );
+                        }
+
                         killed = true;
                     }
 
@@ -158,6 +181,29 @@ export default class Director {
         if (felixCollide) {
             this.felix.takeDamage(dt);
         }
+    }
+
+    private processPickups(dt: number, felixPos: Vector2) {
+
+        const gemsToRemove: Function[] = [];
+        this.gemFnCollection.forEach((checkPickup) => {
+            const gemPickedUp = checkPickup(dt, felixPos);
+            if (gemPickedUp === true) {
+                gemsToRemove.push(checkPickup);
+            }
+        });
+        this.gemFnCollection = this.gemFnCollection.filter(f => !gemsToRemove.includes(f));
+
+        const pickedupBags = this.bagCollection.filter(
+            b => this.baggie.detectPickups([b.mesh], felixPos).length === 1
+        );
+
+        if (pickedupBags.length > 0) {
+            const pickedupBag = pickedupBags[0]; // Almost always just 1, and if not the next frame will get the next.
+            this.ui.setFelixHP(1);
+        }
+
+
     }
 
     update(dt: number, elapsed: number) {
@@ -195,12 +241,7 @@ export default class Director {
             });
         }
 
-        this.gemFnCollection.forEach((checkPickup) => {
-            const gemPickedUp = checkPickup(dt, felixPos);
-            if (gemPickedUp === true) {
-                this.gemFnCollection = this.gemFnCollection.filter(f => f !== checkPickup);
-            }
-        });
+        this.processPickups(dt, felixPos);
 
         this.runWorldTick(dt);
 
