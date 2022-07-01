@@ -6,6 +6,7 @@ import { shake } from "../renderer";
 import SpritePlane from "../SpritePlane";
 import { rotateAboutPoint, withinDistance2D } from "../utils";
 import TwoDEnemy from "../enemies/2DEnemy";
+import ClockNumEnemy from "../enemies/ClockNum";
 
 export default class Weapon {
     public minDamage: number = 0;
@@ -15,10 +16,10 @@ export default class Weapon {
     update(dt: number, elapsed: number, pos: Vector2) {
         throw new Error("Not implemented");
     }
-    detectCollision(enemy: TwoDEnemy): boolean {
+    detectCollision(enemy: TwoDEnemy | ClockNumEnemy): boolean {
         throw new Error("Not implemented");
     }
-    onEnemyCollide(enemy: TwoDEnemy) {
+    onEnemyCollide(enemy: TwoDEnemy | ClockNumEnemy) {
         throw new Error("Not implemented");
     }
 }

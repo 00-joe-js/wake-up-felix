@@ -1,4 +1,4 @@
-import { MathUtils, Mesh, Scene, Vector2 } from "three";
+import { BufferGeometry, MathUtils, Mesh, MeshStandardMaterial, Scene, Vector2 } from "three";
 
 import Weapon from "../weapons";
 import TwoDEnemy from "../enemies/2DEnemy";
@@ -34,12 +34,12 @@ export default class Director {
     private tick: number = -1;
 
     private damageNumbers: DamagePlane;
-    private clockNumMeshes: Mesh[];
+    private clockNumMeshes: Mesh<BufferGeometry, MeshStandardMaterial>[];
 
     private gemsManager: GemsManager;
     private gemFnCollection: ((dt: number, p: Vector2) => boolean | null)[] = [];
 
-    constructor(creationTime: number, scene: Scene, felix: FelixCamera, ui: UIMethods, clockNumMeshes: Mesh[]) {
+    constructor(creationTime: number, scene: Scene, felix: FelixCamera, ui: UIMethods, clockNumMeshes: Mesh<BufferGeometry, MeshStandardMaterial>[]) {
         this.startTime = creationTime;
         this.scene = scene;
         this.felix = felix;
@@ -81,7 +81,7 @@ export default class Director {
 
         const clockEnemy = new ClockNumEnemy(correctMesh);
 
-        this.allEnemies.push(clockEnemy);        
+        this.allEnemies.push(clockEnemy);
 
     }
 
@@ -105,7 +105,7 @@ export default class Director {
         this.allWeapons.forEach(w => w.update(dt, elapsed, felixPos));
     }
 
-    private processWeaponCollisions(enemy: GameEnemy, dt: number, destroyedEnemies: TwoDEnemy[]): boolean {
+    private processWeaponCollisions(enemy: GameEnemy, dt: number, destroyedEnemies: GameEnemy[]): boolean {
 
         let killed = false;
 

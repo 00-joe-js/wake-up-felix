@@ -1,7 +1,7 @@
 import "./style.css";
 import "./game-ui.css";
 
-import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils } from "three";
+import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils, BufferGeometry, MeshStandardMaterial } from "three";
 import { Mesh } from "three";
 
 
@@ -72,7 +72,7 @@ const findWithName = (group: Group, name: string): Mesh => {
     return mesh;
 };
 
-const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh[] => {
+const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh<BufferGeometry, MeshStandardMaterial>[] => {
 
     const clockNumberNames = [
         "Twelve", "One", "Two", "Three", "Four",
@@ -88,13 +88,15 @@ const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh[] => {
 
     const radius = 275;
 
-    let c = 0;
-
     const activeMeshes = [];
 
     for (let i = 0; i < 12; i++) {
         const numMesh = clockNumberMeshes[i].clone();
-        numMesh.material = numMesh.material.clone();
+        if (!Array.isArray(numMesh.material)) {
+            const mat: MeshStandardMaterial = new MeshStandardMaterial();
+            mat.copy(numMesh.material);
+            numMesh.material = numMesh.material.clone();
+        }
         const d = (-Math.PI / 2) + ((Math.PI / 6) * i);
         numMesh.position.z = Math.sin(d) * radius;
         numMesh.position.x = Math.cos(d) * radius;
@@ -103,6 +105,7 @@ const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh[] => {
         activeMeshes.push(numMesh);
     }
 
+    // @ts-ignore -- Material woes that I think I can supress and move on this way?
     return activeMeshes;
 };
 
@@ -248,23 +251,23 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             const numberOneWeapon = new One(clockWeaponMeshes[0], scene);
             scene.add(numberOneWeapon.group);
-            // theDirector.addWeapon(numberOneWeapon);
+            theDirector.addWeapon(numberOneWeapon);
 
             const numberTwoWeapon = new Two(clockWeaponMeshes[1], scene);
-            scene.add(numberTwoWeapon.group);
+            // scene.add(numberTwoWeapon.group);
             // theDirector.addWeapon(numberTwoWeapon);
 
             const numberThreeWeapon = new Three(clockWeaponMeshes[2], scene);
-            scene.add(numberThreeWeapon.group);
+            // scene.add(numberThreeWeapon.group);
             // theDirector.addWeapon(numberThreeWeapon);
 
             const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
-            scene.add(numberFourWeapon.group);
+            // scene.add(numberFourWeapon.group);
             // theDirector.addWeapon(numberFourWeapon);
 
             const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
             scene.add(numberFiveWeapon.group);
-            // theDirector.addWeapon(numberFiveWeapon);
+            theDirector.addWeapon(numberFiveWeapon);
 
             // Six: a staff/wand that hovers at 6 and fires homing projectiles.
 
