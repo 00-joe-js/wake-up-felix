@@ -70,11 +70,11 @@ export default class Director {
     }
 
     private getCurrentMinute(dt: number) {
-        return Math.floor(dt / (1000 * 5));
+        return Math.floor(dt / (1000 * 15));
     }
 
     private getCurrentEra(dt: number) {
-        const ERA_TIME = (1000) * (30) * (1);
+        const ERA_TIME = (1000) * (60) * (1);
         const timeSinceStart = dt - this.startTime;
         const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
         const currentEra = ERAS[eraIndex];
@@ -143,7 +143,7 @@ export default class Director {
             this.tick = secondRoundedDown;
             if (this.tick % 5 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(5).forEach(() => this.makeEraEnemy(era));
+                range(2).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
@@ -231,11 +231,11 @@ export default class Director {
             b => this.baggie.detectPickups([b.mesh], felixPos).length === 1
         );
 
-        if (true) {
+        if (pickedupBags.length > 0) {
             // Almost always just 1, and if not the next frame will get the next.
             const pickedupBag = pickedupBags[0];
             pauseRendering();
-            this.ui.showUpgradeScreen(1, (choseWeapon: boolean, upgradeId: string | null) => {
+            this.ui.showUpgradeScreen(pickedupBag.forMinute, (choseWeapon: boolean, upgradeId: string | null) => {
                 if (choseWeapon) {
                     this.activateWeapon(pickedupBag.forMinute);
                 } else {

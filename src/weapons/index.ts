@@ -114,7 +114,7 @@ export class One extends Weapon {
             this.movementVector.copy(One.ONE_DIR);
             this.movementVector.multiplyScalar(elapsed / 16.667);
             proj.mesh.position.add(this.movementVector);
-            if (dt - proj.thrownTime > 2500 ) {
+            if (dt - proj.thrownTime > 2500) {
                 this.activeProjectiles = this.activeProjectiles.filter(i => i !== proj);
                 this.scene.remove(proj.mesh);
             }
@@ -144,7 +144,7 @@ export class Two extends Weapon {
     group: Group;
     modelMesh: Mesh;
 
-    stunValue = 2000;
+    stunValue = 2500;
     minDamage: number = 10;
     maxDamage: number = 20;
 
@@ -316,8 +316,8 @@ export class Five extends Weapon {
 
     minDamage = 15;
     maxDamage = 25;
-    stunValue = 1000;
-    hitDelay = 1000;
+    stunValue = 1500;
+    hitDelay = 3000;
 
     private shields: Mesh[] = [];
 

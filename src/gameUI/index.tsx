@@ -130,7 +130,7 @@ export default (): UIMethods => {
     felixMaxHP: 4,
     totalXp: 0,
     currentXp: 0,
-    bagXps: [{ minute: 1, total: 200 }],
+    bagXps: [],
     chosenWeapons: [],
     onUpgradeScreen: null,
     upgradeSelectionFn: null,

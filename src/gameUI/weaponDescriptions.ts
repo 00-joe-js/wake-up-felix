@@ -1,0 +1,35 @@
+export type WeaponDescription = {
+    roman: string,
+    heading: string,
+    elaborate: string,
+};
+
+const lib: { [k: string]: WeaponDescription } = {
+    "1": {
+        roman: "I",
+        heading: "Fire an arrow out from the 1:00 angle on a clock.",
+        elaborate: "This arrow doesn't stun enemies much, but it fires fast and has huge range!"
+    },
+    "2": {
+        roman: "II",
+        heading: "Swing a beefy hammer around you that gets larger when it is close to the 2:00 angle.",
+        elaborate: "Not only does the number II hit powerfully, it also stuns enemies big time!"
+    },
+    "3": {
+        roman: "III",
+        heading: "Plant spiky traps every 3 seconds at the 3:00 angle. You can have 3 planted at once.",
+        elaborate: "Time your steps and funnel enemies into your traps. They will stumble and stick as they take damage trying to wade through!"
+    },
+    "4": {
+        roman: "IV",
+        heading: "A deadly spear juts out from your 4:00 angle. It doesn't move but does lots of damage.",
+        elaborate: "IV is the definition of simple but effective. Not very effective if enemies are above you!"
+    },
+    "5": {
+        roman: "V",
+        heading: "Surround yourself with protective shields and get 1 extra HP (for a total of 5:00).",
+        elaborate: "More health always helps, not to mention this orbiting wall! The same enemy cannot be hit very frequently with these shields, so be careful."
+    }
+};
+
+export default lib;

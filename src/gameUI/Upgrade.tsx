@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import fatherTimeContent from "../../assets/father_time_content.png";
 import fatherTimeLaugh from "../../assets/father_time_laughter.png";
@@ -7,6 +7,7 @@ import fatherTimeRage from "../../assets/father_time_rage.png";
 
 import { UpgradeSelectionFn, BagXp } from ".";
 import upgrades from "../Baggie/upgrades";
+import weaponDescriptions, { WeaponDescription } from "./weaponDescriptions";
 
 const Upgrade = ({
   minute,
@@ -17,6 +18,25 @@ const Upgrade = ({
   minute: number;
   onSelect: UpgradeSelectionFn;
 }) => {
+  const container = useRef<HTMLDivElement>(null);
+  const [selectionMade, setSelectionMade] = useState(false);
+
+  useEffect(() => {
+    if (selectionMade && container.current) {
+      const el = container.current;
+      const i = setInterval(() => {
+        el.style.opacity = `${parseFloat(el.style.opacity) - 0.05}`;
+      }, 10);
+      return () => clearInterval(i);
+    }
+  }, [selectionMade]);
+
+  const weaponDescription: WeaponDescription = useMemo(() => {
+    const d = weaponDescriptions[minute];
+    if (!d) throw new Error(`No weapon details for minute ${minute}`);
+    return d;
+  }, [minute]);
+
   const xpForThisBag = useMemo(() => {
     const bag = bagXps.find((b) => b.minute === minute);
     if (!bag) {
@@ -33,7 +53,7 @@ const Upgrade = ({
   }, [opacity]);
 
   return (
-    <div id="upgrade-container" style={{ opacity }}>
+    <div id="upgrade-container" ref={container} style={{ opacity }}>
       <div className="got-the-bag">
         <h1>You got the {minute}:00 bag!</h1>
         <div className="xp-stats">
@@ -43,7 +63,8 @@ const Upgrade = ({
           <div className="scaling-result">
             <img className="father-time" src={fatherTimeContent} />
             <h2>
-              This weapon or upgrade will be <strong>1.25x</strong> as powerful!
+              This weapon or upgrade will be{" "}
+              <strong>{(xpForThisBag / 50).toFixed(2)}x</strong> as powerful!
             </h2>
           </div>
         </div>
@@ -55,15 +76,18 @@ const Upgrade = ({
         <div className="choose-weapon">
           <div className="weapon-description">
             <div className="weapon-gif">WEAPON GIF HERE</div>
-            <h3>Fire an arrow out from the 1:00 angle on a clock.</h3>
-            <p>
-              This arrow doesn't stun enemies much, but it fires fast and has
-              huge range!
-            </p>
+            <h3>{weaponDescription.heading}</h3>
+            <p>{weaponDescription.elaborate}</p>
           </div>
-          <h2 onClick={() => onSelect(true, null)}>
+          <h2
+            onClick={() => {
+              if (selectionMade) return;
+              setSelectionMade(true);
+              onSelect(true, null);
+            }}
+          >
             Claim <br />
-            <strong>I</strong>
+            <strong>{weaponDescription.roman}</strong>
             <br /> as your weapon
           </h2>
         </div>
@@ -72,7 +96,15 @@ const Upgrade = ({
           <h1>Or, have an upgrade ...</h1>
           {upgrades.map((u) => {
             return (
-              <div className="one-upgrade" key={u.id} onClick={() => onSelect(false, u.id)}>
+              <div
+                className="one-upgrade"
+                key={u.id}
+                onClick={() => {
+                  if (selectionMade) return;
+                  setSelectionMade(true);
+                  onSelect(false, u.id);
+                }}
+              >
                 <h2>{u.name}</h2>
                 <p>{u.description}</p>
               </div>
