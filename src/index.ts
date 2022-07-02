@@ -244,8 +244,8 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const theDirector = new Director(dt, scene, fCam, uiMethods, staticClockMeshes);
 
             const bullet = new Bullet();
-            scene.add(bullet.group);
-            theDirector.addWeapon(bullet);
+            // scene.add(bullet.group);
+            // theDirector.addWeapon(bullet);
 
             const clockWeaponMeshes = getWeaponMeshes(clockNumsGroup);
 
@@ -286,6 +286,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             // Sound+Music implementation
             // Lootlocker Leaderboard
             // Start, Help, About screens
+            // Escape to pause
             // Good screen sizing
             // Visual upgrades to some weapons
 

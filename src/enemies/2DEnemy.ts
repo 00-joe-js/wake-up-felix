@@ -11,7 +11,9 @@ type EnemyConfig = {
     frameAmount: number,
     animationSpeed: number,
     health: number,
-    speed?: number
+    speed?: number,
+    hitboxPaddingX?: number;
+    hitboxPaddingY?: number;
 };
 
 const _v3 = new Vector3();
@@ -29,11 +31,13 @@ export default class TwoDEnemy {
     private width: number;
     private height: number;
     private speed: number;
+    private hitboxPaddingX: number;
+    private hitboxPaddingY: number;
 
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
     private reverseFlip: boolean = false;
 
-    constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5 }: EnemyConfig) {
+    constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5, hitboxPaddingX = 0, hitboxPaddingY = 0 }: EnemyConfig) {
         this.sprite = new SpritePlane(textureUrl, width, height, 20, frameAmount, animationSpeed);
         this.health = health;
         this.object = this.sprite.mesh;
@@ -41,6 +45,8 @@ export default class TwoDEnemy {
         this.width = width;
         this.height = height;
         this.speed = speed;
+        this.hitboxPaddingX = hitboxPaddingX;
+        this.hitboxPaddingY = hitboxPaddingY;
 
         _v3.set(0, 0, 1);
         _v3.applyAxisAngle(_up, MathUtils.randFloat(0, Math.PI * 2));
@@ -113,14 +119,14 @@ export default class TwoDEnemy {
         return this.health < 0; // should die, Director.
     }
 
-    collidesWith(pos: Vector2, padding: number = 0) {
+    collidesWith(pos: Vector2) {
 
         const { x, z } = this.sprite.mesh.position;
 
-        const inRangeH = Math.abs(x - padding - pos.x) < this.width / 2;
+        const inRangeH = Math.abs(x - pos.x) < (this.width + this.hitboxPaddingX) / 2;
         if (!inRangeH) return false;
 
-        const inRangeV = Math.abs(z - padding - pos.y) < this.height / 2;
+        const inRangeV = Math.abs(z - pos.y) < (this.height + this.hitboxPaddingY) / 2;
         if (!inRangeV) return false;
 
         return true;

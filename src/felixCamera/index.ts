@@ -69,14 +69,14 @@ class FelixCamera {
     }
 
     public takeDamage(dt: number) {
-        if (dt - this.lastDamageTakenTime > 2000) {
+        if (dt - this.lastDamageTakenTime > 500) {
             this.health = this.health - 1;
             this.ui.setFelixHP(this.health);
             this.lastDamageTakenTime = dt;
             flash([1, 0, 0], 0.2, 0.001);
             shake(400);
             if (this.health === 0) {
-                window.location.reload();
+                // window.location.reload();
             }
         }
     }

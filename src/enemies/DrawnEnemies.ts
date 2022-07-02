@@ -31,6 +31,8 @@ type DrawnEnemyConfig = {
     animationSpeed: number;
     speed?: number;
     reverseFlip?: boolean;
+    hitboxPaddingX?: number;
+    hitboxPaddingY?: number;
 };
 
 // The plan is to give every enemy of the same type ONE texture.
@@ -214,7 +216,9 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "prohibition",
         animationSpeed: 500,
         health: 20,
-        speed: 4
+        speed: 4,
+        hitboxPaddingX: 0,
+        hitboxPaddingY: 2,
     },
     {
         name: "Wine Bottle",
@@ -240,6 +244,12 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         speed: 3.5
     }
 ];
+
+export const getEnemyByName = (name: string) => {
+    const e = ENEMIES.find(e => e.name === name);
+    if (!e) throw new Error(`Unknown enemy: ${name}`);
+    return e;
+};
 
 export const getRandomEnemyName = (coll = ENEMIES) => {
     const rand = MathUtils.randInt(0, coll.length - 1);

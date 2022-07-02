@@ -69,6 +69,12 @@ export default class Director {
         this.allEnemies.push(newEnemy);
     }
 
+    private makeEnemyWithName(name: string) {
+        const e = new DrawnEnemy(name);
+        this.scene.add(e.object);
+        this.allEnemies.push(e);
+    }
+
     private getCurrentMinute(dt: number) {
         return Math.floor(dt / (1000 * 15));
     }
@@ -154,7 +160,7 @@ export default class Director {
             this.tick = secondRoundedDown;
             if (this.tick % 2 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(3).forEach(() => this.makeEraEnemy(era));
+                range(2).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
