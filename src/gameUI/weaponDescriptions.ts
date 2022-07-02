@@ -34,6 +34,16 @@ const lib: { [k: string]: WeaponDescription } = {
         roman: "VI",
         heading: "A magic scepter that hovers below you at 6:00. It fires orbs at random nearby enemies, but only 6 at a time.",
         elaborate: "This weapon excels against single enemies, but struggles against hordes."
+    },
+    "7": {
+        roman: "VII",
+        heading: "An energizing contraption that hovers at 7:00 and gives you a damaging aura. It also increases your pickup range!",
+        elaborate: "You'll feel all charged up with this one! Anything that gets near you is zapped, but enemies with enough health will still power through it."
+    },
+    "8": {
+        roman: "VIII",
+        heading: "Every 8 seconds, spawn a huge smoke stack that damages and stuns enemies.",
+        elaborate: "The smoke will absolutely incapacitate anything within it, but it will only spawn on a random enemy every 8 seconds. You will have to act fast to manuever your enemies into the smoke!"
     }
 };
 

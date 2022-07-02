@@ -6,10 +6,14 @@ import { flash } from "../renderer/flashShader";
 import { UIMethods } from "../gameUI";
 import FelixCamera from "../felixCamera";
 
+const _v3 = new Vector3();
+
 export default class GemsManager {
 
     private scene: Scene;
     private ui: UIMethods;
+
+    public gemPickupDistance: number = 20;
 
     constructor(scene: Scene, ui: UIMethods) {
         this.scene = scene;
@@ -21,6 +25,10 @@ export default class GemsManager {
             new TorusGeometry(3, 0.5, 16, 100),
             new MeshBasicMaterial({ color })
         );
+    }
+
+    increaseGemPickupDistance(v: number) {
+        this.gemPickupDistance += v;
     }
 
     placeGem(x: number, z: number) {
@@ -55,29 +63,42 @@ export default class GemsManager {
 
         this.scene.add(g);
 
+        let pickedUp: boolean = false;
+
         return everyNthFrame<boolean>((dt: number, felixPos: Vector2) => {
-
-            const felixPickingUp = withinDistance2D(
-                20,
-                felixPos.x, g.position.x,
-                felixPos.y, g.position.z
-            );
-
-            if (felixPickingUp) {
-                const rarityDeets = rarityDetails[rarity];
-                flash(rarityDeets.color.toArray(), 0.02, 0.0001);
-                this.scene.remove(g);
-                this.ui.addXP(rarityDeets.amount);
-                return true;
-            }
 
             const r = MathUtils.randFloat(0.1, Math.PI);
             g.rotation.y += r;
             g.rotation.x += r / MathUtils.randInt(1, 10);
 
-            return false;
+            if (pickedUp === true) {
+                _v3.set(felixPos.x - g.position.x, 5, felixPos.y - g.position.z);
+                g.position.add(_v3.normalize().multiplyScalar(5));
 
-        }, 10);
+                if (withinDistance2D(1, g.position.x, felixPos.x, g.position.z, felixPos.y)) {
+                    const rarityDeets = rarityDetails[rarity];
+                    flash(rarityDeets.color.toArray(), 0.02, 0.0001);
+                    this.scene.remove(g);
+                    this.ui.addXP(rarityDeets.amount);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                const felixPickingUp = withinDistance2D(
+                    this.gemPickupDistance,
+                    felixPos.x, g.position.x,
+                    felixPos.y, g.position.z
+                );
+
+                if (felixPickingUp) {
+                    pickedUp = true;
+                }
+
+                return false;
+            }
+
+        }, 2);
 
     }
 

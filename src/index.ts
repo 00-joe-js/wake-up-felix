@@ -38,7 +38,7 @@ import loadModels from "./importHelpers/gltfLoader";
 
 import { KeyboardInterface } from "./firstPersonCharacter/inputHelper";
 
-import { OGBullet as Bullet, One, Two, Three, Four, Five, Six } from "./weapons";
+import { OGBullet as Bullet, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Eleven, Twelve } from "./weapons";
 import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
@@ -110,7 +110,7 @@ const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh<BufferGeome
 };
 
 const getWeaponMeshes = (gltfGroup: Group) => {
-    const names = ["One", "Two", "Three", "Four", "Five", "Six"].map(s => `${s}Weapon`);
+    const names = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"].map(s => `${s}Weapon`);
     return names.map(n => findWithName(gltfGroup, n));
 };
 
@@ -255,6 +255,8 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
             const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
             const numberSixWeapon = new Six(clockWeaponMeshes[5], scene);
+            const numberSevenWeapon = new Seven(clockWeaponMeshes[6], scene);
+            const numberEightWeapon = new Eight(clockWeaponMeshes[7], scene);
 
             const arsenal = new Map();
             arsenal.set(1, numberOneWeapon);
@@ -263,13 +265,11 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             arsenal.set(4, numberFourWeapon);
             arsenal.set(5, numberFiveWeapon);
             arsenal.set(6, numberSixWeapon);
+            arsenal.set(7, numberSevenWeapon);
+            arsenal.set(8, numberEightWeapon);
 
             theDirector.provideClockWeapons(arsenal);
-            // theDirector.activateWeapon(6);
-
-            // Six: a staff/wand that hovers at 6 and fires homing projectiles.
-
-            // Seven: Garlic+attract orb combo
+            // theDirector.activateWeapon(8);
 
             // Eight: smoke stacks that appear on random enemies every 8 seconds 
             // and emit a light cloud/damage zone, like santa water

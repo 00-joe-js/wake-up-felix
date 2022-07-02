@@ -104,6 +104,8 @@ export default class Director {
             this.felix.health += 1;
             this.ui.setFelixHP(this.felix.health);
             this.ui.increaseFelixMaxHP();
+        } else if (minute === 7) {
+            this.gemsManager.increaseGemPickupDistance(30);
         }
 
         this.addWeapon(weapon);
