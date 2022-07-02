@@ -60,7 +60,7 @@ const _barrierCheckV = new Vector3();
 const createStageMaterial = () => {
     const mat = new MeshPhongMaterial({
         color: new Color(0.7, 0.7, 0.7),
-        shininess: 1000,
+        shininess: 500,
     });
     return mat;
 };
@@ -110,7 +110,7 @@ const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh<BufferGeome
 };
 
 const getWeaponMeshes = (gltfGroup: Group) => {
-    const names = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"].map(s => `${s}Weapon`);
+    const names = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"].map(s => `${s}Weapon`);
     return names.map(n => findWithName(gltfGroup, n));
 };
 
@@ -257,6 +257,9 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const numberSixWeapon = new Six(clockWeaponMeshes[5], scene);
             const numberSevenWeapon = new Seven(clockWeaponMeshes[6], scene);
             const numberEightWeapon = new Eight(clockWeaponMeshes[7], scene);
+            const numberNineWeapon = new Nine(clockWeaponMeshes[8], scene);
+            const numberTenWeapon = new Ten(clockWeaponMeshes[9], scene);
+            const numberElevenWeapon = new Eleven(clockWeaponMeshes[10], scene);
 
             const arsenal = new Map();
             arsenal.set(1, numberOneWeapon);
@@ -267,20 +270,27 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             arsenal.set(6, numberSixWeapon);
             arsenal.set(7, numberSevenWeapon);
             arsenal.set(8, numberEightWeapon);
-
+            arsenal.set(9, numberNineWeapon);
+            arsenal.set(10, numberTenWeapon);
+            arsenal.set(11, numberElevenWeapon);
+            
             theDirector.provideClockWeapons(arsenal);
-            // theDirector.activateWeapon(8);
+            theDirector.activateWeapon(11);
 
-            // Eight: smoke stacks that appear on random enemies every 8 seconds 
-            // and emit a light cloud/damage zone, like santa water
-
-            // Nine: lightning ring instant area explosion on
-            // random enemy who's X is less than Felix's
-
-            // Ten: cross/boomerang that fly out at 10
+            // Major things left to do:
+                // Weapons 10-12
+                // Sound+Music implementation
+                // Lootlocker Leaderboard
+                // Applying and creating more general upgrades (non-weapon)
+                // Start, Help, About screens
+                // Balancing full runs and final wave
+                // Good screen sizing
+                // Better enemy hitboxes
+                // Visual upgrades to some weapons
+                    // 8 smoke shader
+                    // 9 lightning shader
 
             // Eleven: vamp survivors axes that fly out at 11oclock angle
-
             // Twelve: Clock lancet.
 
             loopHooks.push((dt, elapsed) => {

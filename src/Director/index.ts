@@ -171,7 +171,7 @@ export default class Director {
 
         this.allWeapons.forEach(weapon => {
 
-            const weaponCollide = weapon.detectCollision(enemy);
+            const weaponCollide = weapon.detectCollision(enemy, dt);
 
             if (weaponCollide) {
 

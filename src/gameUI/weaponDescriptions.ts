@@ -44,6 +44,21 @@ const lib: { [k: string]: WeaponDescription } = {
         roman: "VIII",
         heading: "Every 8 seconds, spawn a huge smoke stack that damages and stuns enemies.",
         elaborate: "The smoke will absolutely incapacitate anything within it, but it will only spawn on a random enemy every 8 seconds. You will have to act fast to manuever your enemies into the smoke!"
+    },
+    "9": {
+        roman: "IX",
+        heading: "Spawn tesla coils that last 9 seconds and zap random enemies near it.",
+        elaborate: "These coils are most effective when they cover different areas. Try to move out of range of any already placed coil to maximize damage!"
+    },
+    "10": {
+        roman: "X",
+        heading: "Toss ninja stars from the 10:00 angle and its mirrors. These have huge range and you'll throw them FAST!",
+        elaborate: "This weapon is awesome for large hordes, but struggles when you have one huge enemy to kill."
+    },
+    "11": {
+        roman: "XI",
+        heading: "Every 11 seconds, axes will fly upwards and then fall through your enemies. These axes do MAJOR damage!",
+        elaborate: "These axes do tons of damage, they're huge, and they last forever. Downside? Uhhhhhh ..."
     }
 };
 

@@ -19,7 +19,7 @@ export default class Weapon {
     update(dt: number, elapsed: number, pos: Vector2, allEnemies: GameEnemy[]) {
         throw new Error("Not implemented");
     }
-    detectCollision(enemy: GameEnemy): boolean {
+    detectCollision(enemy: GameEnemy, dt: number): boolean {
         throw new Error("Not implemented");
     }
     onEnemyCollide(enemy: GameEnemy) {
@@ -653,25 +653,130 @@ export class Nine extends Weapon {
     modelMesh: Mesh;
     scene: Scene;
 
-    stunValue = 150;
+    stunValue = 2000;
     minDamage = 5;
     maxDamage = 10;
-    hitDelay = 750;
+    hitDelay = 1000;
+
+    private placedCoils: { group: Group, timePlaced: number, lastZapTime: number }[] = [];
+
+    private lightningMesh: Mesh;
+
+    private placeDelay: number = 2500;
+    private lastPlacedTime: number = -500;
+
+    private findVector: Vector3 = new Vector3();
+    private findBox: Box3 = new Box3();
+
+    private lights: PointLight[] = [
+        new PointLight(0x00eeff, 1, 80),
+        new PointLight(0x00eeff, 1, 80),
+        new PointLight(0x00eeff, 1, 80)
+    ];
 
     constructor(mesh: Mesh, scene: Scene) {
         super();
         this.group = new Group();
         this.scene = scene;
         this.modelMesh = mesh;
-        this.group.add(this.modelMesh);
+        this.modelMesh.scale.set(2, 2, 2);
+        this.lights.forEach(l => {
+            this.scene.add(l);
+            l.intensity = 0;
+        });
+        this.lightningMesh = new Mesh(new CylinderGeometry(2, 20, 40), new MeshBasicMaterial({ color: 0x00ffff }));
+        this.lightningMesh.position.y = 40;
+        this.lightningMesh.rotation.y = Math.PI / 2;
+        this.lightningMesh.visible = false;
+        this.scene.add(this.lightningMesh);
+    }
+
+    findEnemyInRange(felixPos: Vector2, allEnemies: GameEnemy[]): GameEnemy | null {
+        this.findVector.set(felixPos.x, 0, felixPos.y);
+        const zoneSphere = new Sphere(this.findVector, 100);
+        zoneSphere.getBoundingBox(this.findBox);
+        const enemiesInZone = allEnemies.filter((enemy) => {
+            const pos = enemy.object.position;
+            const test = this.findBox.containsPoint(pos);
+            return test;
+        });
+        if (enemiesInZone.length === 0) return null;
+        return enemiesInZone[MathUtils.randInt(0, enemiesInZone.length - 1)];
     }
 
     update(dt: number, elapsed: number, felixPos: Vector2, allEnemies: GameEnemy[]) {
-        this.group.position.set(felixPos.x, 5, felixPos.y);
+
+        if (dt - this.lastPlacedTime > this.placeDelay && this.placedCoils.length < 3) {
+
+            const randomTarget = this.findEnemyInRange(felixPos, allEnemies);
+
+            if (randomTarget) {
+                this.lastPlacedTime = dt;
+                const g = new Group();
+                const m = this.modelMesh.clone();
+                g.add(m);
+
+                g.position.copy(randomTarget.object.position);
+                g.position.y = 0;
+
+                this.scene.add(g);
+
+                this.placedCoils.push({
+                    group: g,
+                    timePlaced: dt,
+                    lastZapTime: dt
+                });
+
+                this.lights.forEach((light, i) => {
+                    if (this.placedCoils[i]) {
+                        light.position.copy(this.placedCoils[i].group.position);
+                        light.position.y = 10;
+                        light.intensity = 2;
+                    } else {
+                        light.intensity = 0;
+                    }
+                });
+
+            }
+
+        }
+
+        this.placedCoils = this.placedCoils.filter((coil, i) => {
+            if (dt - coil.timePlaced > 9000) {
+                this.scene.remove(coil.group);
+                this.lights[i].intensity = 0;
+                return false;
+            }
+            return true;
+        });
+
     }
 
-    detectCollision(enemy: TwoDEnemy): boolean {
-        return false;
+    detectCollision(enemy: TwoDEnemy, dt: number): boolean {
+
+        const enemyPos = enemy.object.position;
+
+        return this.placedCoils.some(coil => {
+
+            const gPos = coil.group.position;
+
+            if (dt - coil.lastZapTime < 200) return false;
+
+            const inRange = withinDistance2D(40, enemyPos.x, gPos.x, enemyPos.z, gPos.z);
+
+            if (inRange) {
+                coil.lastZapTime = dt;
+                this.lightningMesh.visible = true;
+                this.lightningMesh.position.set(enemyPos.x, 20, enemyPos.z);
+                setTimeout(() => {
+                    this.lightningMesh.visible = false;
+                }, 100);
+                return true;
+            } else {
+                return false;
+            }
+        });
+
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
@@ -682,58 +787,173 @@ export class Nine extends Weapon {
 export class Ten extends Weapon {
     group: Group;
     modelMesh: Mesh;
-    scene: Scene;
 
-    stunValue = 150;
-    minDamage = 5;
-    maxDamage = 10;
-    hitDelay = 750;
+    stunValue = 250;
+    minDamage: number = 3;
+    maxDamage: number = 6;
+    hitDelay = 500;
+
+    private throwDelay: number = 250;
+
+    static ONE_DIR: Vector3 =
+        new Vector3(0, 0, -1)
+            .applyAxisAngle(new Vector3(0, 1, 0), -Math.PI / 6)
+            .multiplyScalar(5);
+
+    private activeProjectiles: ({ mesh: Mesh, thrownTime: number, dir: Vector3 })[] = [];
+
+    private lastThrowTime: number = 0;
+
+    private collisionLight: PointLight = new PointLight(0xfedf02, 10, 50);
+
+    private scene: Scene;
+
+    private movementVector: Vector3 = new Vector3();
 
     constructor(mesh: Mesh, scene: Scene) {
         super();
         this.group = new Group();
         this.scene = scene;
         this.modelMesh = mesh;
-        this.group.add(this.modelMesh);
+        this.modelMesh.scale.set(0.75, 0.75, 0.75);
+        this.scene.add(this.collisionLight);
     }
 
-    update(dt: number, elapsed: number, felixPos: Vector2, allEnemies: GameEnemy[]) {
-        this.group.position.set(felixPos.x, 5, felixPos.y);
+    update(dt: number, elapsed: number, felixPos: Vector2) {
+        this.group.position.set(felixPos.x, 20, felixPos.y);
+        if (dt - this.lastThrowTime > this.throwDelay) {
+            const newProjectile = this.modelMesh.clone();
+            newProjectile.position.copy(this.group.position);
+            this.scene.add(newProjectile);
+            newProjectile.rotation.y = -Math.PI / 2 - Math.PI / 6;
+
+            const dir = this.movementVector.copy(One.ONE_DIR).clone();
+
+            if (MathUtils.randFloat(0, 1) > 0.5) {
+                dir.x *= -1;
+            }
+
+            if (MathUtils.randFloat(0, 1) > 0.5) {
+                dir.z *= -1;
+            }
+
+            dir.normalize();
+
+            this.activeProjectiles.push({
+                mesh: newProjectile,
+                thrownTime: dt,
+                dir
+            });
+            this.lastThrowTime = dt;
+        }
+        this.activeProjectiles.forEach((p) => {
+            p.dir.normalize();
+            p.dir.multiplyScalar(elapsed / 16.667);
+            p.dir.multiplyScalar(4);
+            p.mesh.position.add(p.dir);
+            p.mesh.rotation.y -= 0.3;
+            if (dt - p.thrownTime > 1500) {
+                this.activeProjectiles = this.activeProjectiles.filter(i => i !== p);
+                this.scene.remove(p.mesh);
+            }
+        });
+        this.collisionLight.intensity -= 3;
+        this.collisionLight.intensity = Math.max(0, this.collisionLight.intensity);
     }
 
     detectCollision(enemy: TwoDEnemy): boolean {
-        return false;
+        return this.activeProjectiles.some(proj => {
+            return withinDistance2D(
+                15,
+                proj.mesh.position.x, enemy.object.position.x,
+                proj.mesh.position.z, enemy.object.position.z
+            );
+        });
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
+        this.collisionLight.position.copy(enemy.object.position);
+        this.collisionLight.intensity = 50;
     }
 }
 
 export class Eleven extends Weapon {
+
     group: Group;
     modelMesh: Mesh;
     scene: Scene;
 
-    stunValue = 150;
-    minDamage = 5;
-    maxDamage = 10;
-    hitDelay = 750;
+    stunValue = 300;
+    minDamage: number = 10;
+    maxDamage: number = 20;
+
+    private activeProjectiles: ({ mesh: Mesh, thrownTime: number, dir: Vector3, showDelay: number, shown: boolean })[] = [];
+    private lastThrowsTime: number = -11000;
+    private delay: number = 11000;
+
+    static ELEVEN_DIR: Vector3 =
+        new Vector3(0, 0, -1)
+            .applyAxisAngle(new Vector3(0, 1, 0), (-Math.PI / 6) * 11);
 
     constructor(mesh: Mesh, scene: Scene) {
         super();
-        this.group = new Group();
         this.scene = scene;
+        this.group = new Group();
         this.modelMesh = mesh;
-        this.group.add(this.modelMesh);
+        this.modelMesh.scale.set(2, 2, 2);
     }
 
-    update(dt: number, elapsed: number, felixPos: Vector2, allEnemies: GameEnemy[]) {
-        this.group.position.set(felixPos.x, 5, felixPos.y);
+    update(dt: number, elapsed: number, felixPos: Vector2) {
+
+        this.group.position.set(felixPos.x, 20, felixPos.y);
+
+        if (dt - this.lastThrowsTime > this.delay) {
+
+            for (let n = 0; n < 11; n++) {
+                const newAxe = this.modelMesh.clone();
+                this.scene.add(newAxe);
+                newAxe.visible = false;
+                this.activeProjectiles.push({
+                    mesh: newAxe,
+                    thrownTime: dt,
+                    showDelay: n * 500,
+                    shown: false,
+                    dir: new Vector3(MathUtils.randFloat(-3, 3), 0, -5)
+                });
+            }
+
+            this.lastThrowsTime = dt;
+
+        }
+
+        this.activeProjectiles.forEach(p => {
+
+            if (!p.shown) {
+                if (dt > p.thrownTime + p.showDelay) {
+                    p.shown = true;
+                    p.mesh.visible = true;
+                    p.mesh.position.set(felixPos.x, 2, felixPos.y);
+                } else {
+                    return;
+                }
+            }
+
+            p.mesh.position.add(p.dir);
+            p.mesh.rotation.y += 0.1;
+            p.dir.z += 0.1;
+
+        });
+
     }
 
     detectCollision(enemy: TwoDEnemy): boolean {
-        return false;
+
+        return this.activeProjectiles.some((p) => {
+            const pPos = p.mesh.position;
+            const ePos = enemy.object.position;
+            return withinDistance2D(30, pPos.x, ePos.x, pPos.z, ePos.z);
+        });
+
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
