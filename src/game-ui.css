@@ -92,8 +92,8 @@
 }
 
 .got-the-bag h1 {
-  font-size: 5rem;
-  margin-top: 2rem;
+  font-size: 4rem;
+  margin-top: 1.5rem;
 }
 
 .got-the-bag strong {
@@ -103,17 +103,25 @@
 }
 
 .got-the-bag h2 strong {
-  font-size: 3rem;
+  font-size: 5rem;
 }
 
 .got-the-bag .father-time {
-  margin: 1rem;
+  margin: 2rem;
   width: 10rem;
 }
 
 .got-the-bag .scaling-result {
   display: flex;
   align-items: center;
+}
+
+.got-the-bag .scaling-result h3 {
+  margin-bottom: 0;
+}
+
+.got-the-bag .scaling-result h2 {
+  margin-top: 2rem;
 }
 
 .divider {

@@ -14,6 +14,7 @@ export default class GemsManager {
     private ui: UIMethods;
 
     public gemPickupDistance: number = 20;
+    public gemRareChance: number = 0;
 
     constructor(scene: Scene, ui: UIMethods) {
         this.scene = scene;
@@ -31,17 +32,25 @@ export default class GemsManager {
         this.gemPickupDistance += v;
     }
 
+    increaseRareChance(v: number) {
+        this.gemRareChance += v;
+    }
+
     placeGem(x: number, z: number) {
 
         const g = new Group();
 
         let rand = Math.random();
+        rand += this.gemRareChance;
+
         let rarity = 0;
 
-        if (rand > .75) {
+        // Base 15% chance for uncommons.
+        if (rand > .85) {
             rarity = 1;
         }
 
+        // Base 5% chance for ultra-rares.
         if (rand > .95) {
             rarity = 2;
         }

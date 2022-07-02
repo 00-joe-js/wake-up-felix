@@ -6,7 +6,8 @@ import Upgrade from "./Upgrade";
 
 export type UpgradeSelectionFn = (
   choseWeapon: boolean,
-  upgradeId: string | null
+  upgradeId: string | null,
+  scalar: number
 ) => any;
 
 export type BagXp = {
@@ -14,8 +15,7 @@ export type BagXp = {
   total: number;
 };
 
-// todo: isolate obv
-type GameState = {
+export type GameState = {
   elapsedTime: number;
   felixHP: number;
   felixMaxHP: number;
@@ -25,6 +25,7 @@ type GameState = {
   chosenWeapons: number[];
   onUpgradeScreen: number | null;
   upgradeSelectionFn: UpgradeSelectionFn | null;
+  expectedMinuteXp: number | null;
 };
 
 export type UIMethods = {
@@ -34,7 +35,7 @@ export type UIMethods = {
   addXP: (a: number) => void;
   replaceCurrentXP: (t: number) => void;
   getGameState: () => GameState;
-  showUpgradeScreen: (n: number, fn: UpgradeSelectionFn) => void;
+  showUpgradeScreen: (n: number, xpE: number, fn: UpgradeSelectionFn) => void;
   hideUpgradeScreen: () => void;
   storeCurrentXPInBag: (n: number) => void;
 };
@@ -110,13 +111,7 @@ const UI = ({ gameState }: { gameState: GameState }) => {
   const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
-      {onUpgradeScreen && onSelect && (
-        <Upgrade
-          bagXps={gameState.bagXps}
-          minute={onUpgradeScreen}
-          onSelect={onSelect}
-        />
-      )}
+      {onUpgradeScreen && onSelect && <Upgrade gameState={gameState} onSelect={onSelect} />}
       <Timer time={gameState.elapsedTime} />
       <div id="beneath-timer">
         <HealthBar
@@ -136,6 +131,7 @@ export default (): UIMethods => {
     felixMaxHP: 4,
     totalXp: 0,
     currentXp: 0,
+    expectedMinuteXp: null,
     bagXps: [],
     chosenWeapons: [],
     onUpgradeScreen: null,
@@ -197,9 +193,14 @@ export default (): UIMethods => {
     getGameState() {
       return gameState;
     },
-    showUpgradeScreen(minute: number, onSelection: UpgradeSelectionFn) {
+    showUpgradeScreen(
+      minute: number,
+      expectedXp: number,
+      onSelection: UpgradeSelectionFn
+    ) {
       gameState.onUpgradeScreen = minute;
       gameState.upgradeSelectionFn = onSelection;
+      gameState.expectedMinuteXp = expectedXp;
       setStateDirty();
     },
     hideUpgradeScreen() {

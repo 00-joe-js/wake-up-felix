@@ -52,7 +52,24 @@ export default class Director {
     private gemsManager: GemsManager;
     private gemFnCollection: ((dt: number, p: Vector2) => boolean | null)[] = [];
 
-    constructor(creationTime: number, scene: Scene, felix: FelixCamera, ui: UIMethods, clockNumMeshes: Mesh<BufferGeometry, MeshStandardMaterial>[]) {
+    // Upgrade stuff.
+    private increaseSpeed: Function;
+    private weaponDamageScalar: number = 1;
+    private enemyMovementScalar: number = 1;
+
+    private specificWeaponScalars: { [k: string]: number } = {};
+
+    private cancelTempUpgradeFns: Function[] = [];
+
+    constructor(
+        creationTime: number,
+        scene: Scene,
+        felix: FelixCamera,
+        ui: UIMethods,
+        clockNumMeshes: Mesh<BufferGeometry, MeshStandardMaterial>[],
+        // Upgrade Stuff
+        increaseSpeed: Function,
+    ) {
         this.startTime = creationTime;
         this.scene = scene;
         this.felix = felix;
@@ -61,6 +78,7 @@ export default class Director {
         this.damageNumbers = new DamagePlane();
         this.baggie = new Baggie(this.scene);
         this.gemsManager = new GemsManager(this.scene, this.ui);
+        this.increaseSpeed = increaseSpeed;
     }
 
     private makeEraEnemy(era: string) {
@@ -96,7 +114,7 @@ export default class Director {
         this.arsenal = arsenal;
     }
 
-    public activateWeapon(minute: number) {
+    public activateWeapon(minute: number, scalar: number = 1) {
         const weapon = this.arsenal.get(minute);
 
         if (!weapon) {
@@ -113,6 +131,8 @@ export default class Director {
         }
 
         this.addWeapon(weapon);
+        this.specificWeaponScalars[minute] = scalar;
+
     }
 
     private activateMinuteReached(newMinute: number) {
@@ -135,7 +155,8 @@ export default class Director {
 
     private createClockNumberEnemy(): ClockNumEnemy {
 
-        const correctMesh = this.clockNumMeshes[this.canonicalGameMinute];
+        const useIndex = this.canonicalGameMinute === 12 ? 0 : this.canonicalGameMinute;
+        const correctMesh = this.clockNumMeshes[useIndex];
 
         const clockEnemy = new ClockNumEnemy(
             // @ts-ignore
@@ -179,10 +200,14 @@ export default class Director {
 
             if (weaponCollide) {
 
-                // To be replaced with weapon properties.
-                // MAYBE this should come from detectCollision,
-                // for reasons like the scaling of II
-                const weaponDamage = MathUtils.randInt(weapon.minDamage, weapon.maxDamage);
+                let weaponDamage = MathUtils.randInt(weapon.minDamage, weapon.maxDamage);
+                if (weapon.minute) {
+                    const thisWeaponsScalar = this.specificWeaponScalars[weapon.minute];
+                    if (!thisWeaponsScalar) throw new Error("Missing weapon scalar??");
+                    weaponDamage *= thisWeaponsScalar;
+                }
+                weaponDamage *= this.weaponDamageScalar;
+                weaponDamage = Math.ceil(weaponDamage);
 
                 const hitTakenAndShouldDie = enemy.takeDamage(weaponDamage, weapon, dt);
 
@@ -233,6 +258,68 @@ export default class Director {
         }
     }
 
+    private applyGeneralUpgrade(id: string, scalingFactor: number) {
+
+        this.cancelTempUpgradeFns.forEach(f => f());
+        this.cancelTempUpgradeFns = [];
+
+        switch (id) {
+            case "MORE_SPEED":
+                this.increaseSpeed(0.2 * scalingFactor);
+                break;
+            case "MORE_WEAPON_DAMAGE":
+                this.weaponDamageScalar += 0.25 * scalingFactor; // 25% more damage.
+                break;
+            case "HEAL_NOW":
+                this.felix.heal(1 * scalingFactor);
+                break;
+            case "SLOWER_ENEMIES":
+                this.enemyMovementScalar -= 0.1 * scalingFactor;
+                this.cancelTempUpgradeFns.push(() => {
+                    this.enemyMovementScalar = 1;
+                });
+                break;
+            case "PICK_UP_RANGE":
+                this.gemsManager.increaseGemPickupDistance(7.5 * scalingFactor);
+                break;
+            case "FREEZE":
+                this.allEnemies.forEach(e => {
+                    e.stun += 15000 * scalingFactor;
+                });
+                break;
+            case "LUCKY":
+                this.gemsManager.increaseRareChance(0.1 * scalingFactor);
+                break;
+            default:
+                throw new Error(`Unknown upgrade id ${id}`);
+        }
+
+    }
+
+    private getExpectedXPForMinute(m: number) {
+        const minutesToExpected: { [k: string]: number } = {
+            "1": 100,
+            "2": 200,
+            "3": 300,
+            "4": 400,
+            "5": 500,
+            "6": 600,
+            "7": 700,
+            "8": 800,
+            "9": 900,
+            "10": 1000,
+            "11": 1100,
+            "12": 1200,
+        };
+
+        const DIV = 0.05;
+        Object.keys(minutesToExpected).forEach((k) => {
+            minutesToExpected[k] = minutesToExpected[k] * DIV;
+        });
+
+        return minutesToExpected[m.toString()];
+    }
+
     private processPickups(dt: number, felixPos: Vector2) {
 
         const gemsToRemove: Function[] = [];
@@ -252,19 +339,22 @@ export default class Director {
             // Almost always just 1, and if not the next frame will get the next.
             const pickedupBag = pickedupBags[0];
             pauseRendering();
-            this.ui.showUpgradeScreen(pickedupBag.forMinute, (choseWeapon: boolean, upgradeId: string | null) => {
-                if (choseWeapon) {
-                    this.activateWeapon(pickedupBag.forMinute);
-                } else {
-                    console.log(`One ${upgradeId}, coming right up!`);
-                }
-                this.scene.remove(pickedupBag.mesh);
-                this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
-                this.ui.hideUpgradeScreen();
-                setTimeout(() => {
-                    resumeRendering();
-                }, 200);
-            });
+            this.ui.showUpgradeScreen(
+                pickedupBag.forMinute,
+                this.getExpectedXPForMinute(pickedupBag.forMinute),
+                (choseWeapon: boolean, upgradeId: string | null, scalar: number) => {
+                    if (choseWeapon) {
+                        this.activateWeapon(pickedupBag.forMinute, scalar);
+                    } else if (upgradeId) {
+                        this.applyGeneralUpgrade(upgradeId, scalar);
+                    }
+                    this.scene.remove(pickedupBag.mesh);
+                    this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
+                    this.ui.hideUpgradeScreen();
+                    setTimeout(() => {
+                        resumeRendering();
+                    }, 200);
+                });
         }
 
 
@@ -291,7 +381,7 @@ export default class Director {
             const killedThisFrame = this.processWeaponCollisions(enemy, dt, destroyedEnemiesThisFrame);
 
             if (!killedThisFrame) {
-                enemy.moveTowards(felixPos, dt, elapsed);
+                enemy.moveTowards(felixPos, dt, elapsed, this.enemyMovementScalar);
                 if (enemy.stun <= 0) {
                     this.processFelixCollision(enemy, dt);
                 }

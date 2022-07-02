@@ -5,19 +5,24 @@ import fatherTimeLaugh from "../../assets/father_time_laughter.png";
 import fatherTimeUpset from "../../assets/father_time_upset.png";
 import fatherTimeRage from "../../assets/father_time_rage.png";
 
-import { UpgradeSelectionFn, BagXp } from ".";
+import { GameState, UpgradeSelectionFn } from ".";
 import upgrades from "../Baggie/upgrades";
 import weaponDescriptions, { WeaponDescription } from "./weaponDescriptions";
+import shuffleArray from "shuffle-array";
 
 const Upgrade = ({
-  minute,
+  gameState,
   onSelect,
-  bagXps,
 }: {
-  bagXps: BagXp[];
-  minute: number;
+  gameState: GameState;
   onSelect: UpgradeSelectionFn;
 }) => {
+  const { onUpgradeScreen: minute, bagXps, expectedMinuteXp } = gameState;
+
+  const threeRandomUpgrades = useMemo(() => {
+    return shuffleArray(upgrades.slice(0)).slice(0, 3);
+  }, [minute]);
+
   const container = useRef<HTMLDivElement>(null);
   const [selectionMade, setSelectionMade] = useState(false);
 
@@ -31,13 +36,15 @@ const Upgrade = ({
     }
   }, [selectionMade]);
 
-  const weaponDescription: WeaponDescription = useMemo(() => {
+  const weaponDescription: WeaponDescription | null = useMemo(() => {
+    if (!minute) return null;
     const d = weaponDescriptions[minute];
     if (!d) throw new Error(`No weapon details for minute ${minute}`);
     return d;
   }, [minute]);
 
   const xpForThisBag = useMemo(() => {
+    if (!minute) return null;
     const bag = bagXps.find((b) => b.minute === minute);
     if (!bag) {
       throw new Error("No bagged XP for this minute upgrade.");
@@ -52,20 +59,33 @@ const Upgrade = ({
     }
   }, [opacity]);
 
+  if (expectedMinuteXp === null) {
+    throw new Error("Should not render without expectedMinuteXp.");
+  }
+
+  if (!weaponDescription || !xpForThisBag) return null;
+
+  const scalar = xpForThisBag / expectedMinuteXp;
+
   return (
     <div id="upgrade-container" ref={container} style={{ opacity }}>
       <div className="got-the-bag">
         <h1>You got the {minute}:00 bag!</h1>
         <div className="xp-stats">
-          <h3>
-            XP collected during this minute: <strong>{xpForThisBag}</strong>
-          </h3>
           <div className="scaling-result">
             <img className="father-time" src={fatherTimeContent} />
-            <h2>
-              This weapon or upgrade will be{" "}
-              <strong>{(xpForThisBag / 50).toFixed(2)}x</strong> as powerful!
-            </h2>
+            <div>
+              <h3>
+                XP collected during this minute: <strong>{xpForThisBag}</strong>
+              </h3>
+              <h3>
+                XP needed by Father Time: <strong>{expectedMinuteXp}</strong>
+              </h3>
+              <h2>
+                This weapon or upgrade will be{" "}
+                <strong>{scalar.toFixed(2)}x</strong> as powerful!
+              </h2>
+            </div>
           </div>
         </div>
       </div>
@@ -83,7 +103,7 @@ const Upgrade = ({
             onClick={() => {
               if (selectionMade) return;
               setSelectionMade(true);
-              onSelect(true, null);
+              onSelect(true, null, scalar);
             }}
           >
             Claim <br />
@@ -94,7 +114,7 @@ const Upgrade = ({
         <div className="divider-vertical" />
         <div className="choose-upgrade">
           <h1>Or, have an upgrade ...</h1>
-          {upgrades.map((u) => {
+          {threeRandomUpgrades.map((u) => {
             return (
               <div
                 className="one-upgrade"
@@ -102,7 +122,7 @@ const Upgrade = ({
                 onClick={() => {
                   if (selectionMade) return;
                   setSelectionMade(true);
-                  onSelect(false, u.id);
+                  onSelect(false, u.id, scalar);
                 }}
               >
                 <h2>{u.name}</h2>

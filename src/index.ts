@@ -167,7 +167,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 1.2;
+            let FELIX_SPEED = 1.2;
 
             loopHooks.push((dt, elapsed) => {
 
@@ -241,11 +241,13 @@ const getWeaponMeshes = (gltfGroup: Group) => {
                 itsMeFelix.update(dt, felixFlipped, felixWalking);
             });
 
-            const theDirector = new Director(dt, scene, fCam, uiMethods, staticClockMeshes);
+            const theDirector = new Director(dt, scene, fCam, uiMethods, staticClockMeshes, (addSpeedValue: number) => {
+                FELIX_SPEED += addSpeedValue;
+            });
 
             const bullet = new Bullet();
-            // scene.add(bullet.group);
-            // theDirector.addWeapon(bullet);
+            scene.add(bullet.group);
+            theDirector.addWeapon(bullet);
 
             const clockWeaponMeshes = getWeaponMeshes(clockNumsGroup);
 
@@ -280,16 +282,16 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             // Major things left to do:
 
-            // Better enemy hitboxes
-            // Applying and creating more general upgrades (non-weapon)
             // Balancing full runs and final wave
-            // Sound+Music implementation
+
             // Lootlocker Leaderboard
-            // Start, Help, About screens
+            // Sound+Music implementation
+            // Start, Help, About, Game Over screens
             // Escape to pause
             // Good screen sizing
             // Visual upgrades to some weapons
 
+            // baggie shader/texture
             // 8 smoke shader
             // 9 lightning shader
             // 12 clock?

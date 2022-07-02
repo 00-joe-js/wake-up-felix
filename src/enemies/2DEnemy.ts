@@ -60,7 +60,7 @@ export default class TwoDEnemy {
         this.reverseFlip = true;
     }
 
-    moveTowards(pos: Vector2, dt: number, elapsed: number) {
+    moveTowards(pos: Vector2, dt: number, elapsed: number, upgradeScalar: number = 1) {
 
         if (this.stun > 0) {
             this.object.position.x += MathUtils.randFloat(-1, 1);
@@ -80,6 +80,7 @@ export default class TwoDEnemy {
         _v2.normalize();
 
         _v2.divideScalar(this.speed);
+        _v2.multiplyScalar(upgradeScalar);
 
         const movementTimeScale = elapsed / 16.667;
 

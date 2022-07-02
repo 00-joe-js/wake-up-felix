@@ -81,6 +81,11 @@ class FelixCamera {
         }
     }
 
+    public heal(amount: number) {
+        this.health += amount;
+        this.ui.setFelixHP(this.health);
+    }
+
 }
 
 export default FelixCamera;

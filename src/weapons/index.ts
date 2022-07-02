@@ -16,6 +16,7 @@ export default class Weapon {
     public maxDamage: number = 0;
     public hitDelay: number = 1000;
     public stunValue: number = 500;
+    public minute: number | null = null;
     update(dt: number, elapsed: number, pos: Vector2, allEnemies: GameEnemy[]) {
         throw new Error("Not implemented");
     }
@@ -73,6 +74,8 @@ export class One extends Weapon {
     stunValue = 20;
     minDamage: number = 3;
     maxDamage: number = 6;
+
+    minute = 1;
 
     static ONE_DIR: Vector3 =
         new Vector3(0, 0, -1)
@@ -150,6 +153,8 @@ export class Two extends Weapon {
     minDamage: number = 10;
     maxDamage: number = 20;
 
+    minute = 2;
+
     static TWO_DIR: Vector3 =
         new Vector3(0, 0, -1)
             .applyAxisAngle(new Vector3(0, 1, 0), -Math.PI / 6 * 2);
@@ -207,6 +212,8 @@ export class Three extends Weapon {
     maxDamage = 3;
     stunValue = 300;
     hitDelay = 600;
+
+    minute = 3;
 
     private lastPlace: number = 0;
 
@@ -270,6 +277,8 @@ export class Four extends Weapon {
     stunValue = 1000;
     hitDelay = 1000;
 
+    minute = 4;
+
     constructor(mesh: Mesh, scene: Scene) {
         super();
         this.group = new Group();
@@ -315,6 +324,8 @@ export class Five extends Weapon {
     maxDamage = 25;
     stunValue = 1500;
     hitDelay = 3000;
+
+    minute = 5;
 
     private shields: Mesh[] = [];
 
@@ -369,6 +380,7 @@ export class Six extends Weapon {
     maxDamage = 1;
     hitDelay = 0;
 
+    minute = 6;
 
     private activeProjectiles: ({ mesh: Mesh, target: GameEnemy })[] = [];
 
@@ -517,6 +529,8 @@ export class Seven extends Weapon {
     maxDamage = 10;
     hitDelay = 750;
 
+    minute = 7;
+
     private sourceLight: PointLight = new PointLight(0xffaa00, 1, 100);
 
     constructor(mesh: Mesh, scene: Scene) {
@@ -556,7 +570,9 @@ export class Eight extends Weapon {
     stunValue = 150;
     minDamage = 5;
     maxDamage = 10;
-    hitDelay = 750;
+    hitDelay = 200;
+
+    minute = 8;
 
     activeStacks: { group: Group, timePlaced: number }[] = [];
 
@@ -657,6 +673,8 @@ export class Nine extends Weapon {
     minDamage = 10;
     maxDamage = 15;
     hitDelay = 500;
+
+    minute = 9;
 
     private placedCoils: { group: Group, timePlaced: number, lastZapTime: number }[] = [];
 
@@ -797,6 +815,8 @@ export class Ten extends Weapon {
     maxDamage: number = 6;
     hitDelay = 500;
 
+    minute = 10;
+
     private throwDelay: number = 250;
 
     static ONE_DIR: Vector3 =
@@ -891,6 +911,8 @@ export class Eleven extends Weapon {
     minDamage: number = 10;
     maxDamage: number = 20;
 
+    minute = 11;
+
     private activeProjectiles: ({ mesh: Mesh, thrownTime: number, dir: Vector3, showDelay: number, shown: boolean })[] = [];
     private lastThrowsTime: number = -11000;
     private delay: number = 11000;
@@ -975,6 +997,8 @@ export class Twelve extends Weapon {
     maxDamage = 50;
     hitDelay = 100;
 
+    minute = 12;
+
     private tickDelay: number = 1000 / 12;
     private lastTick: number = 0;
 
@@ -1025,7 +1049,9 @@ export class Twelve extends Weapon {
     }
 
     detectCollision(enemy: TwoDEnemy): boolean {
+
         this._box.setFromObject(this.modelMesh);
+        this._box.expandByScalar(1.5);
 
         if (this._box.containsPoint(enemy.object.position)) {
             return true;
