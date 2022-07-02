@@ -59,11 +59,11 @@ const HealthBar = ({
   currentHP: number;
   totalHP: number;
 }) => {
-  const faceClasses = ["mad-hurt", "uh-oh", "anger", "feeling-good"];
+  const faceClasses = ["mad-hurt", "uh-oh", "angry", "feeling-good"];
 
   if (totalHP === 5) {
     // Todo: replace with Roman.
-    faceClasses.push("feeling-good");
+    faceClasses.push("war");
   }
 
   return (

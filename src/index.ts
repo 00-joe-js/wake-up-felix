@@ -167,7 +167,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            const FELIX_SPEED = 1;
+            const FELIX_SPEED = 1.2;
 
             loopHooks.push((dt, elapsed) => {
 
@@ -255,8 +255,6 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const numberFourWeapon = new Four(clockWeaponMeshes[3], scene);
             const numberFiveWeapon = new Five(clockWeaponMeshes[4], scene);
             const numberSixWeapon = new Six(clockWeaponMeshes[5], scene);
-
-            console.log(numberSixWeapon);
 
             const arsenal = new Map();
             arsenal.set(1, numberOneWeapon);

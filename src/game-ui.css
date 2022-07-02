@@ -36,23 +36,27 @@
 .felix-face {
   width: 5rem;
   height: 5rem;
-  background-size: 400%;
+  background-size: 500%;
 }
 
 .felix-face.mad-hurt {
-  background-position: 153px 2px;
-}
-
-.felix-face.feeling-good {
   background-position: 236px 2px;
 }
 
-.felix-face.uh-oh {
+.felix-face.feeling-good {
   background-position: 320px 2px;
 }
 
-.felix-face.anger {
+.felix-face.uh-oh {
   background-position: 399px 2px;
+}
+
+.felix-face.anger {
+  background-position: 559px 2px;
+}
+
+.felix-face.war {
+  background-position: 480px 2px;
 }
 
 #upgrade-container {

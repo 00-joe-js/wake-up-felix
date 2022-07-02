@@ -36,8 +36,8 @@ export class OGBullet extends Weapon {
 
     stunValue = 1000;
 
-    public minDamage: number = 10;
-    public maxDamage: number = 20;
+    public minDamage: number = 100;
+    public maxDamage: number = 200;
 
     constructor() {
         super();

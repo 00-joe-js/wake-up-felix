@@ -154,7 +154,7 @@ export default class Director {
             this.tick = secondRoundedDown;
             if (this.tick % 5 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(5).forEach(() => this.makeEraEnemy(era));
+                range(1).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
