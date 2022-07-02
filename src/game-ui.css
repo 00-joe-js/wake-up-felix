@@ -188,7 +188,12 @@
   align-items: center;
 }
 
+.choose-upgrade h1 {
+  margin: 0;
+}
+
 .one-upgrade {
+  position: relative;
   cursor: pointer;
   text-align: center;
   background: rgba(100, 100, 0, 0.9);
@@ -203,4 +208,24 @@
 
 .one-upgrade h2 {
   font-size: 2rem;
+}
+
+.bonus {
+  font-size: 1.5rem;
+  padding: 1rem;
+}
+
+.bonus.good {
+  background: rgb(0, 150, 150);
+}
+
+.bonus.bad {
+  background: red;
+}
+
+.one-upgrade .bonus {
+  position: absolute;
+  top: -1.5rem;
+  right: -1rem;
+  font-size: 1rem;
 }

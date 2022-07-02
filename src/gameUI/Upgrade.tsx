@@ -66,6 +66,9 @@ const Upgrade = ({
   if (!weaponDescription || !xpForThisBag) return null;
 
   const scalar = xpForThisBag / expectedMinuteXp;
+  const perc = (scalar * 100).toFixed(0) + "%";
+  const extraBonusClass = scalar >= 1 ? "good" : "bad";
+  const punc = extraBonusClass === "good" ? "!" : " ...";
 
   return (
     <div id="upgrade-container" ref={container} style={{ opacity }}>
@@ -110,6 +113,9 @@ const Upgrade = ({
             <strong>{weaponDescription.roman}</strong>
             <br /> as your weapon
           </h2>
+          <span className={`bonus ${extraBonusClass}`}>
+            {perc} damage{punc}
+          </span>
         </div>
         <div className="divider-vertical" />
         <div className="choose-upgrade">
@@ -127,6 +133,9 @@ const Upgrade = ({
               >
                 <h2>{u.name}</h2>
                 <p>{u.description}</p>
+                <span className={`bonus ${extraBonusClass}`}>
+                  {u.scalarLabel(perc, scalar)}{punc}
+                </span>
               </div>
             );
           })}

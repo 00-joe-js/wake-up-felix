@@ -339,6 +339,8 @@ export default class Director {
             // Almost always just 1, and if not the next frame will get the next.
             const pickedupBag = pickedupBags[0];
             pauseRendering();
+            this.scene.remove(pickedupBag.mesh);
+            this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
             this.ui.showUpgradeScreen(
                 pickedupBag.forMinute,
                 this.getExpectedXPForMinute(pickedupBag.forMinute),
@@ -348,8 +350,6 @@ export default class Director {
                     } else if (upgradeId) {
                         this.applyGeneralUpgrade(upgradeId, scalar);
                     }
-                    this.scene.remove(pickedupBag.mesh);
-                    this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
                     this.ui.hideUpgradeScreen();
                     setTimeout(() => {
                         resumeRendering();
