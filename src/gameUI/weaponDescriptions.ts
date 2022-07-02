@@ -29,6 +29,11 @@ const lib: { [k: string]: WeaponDescription } = {
         roman: "V",
         heading: "Surround yourself with protective shields and get 1 extra HP (for a total of 5:00).",
         elaborate: "More health always helps, not to mention this orbiting wall! The same enemy cannot be hit very frequently with these shields, so be careful."
+    },
+    "6": {
+        roman: "VI",
+        heading: "A magic scepter that hovers below you at 6:00. It fires orbs at random nearby enemies, but only 6 at a time.",
+        elaborate: "This weapon excels against single enemies, but struggles against hordes."
     }
 };
 

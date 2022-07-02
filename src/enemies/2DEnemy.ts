@@ -24,6 +24,7 @@ export default class TwoDEnemy {
 
     public health: number = 15;
     public stun: number = 0;
+    public isDead: boolean = false;
 
     private width: number;
     private height: number;

@@ -11,6 +11,7 @@ export default class ClockNumEnemy {
     public minute: number;
     public health: number = 20;
     public stun: number = 0;
+    public isDead: boolean = false;
 
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
 

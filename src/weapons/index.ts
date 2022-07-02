@@ -1,6 +1,6 @@
 import bulletUrl from "../../assets/bullet.png";
 
-import { BoxGeometry, Group, Mesh, Object3D, PointLight, Scene, Vector2, Vector3 } from "three";
+import { Box3, BoxGeometry, Group, MathUtils, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Object3D, PointLight, Scene, Sphere, SphereGeometry, Vector2, Vector3 } from "three";
 
 import { shake } from "../renderer";
 import SpritePlane from "../SpritePlane";
@@ -8,19 +8,21 @@ import { rotateAboutPoint, withinDistance2D } from "../utils";
 import TwoDEnemy from "../enemies/2DEnemy";
 import ClockNumEnemy from "../enemies/ClockNum";
 
+type GameEnemy = TwoDEnemy | ClockNumEnemy;
+
 export default class Weapon {
     public group: Object3D = new Group();
     public minDamage: number = 0;
     public maxDamage: number = 0;
     public hitDelay: number = 1000;
     public stunValue: number = 500;
-    update(dt: number, elapsed: number, pos: Vector2) {
+    update(dt: number, elapsed: number, pos: Vector2, allEnemies: GameEnemy[]) {
         throw new Error("Not implemented");
     }
-    detectCollision(enemy: TwoDEnemy | ClockNumEnemy): boolean {
+    detectCollision(enemy: GameEnemy): boolean {
         throw new Error("Not implemented");
     }
-    onEnemyCollide(enemy: TwoDEnemy | ClockNumEnemy) {
+    onEnemyCollide(enemy: GameEnemy) {
         throw new Error("Not implemented");
     }
 }
@@ -34,8 +36,8 @@ export class OGBullet extends Weapon {
 
     stunValue = 1000;
 
-    public minDamage: number = 50;
-    public maxDamage: number = 100;
+    public minDamage: number = 10;
+    public maxDamage: number = 20;
 
     constructor() {
         super();
@@ -53,7 +55,7 @@ export class OGBullet extends Weapon {
         this.sprite.update(dt, c < 0, true);
     }
 
-    detectCollision(enemy: TwoDEnemy | ClockNumEnemy): boolean {
+    detectCollision(enemy: GameEnemy): boolean {
         return withinDistance2D(OGBullet.COLLIDE_DISTANCE,
             this.group.position.x, enemy.object.position.x,
             this.group.position.z, enemy.object.position.z);
@@ -358,5 +360,157 @@ export class Five extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
+    }
+}
+
+export class Six extends Weapon {
+
+    group: Group;
+    modelMesh: Mesh;
+    scene: Scene;
+
+    stunValue = 5;
+    minDamage = 1;
+    maxDamage = 1;
+    hitDelay = 0;
+
+    static ONE_DIR: Vector3 =
+        new Vector3(0, 0, -1)
+            .applyAxisAngle(new Vector3(0, 1, 0), -Math.PI / 6)
+            .multiplyScalar(5);
+
+    private activeProjectiles: ({ mesh: Mesh, target: GameEnemy })[] = [];
+
+    private sourceLight: PointLight = new PointLight(0xddff00, 2, 15);
+
+    private movementVector: Vector3 = new Vector3();
+    private findVector: Vector3 = new Vector3();
+    private findBox: Box3 = new Box3();
+
+    private shotDelay = 100;
+    private lastShotTime = 0;
+
+    constructor(mesh: Mesh, scene: Scene) {
+        super();
+        this.group = new Group();
+        this.scene = scene;
+        this.modelMesh = mesh;
+        this.modelMesh.position.z = 25;
+        this.sourceLight.position.z = 15;
+        this.group.add(this.modelMesh);
+        this.group.add(this.sourceLight);
+    }
+
+    makeProjectileMesh() {
+        const m = new Mesh(
+            new SphereGeometry(2, 20, 20),
+            new MeshPhongMaterial({ color: 0x99aa00, shininess: 100 })
+        );
+        return m;
+    }
+
+    findEnemyInRange(felixPos: Vector2, allEnemies: GameEnemy[]): GameEnemy | null {
+        this.findVector.set(felixPos.x, 0, felixPos.y);
+        const zoneSphere = new Sphere(this.findVector, 100);
+        zoneSphere.getBoundingBox(this.findBox);
+        const enemiesInZone = allEnemies.filter((enemy) => {
+            const pos = enemy.object.position;
+            const test = this.findBox.containsPoint(pos);
+            return test;
+        });
+        if (enemiesInZone.length === 0) return null;
+        return enemiesInZone[MathUtils.randInt(0, enemiesInZone.length - 1)];
+    }
+
+    update(dt: number, elapsed: number, felixPos: Vector2, allEnemies: GameEnemy[]) {
+        this.group.position.set(felixPos.x, 5, felixPos.y);
+        this.modelMesh.rotation.y = -Math.PI / 2 + Math.sin(dt / 500) / 2;
+
+        if (this.activeProjectiles.length < 6) {
+            if (dt - this.lastShotTime > this.shotDelay) {
+                this.findVector.set(felixPos.x, 0, felixPos.y);
+                const zoneSphere = new Sphere(this.findVector, 100);
+                zoneSphere.getBoundingBox(this.findBox);
+                const enemiesInZone = allEnemies.filter((enemy) => {
+                    const pos = enemy.object.position;
+                    const test = this.findBox.containsPoint(pos);
+                    return test;
+                });
+                if (enemiesInZone.length !== 0) {
+                    const target = enemiesInZone[MathUtils.randInt(0, enemiesInZone.length - 1)];
+                    const mesh = this.makeProjectileMesh();
+                    mesh.position.copy(this.group.position);
+                    mesh.position.z += 15;
+                    mesh.position.y = 40;
+                    this.lastShotTime = dt;
+                    this.scene.add(mesh);
+                    this.activeProjectiles.push({
+                        target,
+                        mesh
+                    });
+                }
+            }
+        }
+
+        this.activeProjectiles.forEach((p) => {
+
+            const { mesh, target } = p;
+
+            if (target.isDead) {
+                const newTarget = this.findEnemyInRange(felixPos, allEnemies);
+                if (newTarget === null) {
+                    this.scene.remove(mesh);
+                    this.activeProjectiles = this.activeProjectiles.filter(p => p.mesh !== mesh);
+                } else {
+                    p.target = newTarget;
+                }
+                return;
+            }
+
+            const enemyPos = target.object.position;
+
+            this.movementVector.subVectors(enemyPos, mesh.position);
+
+            this.movementVector.normalize();
+            this.movementVector.multiplyScalar(1.5);
+
+            mesh.position.add(this.movementVector);
+
+            const shouldDissapear = withinDistance2D(1, mesh.position.x, enemyPos.x, mesh.position.z, enemyPos.z);
+
+            if (shouldDissapear) {
+                this.scene.remove(mesh);
+                this.activeProjectiles = this.activeProjectiles.filter(p => p.mesh !== mesh);
+            }
+
+        });
+
+    }
+
+    detectCollision(enemy: TwoDEnemy): boolean {
+        const projectilesTowardsThisEnemy = this.activeProjectiles.filter(({ target }) => {
+            return target === enemy;
+        });
+
+        if (projectilesTowardsThisEnemy.length === 0) {
+            return false;
+        }
+
+        const enemyPos = enemy.object.position;
+
+        const impactingProjectiles = projectilesTowardsThisEnemy.filter(({ mesh }) => {
+            return withinDistance2D(5, mesh.position.x, enemyPos.x, mesh.position.z, enemyPos.z);
+        });
+
+        if (impactingProjectiles.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    onEnemyCollide(enemy: TwoDEnemy): void {
+
     }
 }

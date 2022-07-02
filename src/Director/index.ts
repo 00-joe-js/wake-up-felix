@@ -90,8 +90,10 @@ export default class Director {
         this.arsenal = arsenal;
     }
 
-    private activateWeapon(minute: number) {
+    public activateWeapon(minute: number) {
         const weapon = this.arsenal.get(minute);
+
+        console.log(this.arsenal);
 
         if (!weapon) {
             throw new Error(`Failure to activate unknown weapon: ${minute}`);
@@ -152,13 +154,13 @@ export default class Director {
             this.tick = secondRoundedDown;
             if (this.tick % 5 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(2).forEach(() => this.makeEraEnemy(era));
+                range(5).forEach(() => this.makeEraEnemy(era));
             }
         }
     }
 
     private runWeaponMovement(dt: number, elapsed: number, felixPos: Vector2) {
-        this.allWeapons.forEach(w => w.update(dt, elapsed, felixPos));
+        this.allWeapons.forEach(w => w.update(dt, elapsed, felixPos, this.allEnemies));
     }
 
     private processWeaponCollisions(enemy: GameEnemy, dt: number, destroyedEnemies: GameEnemy[]): boolean {
@@ -289,6 +291,10 @@ export default class Director {
                 }
             }
 
+        });
+
+        destroyedEnemiesThisFrame.forEach(e => {
+            e.isDead = true;
         });
 
         if (destroyedEnemiesThisFrame.length > 0) {
