@@ -653,10 +653,10 @@ export class Nine extends Weapon {
     modelMesh: Mesh;
     scene: Scene;
 
-    stunValue = 2000;
-    minDamage = 5;
-    maxDamage = 10;
-    hitDelay = 1000;
+    stunValue = 200;
+    minDamage = 10;
+    maxDamage = 15;
+    hitDelay = 500;
 
     private placedCoils: { group: Group, timePlaced: number, lastZapTime: number }[] = [];
 
@@ -667,11 +667,12 @@ export class Nine extends Weapon {
 
     private findVector: Vector3 = new Vector3();
     private findBox: Box3 = new Box3();
+    private _yellow = 0xffff00;
 
     private lights: PointLight[] = [
-        new PointLight(0x00eeff, 1, 80),
-        new PointLight(0x00eeff, 1, 80),
-        new PointLight(0x00eeff, 1, 80)
+        new PointLight(this._yellow, 1, 80),
+        new PointLight(this._yellow, 1, 80),
+        new PointLight(this._yellow, 1, 80)
     ];
 
     constructor(mesh: Mesh, scene: Scene) {
@@ -684,7 +685,7 @@ export class Nine extends Weapon {
             this.scene.add(l);
             l.intensity = 0;
         });
-        this.lightningMesh = new Mesh(new CylinderGeometry(2, 20, 40), new MeshBasicMaterial({ color: 0x00ffff }));
+        this.lightningMesh = new Mesh(new CylinderGeometry(1, 5, 70), new MeshBasicMaterial({ color: this._yellow }));
         this.lightningMesh.position.y = 40;
         this.lightningMesh.rotation.y = Math.PI / 2;
         this.lightningMesh.visible = false;
@@ -760,7 +761,13 @@ export class Nine extends Weapon {
 
             const gPos = coil.group.position;
 
-            if (dt - coil.lastZapTime < 200) return false;
+            if (dt - coil.lastZapTime < 100) return false;
+
+            // Slight miss chance.
+            if (MathUtils.randFloat(0, 1) < 0.05) {
+                this.lightningMesh.visible = false;
+                return false;
+            }
 
             const inRange = withinDistance2D(40, enemyPos.x, gPos.x, enemyPos.z, gPos.z);
 
@@ -768,9 +775,6 @@ export class Nine extends Weapon {
                 coil.lastZapTime = dt;
                 this.lightningMesh.visible = true;
                 this.lightningMesh.position.set(enemyPos.x, 20, enemyPos.z);
-                setTimeout(() => {
-                    this.lightningMesh.visible = false;
-                }, 100);
                 return true;
             } else {
                 return false;
@@ -966,10 +970,19 @@ export class Twelve extends Weapon {
     modelMesh: Mesh;
     scene: Scene;
 
-    stunValue = 150;
-    minDamage = 5;
-    maxDamage = 10;
-    hitDelay = 750;
+    stunValue = 2000;
+    minDamage = 40;
+    maxDamage = 50;
+    hitDelay = 100;
+
+    private tickDelay: number = 1000 / 12;
+    private lastTick: number = 0;
+
+    private lights: PointLight[] = [];
+
+    private _v3: Vector3 = new Vector3(0, 0, 0);
+    private _axis: Vector3 = new Vector3(0, 1, 0);
+    private _box: Box3 = new Box3();
 
     constructor(mesh: Mesh, scene: Scene) {
         super();
@@ -977,17 +990,52 @@ export class Twelve extends Weapon {
         this.scene = scene;
         this.modelMesh = mesh;
         this.group.add(this.modelMesh);
+        this.modelMesh.rotation.y = -Math.PI / 2;
+        this.modelMesh.position.z = -75;
+        this.modelMesh.scale.set(2, 50, 2);
+
+        this.lights.push(new PointLight(0x00ffff), new PointLight(0x00ffff), new PointLight(0x00ffff));
+
+        this.lights.forEach((l, i) => {
+            this.group.add(l);
+            l.intensity = 1;
+            l.distance = 40;
+            l.position.z = -50 + -50 * i;
+        });
+
     }
 
     update(dt: number, elapsed: number, felixPos: Vector2, allEnemies: GameEnemy[]) {
-        this.group.position.set(felixPos.x, 5, felixPos.y);
+        this.group.position.set(felixPos.x, 15, felixPos.y);
+
+        if (dt - this.lastTick > this.tickDelay) {
+            rotateAboutPoint(this.modelMesh, this._v3, this._axis, -Math.PI / 6);
+            this.lights.forEach(l => {
+                rotateAboutPoint(l, this._v3, this._axis, -Math.PI / 6);
+                l.intensity = MathUtils.randFloat(1, 2);
+            });
+            this.lastTick = dt;
+        }
+
+        this.lights.forEach(l => {
+            // console.log(l.position.y);
+            l.position.y = this.group.position.y + Math.sin(dt / 100) * 5 + 5;
+        });
+
     }
 
     detectCollision(enemy: TwoDEnemy): boolean {
+        this._box.setFromObject(this.modelMesh);
+
+        if (this._box.containsPoint(enemy.object.position)) {
+            return true;
+        }
+
         return false;
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
+
 
     }
 }

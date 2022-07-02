@@ -59,6 +59,11 @@ const lib: { [k: string]: WeaponDescription } = {
         roman: "XI",
         heading: "Every 11 seconds, axes will fly upwards and then fall through your enemies. These axes do MAJOR damage!",
         elaborate: "These axes do tons of damage, they're huge, and they last forever. Downside? Uhhhhhh ..."
+    },
+    "12": {
+        roman: "XII",
+        heading: "The power of the clock itself! Super powerful strips of light appear around you like a ticking clock.",
+        elaborate: "Felix, this weapon is busted!"
     }
 };
 

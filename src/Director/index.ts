@@ -93,8 +93,6 @@ export default class Director {
     public activateWeapon(minute: number) {
         const weapon = this.arsenal.get(minute);
 
-        console.log(this.arsenal);
-
         if (!weapon) {
             throw new Error(`Failure to activate unknown weapon: ${minute}`);
         }
@@ -154,9 +152,9 @@ export default class Director {
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 5 === 0) {
+            if (this.tick % 2 === 0) {
                 const era = this.getCurrentEra(dt)
-                range(1).forEach(() => this.makeEraEnemy(era));
+                range(3).forEach(() => this.makeEraEnemy(era));
             }
         }
     }

@@ -110,7 +110,7 @@ const setStaticClockNumbers = (scene: Scene, gltfGroup: Group): Mesh<BufferGeome
 };
 
 const getWeaponMeshes = (gltfGroup: Group) => {
-    const names = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"].map(s => `${s}Weapon`);
+    const names = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"].map(s => `${s}Weapon`);
     return names.map(n => findWithName(gltfGroup, n));
 };
 
@@ -260,6 +260,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             const numberNineWeapon = new Nine(clockWeaponMeshes[8], scene);
             const numberTenWeapon = new Ten(clockWeaponMeshes[9], scene);
             const numberElevenWeapon = new Eleven(clockWeaponMeshes[10], scene);
+            const numberTwelveWeapon = new Twelve(clockWeaponMeshes[11], scene);
 
             const arsenal = new Map();
             arsenal.set(1, numberOneWeapon);
@@ -273,25 +274,24 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             arsenal.set(9, numberNineWeapon);
             arsenal.set(10, numberTenWeapon);
             arsenal.set(11, numberElevenWeapon);
-            
+            arsenal.set(12, numberTwelveWeapon);
+
             theDirector.provideClockWeapons(arsenal);
-            theDirector.activateWeapon(11);
 
             // Major things left to do:
-                // Weapons 10-12
-                // Sound+Music implementation
-                // Lootlocker Leaderboard
-                // Applying and creating more general upgrades (non-weapon)
-                // Start, Help, About screens
-                // Balancing full runs and final wave
-                // Good screen sizing
-                // Better enemy hitboxes
-                // Visual upgrades to some weapons
-                    // 8 smoke shader
-                    // 9 lightning shader
 
-            // Eleven: vamp survivors axes that fly out at 11oclock angle
-            // Twelve: Clock lancet.
+            // Better enemy hitboxes
+            // Applying and creating more general upgrades (non-weapon)
+            // Balancing full runs and final wave
+            // Sound+Music implementation
+            // Lootlocker Leaderboard
+            // Start, Help, About screens
+            // Good screen sizing
+            // Visual upgrades to some weapons
+
+            // 8 smoke shader
+            // 9 lightning shader
+            // 12 clock?
 
             loopHooks.push((dt, elapsed) => {
                 theDirector.update(dt, elapsed);
