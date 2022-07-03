@@ -312,10 +312,17 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             // Balancing full runs and final wave
 
-            // Lootlocker Leaderboard
-            // Start, Help, About, Game Over screens
             // Good screen sizing
+            
+            // Lootlocker Leaderboard - get leaderboard
+
+            // Start, Help, About, Game Over, Victory screens
+
+            // Loading assets step
+
             // Visual upgrades to weapons
+
+            // Upgrade heal bug/show current HP/prevent from showing at full health?
 
             loopHooks.push((dt, elapsed) => {
                 theDirector.update(dt, elapsed);

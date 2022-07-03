@@ -12,8 +12,12 @@ import ShakeShader from "./shakeShader";
 
 import { Scene, Camera, Vector2, Color, Vector3 } from "three";
 
-const canvasElement = document.querySelector("#three-canvas");
+const container = document.querySelector("#three-canvas-container");
+if (container === null) {
+    throw new Error("Document needs #three-canvas-container");
+}
 
+const canvasElement = document.querySelector("#three-canvas");
 if (canvasElement === null) {
     throw new Error("Document needs #three-canvas.");
 }
@@ -25,10 +29,17 @@ const renderer = new WebGLRenderer({
 
 const composer = new EffectComposer(renderer);
 
-renderer.setSize(canvasElement.clientWidth, canvasElement.clientHeight);
-composer.setSize(canvasElement.clientWidth, canvasElement.clientHeight);
+const resizeScreen = () => {
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    composer.setSize(container.clientWidth, container.clientHeight);
+};
+window.addEventListener("resize", () => {
+    resizeScreen();
+});
 
 renderer.setClearColor(0x000000);
+
+resizeScreen();
 
 const screenRes = new Vector2(canvasElement.clientWidth, canvasElement.clientHeight);
 

@@ -67,12 +67,13 @@ export default class TwoDEnemy {
     moveTowards(pos: Vector2, dt: number, elapsed: number, upgradeScalar: number = 1) {
 
         if (this.stun > 0) {
+            console.log(this.stun);
             this.object.position.x += MathUtils.randFloat(-1, 1);
             this.object.position.z += MathUtils.randFloat(-1, 1);
             this.stun -= elapsed;
             this.sprite.setRed();
             return;
-        } else if (this.stun !== 0) {
+        } else {
             this.sprite.setWhite();
             this.stun = 0;
         }

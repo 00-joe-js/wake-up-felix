@@ -11,7 +11,6 @@ class DamagePlane {
     animations: Array<{ entryTime: number, fn: Function, el: HTMLSpanElement }>;
 
     constructor() {
-        const container = window.getDOMOne("#three-canvas-container");
         const damagePlane = window.getDOMOne("#damage-numbers-plane");
         this.element = damagePlane;
         this.animations = [];
@@ -20,11 +19,11 @@ class DamagePlane {
 
     }
 
-    private convertViewportXYToDOMOffset(vx: number, vy: number) {
+    private convertViewportXYToDOMOffset(vx: number, vy: number, containerWidth: number, containerHeight: number) {
         // x - 0 is 1680 / 2 (840)
         return {
-            left: (CONTAINER_WIDTH / 2) + (CONTAINER_WIDTH / 2 * vx),
-            top: (CONTAINER_HEIGHT / 2) - (CONTAINER_HEIGHT / 2 * vy)
+            left: (containerWidth / 2) + (containerWidth / 2 * vx),
+            top: (containerHeight / 2) - (containerHeight / 2 * vy)
         };
     }
 
@@ -55,12 +54,15 @@ class DamagePlane {
         newElement.classList.add("damage-number");
         newElement.innerText = v.toString();
 
-        const domPosition = this.convertViewportXYToDOMOffset(vx, vy);
+        const planeWidth = this.element.clientWidth;
+        const planeHeight = this.element.clientHeight;
+
+        const domPosition = this.convertViewportXYToDOMOffset(vx, vy, planeWidth, planeHeight);
 
         domPosition.left += MathUtils.randInt(-30, 30);
 
-        domPosition.left = MathUtils.clamp(domPosition.left, 0, CONTAINER_WIDTH);
-        domPosition.top = MathUtils.clamp(domPosition.top, 0, CONTAINER_HEIGHT);
+        domPosition.left = MathUtils.clamp(domPosition.left, 0, planeWidth);
+        domPosition.top = MathUtils.clamp(domPosition.top, 0, planeHeight);
 
         newElement.style.opacity = "1";
         newElement.style.top = `${domPosition.top}px`;

@@ -327,7 +327,7 @@ export default class Director {
                     this.makeEnemyWithName("Viking Cat");
                     this.makeEnemyWithName("Viking Cat");
                     this.makeEnemyWithName("Viking Cat");
-                    
+
                 }
             ]);
 
@@ -450,7 +450,7 @@ export default class Director {
             eventFns[0]();
 
         }
- 
+
     }
 
     private runWeaponMovement(dt: number, elapsed: number, felixPos: Vector2) {

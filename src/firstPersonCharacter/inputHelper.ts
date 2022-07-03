@@ -42,8 +42,6 @@ export class KeyboardInterface {
                 }
                 const kc = e.code;
 
-                console.log(e.code);
-
                 switch (kc) {
                     case W_KEY_CODE:
                         this.wDown = bool;
