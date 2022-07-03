@@ -153,7 +153,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         health: 55,
         speed: 5,
         increasedRarity: 0.4,
-        hitboxPaddingY: -10
+        hitboxPaddingY: -15
     },
     {
         name: "Chimney Sweep",

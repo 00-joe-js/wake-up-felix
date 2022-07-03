@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import felixFacesUrl from "../../assets/felix-faces.png";
 import Upgrade from "./Upgrade";
+import MenuScreens from "./MenuScreens";
 
 export type UpgradeSelectionFn = (
   choseWeapon: boolean,
@@ -19,6 +20,7 @@ export type GameState = {
   elapsedTime: number;
   felixHP: number;
   felixMaxHP: number;
+  gameStarted: boolean;
   totalXp: number;
   currentXp: number;
   bagXps: BagXp[];
@@ -27,6 +29,7 @@ export type GameState = {
   upgradeSelectionFn: UpgradeSelectionFn | null;
   expectedMinuteXp: number | null;
   paused: boolean;
+  startGame: Function | null;
 };
 
 export type UIMethods = {
@@ -42,6 +45,7 @@ export type UIMethods = {
   addChosenWeapon: (m: number) => void;
   showPauseScreen: () => void;
   hidePauseScreen: () => void;
+  provideStartGame: (f: Function) => void;
 };
 
 const zeroPad = (s: string): string => {
@@ -149,6 +153,7 @@ export default (): UIMethods => {
     elapsedTime: 0,
     felixHP: 4,
     felixMaxHP: 4,
+    gameStarted: false,
     totalXp: 0,
     currentXp: 0,
     expectedMinuteXp: null,
@@ -157,6 +162,7 @@ export default (): UIMethods => {
     onUpgradeScreen: null,
     upgradeSelectionFn: null,
     paused: false,
+    startGame: null,
   };
 
   const uiContainer = window.getDOMOne("#game-ui");
@@ -166,11 +172,25 @@ export default (): UIMethods => {
   let stateDirty = true;
 
   const renderLoop = () => {
-    if (stateDirty) {
-      stateDirty = false;
-      root.render(<UI gameState={gameState} />);
+    if (gameState.gameStarted === false) {
+      root.render(
+        <MenuScreens
+          onStartGame={() => {
+            if (gameState.startGame) {
+              gameState.startGame();
+              gameState.gameStarted = true;
+              window.requestAnimationFrame(renderLoop);
+            }
+          }}
+        />
+      );
+    } else {
+      if (stateDirty) {
+        stateDirty = false;
+        root.render(<UI gameState={gameState} />);
+      }
+      window.requestAnimationFrame(renderLoop);
     }
-    window.requestAnimationFrame(renderLoop);
   };
   window.requestAnimationFrame(renderLoop);
 
@@ -240,6 +260,9 @@ export default (): UIMethods => {
     hidePauseScreen() {
       gameState.paused = false;
       setStateDirty();
+    },
+    provideStartGame(f) {
+      gameState.startGame = f;
     },
   };
 };

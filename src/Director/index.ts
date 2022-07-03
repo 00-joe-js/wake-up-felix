@@ -244,15 +244,15 @@ export default class Director {
         const tenMins = 600;
 
         if (t < oneMin) {
-            return 2;
+            return 1;
         }
 
         if (t < threeMins) {
-            return 3;
+            return 2;
         }
 
         if (t < fiveMins) {
-            return 4;
+            return 3;
         }
 
         if (t < eightMins) {
@@ -260,10 +260,10 @@ export default class Director {
         }
 
         if (t < tenMins) {
-            return 6;
+            return 5;
         }
 
-        return 7;
+        return 6;
 
     }
 
@@ -538,7 +538,7 @@ export default class Director {
                 this.weaponDamageScalar += 0.25 * scalingFactor; // 25% more damage.
                 break;
             case "HEAL_NOW":
-                this.felix.heal(1 * scalingFactor);
+                this.felix.heal(Math.floor(1 * scalingFactor));
                 break;
             case "SLOWER_ENEMIES":
                 this.enemyMovementScalar -= 0.1 * scalingFactor;

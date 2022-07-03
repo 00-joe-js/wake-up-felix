@@ -40,23 +40,23 @@
 }
 
 .felix-face.mad-hurt {
-  background-position: 236px 2px;
+  background-position: 15rem 0;
 }
 
 .felix-face.feeling-good {
-  background-position: 320px 2px;
+  background-position: -5rem 0;
 }
 
 .felix-face.uh-oh {
-  background-position: 399px 2px;
+  background-position: 0rem 0;
 }
 
 .felix-face.angry {
-  background-position: 559px 2px;
+  background-position: -15rem 0;
 }
 
 .felix-face.war {
-  background-position: 480px 2px;
+  background-position: 5rem 0;
 }
 
 #upgrade-container {

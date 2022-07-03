@@ -11,28 +11,32 @@ body {
 }
 
 @media (max-width: 1600px) {
-    html {
-      font-size: 13px;
-    }
+  html {
+    font-size: 13px;
   }
-  
-  @media (max-width: 1400px) {
-    html {
-      font-size: 10px;
-    }
+}
+
+@media (max-width: 1400px) {
+  html {
+    font-size: 10px;
   }
-  
-  @media (max-width: 1200px) {
-    html {
-      font-size: 8px;
-    }
+}
+
+@media (max-width: 1200px) {
+  html {
+    font-size: 8px;
   }
-  
-  @media (max-width: 720px) {
-    html {
-      font-size: 4px;
-    }
+}
+
+@media (max-width: 720px) {
+  html {
+    font-size: 4px;
   }
+}
+
+button {
+  cursor: pointer;
+}
 
 #app {
   min-width: 100vw;

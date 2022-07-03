@@ -1,0 +1,122 @@
+#menu-screens {
+  width: 100%;
+  height: 95%;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+#main-menu {
+  width: 100%;
+  height: 100%;
+  background: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#main-menu h1 {
+  font-size: 10rem;
+  margin-bottom: 4rem;
+}
+
+#main-menu-actions {
+  text-align: center;
+}
+
+#main-menu-actions h2 {
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+#main-menu-actions h2:hover {
+  transition: all 0.2s;
+  transform: scale(1.4);
+}
+
+#about {
+  padding: 3rem;
+}
+
+#about h1 strong {
+  font-size: 7rem;
+}
+
+#jam-details {
+  font-family: monospace;
+  font-size: 1.5rem;
+  margin: 3rem 0;
+}
+
+#jam-details strong {
+  color: rgb(150, 150, 150);
+}
+
+#credits {
+  font-family: monospace;
+  font-size: 2rem;
+}
+
+#credits h3 {
+  margin: 1rem 0;
+}
+
+#credits ul {
+  font-size: 1.5rem;
+}
+
+.back-to-main-menu {
+  font-size: 2.5rem;
+  padding: 1rem;
+}
+
+#help-game-start {
+}
+
+.father-time-help {
+  width: 12rem;
+}
+
+#help-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#help-actions button {
+  display: block;
+  font-size: 3rem;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+#how-to-play strong {
+  font-size: 2rem;
+  color: rgb(200, 200, 255);
+}
+
+#leaderboard-page {
+  width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+#leaderboard {
+  flex-grow: 1;
+  max-height: 90%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.score-row {
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.score-row span {
+  font-size: 1.25rem;
+}

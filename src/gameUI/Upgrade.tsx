@@ -70,7 +70,16 @@ const Upgrade = ({
 
   useEffect(() => {
     if (minute && xpForThisBag && expectedMinuteXp) {
-      submitScoreToLeaderboard("Joe", xpForThisBag);
+      submitScoreToLeaderboard(xpForThisBag, shuffleArray(
+        [
+          "I, X, XI",
+          "II, III, V",
+          "IV, V, VI",
+          "VI, VIII, XI",
+          "I, II, III",
+          "II, VII, IX"
+        ]
+      )[0]);
       const scalar = xpForThisBag / expectedMinuteXp;
       if (scalar >= 1) {
         if (scalar >= 2) {

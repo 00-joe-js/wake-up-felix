@@ -1,9 +1,9 @@
 import "./style.css";
 import "./game-ui.css";
+import "./menus.css";
 
 import { Scene, AmbientLight, MeshPhongMaterial, Color, Vector3, Material, CylinderGeometry, MeshBasicMaterial, SphereBufferGeometry, Sphere, SphereGeometry, Group, MathUtils, BufferGeometry, MeshStandardMaterial, Mapping } from "three";
 import { Mesh } from "three";
-
 
 /* GLOBALS */
 declare global {
@@ -15,8 +15,6 @@ declare global {
     var HYPER_BLUE: Color;
     var getDOMOne: (s: string) => HTMLElement
 }
-window.PI = Math.PI;
-window.PI2 = Math.PI * 2;
 window.ZERO_VEC3 = new Vector3(0, 0, 0);
 window.RED = new Color(0xff0000);
 window.BLUE = new Color(0x0000ff);
@@ -114,7 +112,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
     return names.map(n => findWithName(gltfGroup, n));
 };
 
-(async () => {
+const startGame = async () => {
 
     const models = await loadModels();
     const clockNumsGroup = models[0].scene;
@@ -310,19 +308,17 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
             // Major things left to do:
 
-            // Balancing full runs and final wave
-
-            // Good screen sizing
-            
+            // Easier
             // Lootlocker Leaderboard - get leaderboard
-
-            // Start, Help, About, Game Over, Victory screens
-
-            // Loading assets step
-
-            // Visual upgrades to weapons
-
+            // Game Over screen 
+            // Era lore on timer UI
+            // Sounds for certain weapons (arrow, telsa coil, axes?)
             // Upgrade heal bug/show current HP/prevent from showing at full health?
+
+            // Harder
+            // Balancing full runs
+            // Final wave logic + victory screen
+            // Loading assets step? probably
 
             loopHooks.push((dt, elapsed) => {
                 theDirector.update(dt, elapsed);
@@ -354,6 +350,7 @@ const getWeaponMeshes = (gltfGroup: Group) => {
 
     });
 
-})();
+};
 
 
+uiMethods.provideStartGame(startGame);
