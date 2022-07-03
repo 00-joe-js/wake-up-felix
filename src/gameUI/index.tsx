@@ -182,7 +182,7 @@ const UI = ({ gameState }: { gameState: GameState }) => {
   const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
-      {true && <Victory gameState={Object.assign(gameState, { totalXp: 500, chosenWeapons: [1, 5, 9] })} />}
+      {gameState.victorious && <Victory gameState={Object.assign(gameState, { totalXp: 500, chosenWeapons: [1, 5, 9] })} />}
       {gameState.gameOver && <GameOver />}
       {gameState.paused && <PauseScreen />}
       {onUpgradeScreen && onSelect && (
