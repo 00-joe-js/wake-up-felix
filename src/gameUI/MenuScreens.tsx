@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import fatherTimeLaugh from "../../assets/father_time_laughter.png";
 
 import {
-  submitScoreToLeaderboard,
   getLeaderboard,
   registerSession,
   LootLockerScoreRow,
@@ -92,8 +91,12 @@ const Leaderboard = ({ toMainMenu }: { toMainMenu: Function }) => {
             <div className="score-row" key={sc.member_id}>
               <h1 className="score-rank">#{sc.rank}</h1>
               <h1 className="score-member">Felix the Cat #{sc.member_id}</h1>
-              <h1><span>Total XP:</span> {sc.score}</h1>
-              <h1><span>Weapons:</span> {sc.metadata}</h1>
+              <h1>
+                <span>Total XP:</span> {sc.score}
+              </h1>
+              <h1>
+                <span>Weapons:</span> {sc.metadata}
+              </h1>
             </div>
           );
         })}
@@ -185,30 +188,35 @@ const OpeningMenus = ({ onStartGame }: { onStartGame: Function }) => {
   } else if (currentPage === "pre-start") {
     return (
       <div id="help-game-start">
-        <h2>
-          <strong>Felix!</strong> Oh, there you go,{" "}
-          <L href="https://www.youtube.com/watch?v=HSXa7LNMO6s">
-            trifling with time again ...
-          </L>
-          <img className="father-time-help" src={fatherTimeLaugh} />
-          Never gets old.
-        </h2>
-        <h1>
-          And now you're stuck in a time dream! You gotta fight and get back to
-          the present!
-        </h1>
-        <div id="help-actions">
+        <div>
+          <h2>
+            <strong>Felix!</strong> Oh, there you go,{" "}
+            <L href="https://www.youtube.com/watch?v=HSXa7LNMO6s">
+              trifling with time again ...
+            </L>
+            <br />
+            <br />
+            <img className="father-time-help" src={fatherTimeLaugh} />
+            <br />
+            <br />
+            Never gets old.
+          </h2>
+          <h1>
+            And now you're stuck in a time dream! <br />
+            You gotta fight and get back to the present!!
+          </h1>
           <button id="wake-up-button" onClick={() => onStartGame()}>
-            Wake Up!
-          </button>
-          <button
-            onClick={() => {
-              setCurrentPage("main");
-            }}
-          >
-            Back to Main Menu
+            Wake Up!!!
           </button>
         </div>
+        <button
+          className="back-to-main-menu"
+          onClick={() => {
+            setCurrentPage("main");
+          }}
+        >
+          Back to Main Menu
+        </button>
       </div>
     );
   } else if (currentPage === "help") {

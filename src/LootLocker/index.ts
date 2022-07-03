@@ -37,6 +37,7 @@ export const submitScoreToLeaderboard = async (score: number, metadata: string) 
         throw new Error("No session ID established with LootLocker.");
     }
 
+    console.log(score, metadata);
     const response = await axios.post(leaderboardUrl, {
         score, metadata
     }, {
@@ -44,6 +45,8 @@ export const submitScoreToLeaderboard = async (score: number, metadata: string) 
             "x-session-token": sessionId || ""
         }
     });
+
+    console.log(response.data);
 
     return response.data;
 

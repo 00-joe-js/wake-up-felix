@@ -11,6 +11,12 @@
   font-size: 1rem;
 }
 
+#game-ui-content {
+  width: 100%;
+  height: 100%;
+  padding: 0.1px;
+}
+
 #time-display {
   background: rgba(0, 0, 0, 0.5);
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
@@ -267,4 +273,58 @@
 
 #pause strong {
   color: white;
+}
+
+#victory-screen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgb(174, 217, 238);
+  background: linear-gradient(
+    90deg,
+    rgba(174, 217, 238, 1) 0%,
+    rgba(202, 232, 252, 1) 100%
+  );
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#victory-screen h1,
+#victory-screen h2,
+#victory-screen h3,
+#victory-screen h4 {
+  margin: 2rem;
+}
+
+#victory-screen h4 {
+  margin-top: 0.5rem;
+}
+
+#victory-screen .father-time {
+  width: 15rem;
+}
+
+#victory-screen strong {
+  color: rgb(0, 150, 150);
+  font-size: 4rem;
+}
+
+#game-over-screen {
+  position: absolute;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  background: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#game-over-screen h1 {
+  font-size: 5rem;
 }

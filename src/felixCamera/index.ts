@@ -3,11 +3,11 @@ import { PerspectiveCamera, Object3D, PointLight, Scene, Vector2, Box3 } from "t
 import SpritePlane from "../SpritePlane";
 
 import { flash } from "../renderer/flashShader";
-import { shake } from "../renderer";
+import { pauseRendering, shake } from "../renderer";
 
 import type { UIMethods } from "../gameUI";
 
-import { felixHurt } from "../Audio";
+import { felixHurt, gameOver } from "../Audio";
 
 class FelixCamera {
 
@@ -66,7 +66,7 @@ class FelixCamera {
         }
     }
 
-    public takeDamage(dt: number) {
+    public takeDamage(dt: number): boolean {
         if (dt - this.lastDamageTakenTime > 2000) {
             this.health = this.health - 1;
             this.ui.setFelixHP(this.health);
@@ -75,9 +75,13 @@ class FelixCamera {
             shake(400);
             felixHurt.play();
             if (this.health === 0) {
-                // window.location.reload();
+                gameOver.play();
+                this.ui.setGameOver();
+                pauseRendering();
+                return true; // Yeah, I'm ded.
             }
         }
+        return false;
     }
 
     public heal(amount: number) {

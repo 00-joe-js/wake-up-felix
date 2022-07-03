@@ -214,9 +214,9 @@ export class Three extends Weapon {
 
     traps: { mesh: Mesh }[] = [];
 
-    minDamage = 3;
-    maxDamage = 3;
-    stunValue = 300;
+    minDamage = 6;
+    maxDamage = 8;
+    stunValue = 500;
     hitDelay = 600;
 
     minute = 3;
@@ -398,7 +398,7 @@ export class Six extends Weapon {
     private findVector: Vector3 = new Vector3();
     private findBox: Box3 = new Box3();
 
-    private shotDelay = 100;
+    private shotDelay = 200;
     private lastShotTime = 0;
 
     constructor(mesh: Mesh, scene: Scene) {

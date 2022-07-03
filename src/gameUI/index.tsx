@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
 import felixFacesUrl from "../../assets/felix-faces.png";
 import Upgrade from "./Upgrade";
 import MenuScreens from "./MenuScreens";
+import Victory from "./Victory";
 
 export type UpgradeSelectionFn = (
   choseWeapon: boolean,
@@ -30,10 +31,13 @@ export type GameState = {
   expectedMinuteXp: number | null;
   paused: boolean;
   startGame: Function | null;
+  eraMessage: string;
+  victorious: boolean;
+  gameOver: boolean;
 };
 
 export type UIMethods = {
-  setTime: (ms: number) => void;
+  setTime: (ms: number, f?: boolean) => void;
   setFelixHP: (newHP: number) => void;
   increaseFelixMaxHP: () => void;
   addXP: (a: number) => void;
@@ -46,6 +50,10 @@ export type UIMethods = {
   showPauseScreen: () => void;
   hidePauseScreen: () => void;
   provideStartGame: (f: Function) => void;
+  startEndingSequence: () => void;
+  setEraMessage: (s: string) => void;
+  showVictoryScreen: () => void;
+  setGameOver: () => void;
 };
 
 const zeroPad = (s: string): string => {
@@ -98,10 +106,38 @@ const HealthBar = ({
   );
 };
 
-const Timer = ({ time }: { time: number }) => {
+const Timer = ({
+  time,
+  currentEraLabel,
+}: {
+  time: number;
+  currentEraLabel: string;
+}) => {
+  const eraMessageRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (currentEraLabel === "") return;
+    let start = Date.now();
+    const i = setInterval(() => {
+      const elapsed = Date.now() - start;
+      if (eraMessageRef.current) {
+        const r = (Math.sin(elapsed / 100) + 1) / 2;
+        eraMessageRef.current.style.opacity = (r / 2).toString();
+        if (elapsed > 4000 && r > 0.7) {
+          clearInterval(i);
+          eraMessageRef.current.style.opacity = "1";
+        }
+      }
+    });
+    return () => clearInterval(i);
+  }, [currentEraLabel]);
+
   return (
     <div id="time-display">
-      <h1>{formatTime(time)}</h1>
+      <h1>{time !== Infinity ? formatTime(time) : "???"}</h1>
+      <span className="game-era-message" ref={eraMessageRef}>
+        {currentEraLabel}
+      </span>
     </div>
   );
 };
@@ -127,16 +163,35 @@ const PauseScreen = () => {
   );
 };
 
+const GameOver = () => {
+  return (
+    <div id="game-over-screen">
+      <h1>C'mon, Felix ... wake up!</h1>
+      <button
+        className="back-to-main-menu"
+        onClick={() => window.location.reload()}
+      >
+        Back To Main Menu
+      </button>
+    </div>
+  );
+};
+
 const UI = ({ gameState }: { gameState: GameState }) => {
   const onUpgradeScreen = gameState.onUpgradeScreen;
   const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
+      {true && <Victory gameState={Object.assign(gameState, { totalXp: 500, chosenWeapons: [1, 5, 9] })} />}
+      {gameState.gameOver && <GameOver />}
       {gameState.paused && <PauseScreen />}
       {onUpgradeScreen && onSelect && (
         <Upgrade gameState={gameState} onSelect={onSelect} />
       )}
-      <Timer time={gameState.elapsedTime} />
+      <Timer
+        time={gameState.elapsedTime}
+        currentEraLabel={gameState.eraMessage}
+      />
       <div id="beneath-timer">
         <HealthBar
           currentHP={gameState.felixHP}
@@ -154,7 +209,7 @@ export default (): UIMethods => {
     felixHP: 4,
     felixMaxHP: 4,
     gameStarted: false,
-    totalXp: 0,
+    totalXp: 999,
     currentXp: 0,
     expectedMinuteXp: null,
     bagXps: [],
@@ -163,6 +218,9 @@ export default (): UIMethods => {
     upgradeSelectionFn: null,
     paused: false,
     startGame: null,
+    eraMessage: "",
+    victorious: false,
+    gameOver: false,
   };
 
   const uiContainer = window.getDOMOne("#game-ui");
@@ -201,10 +259,10 @@ export default (): UIMethods => {
   let lastKnownSecond = 0;
 
   return {
-    setTime(elapsedMs) {
+    setTime(elapsedMs, forceDirtyState: boolean = false) {
       gameState.elapsedTime = elapsedMs;
       const second = Math.floor(elapsedMs / 1000);
-      if (second > lastKnownSecond) {
+      if (forceDirtyState || second > lastKnownSecond) {
         lastKnownSecond = second;
         setStateDirty();
       }
@@ -263,6 +321,23 @@ export default (): UIMethods => {
     },
     provideStartGame(f) {
       gameState.startGame = f;
+    },
+    startEndingSequence() {
+      gameState.elapsedTime = Infinity;
+      gameState.eraMessage = "???";
+      setStateDirty();
+    },
+    setEraMessage(s: string) {
+      gameState.eraMessage = s;
+      setStateDirty();
+    },
+    showVictoryScreen() {
+      gameState.victorious = true;
+      setStateDirty();
+    },
+    setGameOver() {
+      gameState.gameOver = true;
+      setStateDirty();
     },
   };
 };

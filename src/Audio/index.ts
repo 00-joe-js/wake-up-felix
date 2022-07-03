@@ -13,6 +13,8 @@ import spawnProhibitionUrl from "../../assets/prohibition-spawn.mp3";
 
 import upgradeShowUrl from "../../assets/upgrade-show.mp3";
 
+import gameOverUrl from "../../assets/game-over.mp3";
+
 import xpPickupNormalUrl from "../../assets/catnip2.wav";
 import xpPickupHighUrl from "../../assets/catnip1.wav";
 
@@ -26,6 +28,7 @@ import ancientSongUrl from "../../assets/Music-ancient.mp3";
 import industrialSongUrl from "../../assets/Music-industrial.mp3";
 import prohibitionSongUrl from "../../assets/Music-prohibition.mp3";
 import upgradeSongUrl from "../../assets/Music-upgrade.mp3";
+import finalLoopUrl from "../../assets/Music-endloop.mp3";
 
 class AudioClip {
     private audio: HTMLAudioElement;
@@ -79,11 +82,14 @@ export const smallHit = new AudioClip(smallhitUrl, 0.2, 10);
 export const mediumHit = new AudioClip(mediumhitUrl, 0.2, 3);
 export const bigHit = new AudioClip(bighitUrl, 0.2, 3);
 
+export const gameOver = new AudioClip(gameOverUrl, 0.75);
+
 export const stoneageMusic = new AudioClip(stoneageSongUrl, 1, 0, true);
 export const ancientMusic = new AudioClip(ancientSongUrl, 1);
-export const industrialMusic = new AudioClip(industrialSongUrl, 1);
-export const prohibitionMusic = new AudioClip(prohibitionSongUrl, 1);
+export const industrialMusic = new AudioClip(industrialSongUrl, 0.75);
+export const prohibitionMusic = new AudioClip(prohibitionSongUrl, 0.5);
 export const upgradeLoop = new AudioClip(upgradeSongUrl, 1, 0, true);
+export const finalLoop = new AudioClip(finalLoopUrl, 0.5, 0, true);
 
 export default AudioClip;
 

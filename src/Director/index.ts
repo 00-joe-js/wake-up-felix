@@ -4,7 +4,7 @@ import { pauseRendering, resumeRendering } from "../renderer";
 
 import Weapon from "../weapons";
 import TwoDEnemy from "../enemies/2DEnemy";
-import DrawnEnemy, { getRandomEnemyFromEra } from "../enemies/DrawnEnemies";
+import DrawnEnemy, { getRandomEnemyFromEra, getRandomEnemyName } from "../enemies/DrawnEnemies";
 import ClockNumEnemy from "../enemies/ClockNum";
 
 
@@ -15,7 +15,6 @@ import GemsManager from "../gems";
 
 import FelixCamera from "../felixCamera";
 
-import shuffle from "shuffle-array";
 import { UIMethods } from "../gameUI";
 import Baggie from "../Baggie";
 
@@ -23,9 +22,13 @@ const range = (n: number) => {
     return new Array(n).fill("").map((_, i) => i);
 };
 
-import AudioClip, { spawnAncient, spawnStoneAge, spawnIndustrial, spawnProhibition, upgradeShow, stoneageMusic, upgradeLoop, ancientMusic, industrialMusic, prohibitionMusic } from "../Audio";
+import AudioClip, {
+    spawnAncient, spawnStoneAge, spawnIndustrial, spawnProhibition,
+    upgradeShow, finalLoop, upgradeLoop,
+    stoneageMusic, ancientMusic, industrialMusic, prohibitionMusic
+} from "../Audio";
+
 import shuffleArray from "shuffle-array";
-import { registerSession } from "../LootLocker";
 
 const ERAS = ["stoneage", "ancient", "industrial", "prohibition"];
 
@@ -69,9 +72,16 @@ export default class Director {
     private weaponDamageScalar: number = 1;
     private enemyMovementScalar: number = 1;
 
+    private lastTimeUpdateFramesAgo: number = 0;
+    private endingSequenceBeginTime: number | null = null;
+    private endingStarted: boolean = false;
+    private endingFightStartTime: number | null = null;
+
     private specificWeaponScalars: { [k: string]: number } = {};
 
     private cancelTempUpgradeFns: Function[] = [];
+
+    private scaleMinuteForTesting: number = 1;
 
     public currentSong: AudioClip = stoneageMusic;
 
@@ -92,11 +102,16 @@ export default class Director {
         this.baggie = new Baggie(this.scene);
         this.gemsManager = new GemsManager(this.scene, this.ui);
         this.increaseSpeed = increaseSpeed;
-        registerSession();
     }
 
     private makeEraEnemy(era: string) {
         const newEnemy = new DrawnEnemy(getRandomEnemyFromEra(era));
+        this.scene.add(newEnemy.object);
+        this.allEnemies.push(newEnemy);
+    }
+
+    private makeAnyEnemy() {
+        const newEnemy = new DrawnEnemy(getRandomEnemyName());
         this.scene.add(newEnemy.object);
         this.allEnemies.push(newEnemy);
     }
@@ -109,11 +124,11 @@ export default class Director {
     }
 
     private getCurrentMinute(dt: number) {
-        return Math.floor(dt / (1000 * 60));
+        return Math.floor(dt / (1000 * (60 * this.scaleMinuteForTesting)));
     }
 
     private getCurrentEra(dt: number) {
-        const ERA_TIME = (1000) * (60) * (3);
+        const ERA_TIME = (1000) * (60 * this.scaleMinuteForTesting) * (3);
         const timeSinceStart = dt - this.startTime;
         const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
         const currentEra = ERAS[eraIndex];
@@ -151,6 +166,12 @@ export default class Director {
     }
 
     private activateMinuteReached(newMinute: number, dt: number) {
+
+        if (newMinute === 12) {
+            this.endingSequenceBeginTime = dt;
+            this.ui.startEndingSequence();
+        }
+
         this.canonicalGameMinute = newMinute;
         const clockEnemy = this.createClockNumberEnemy();
 
@@ -192,9 +213,60 @@ export default class Director {
 
     }
 
+    private runEndingTick(dt: number) {
+        if (this.endingSequenceBeginTime && this.endingStarted) {
+            if (this.endingFightStartTime === null) {
+                this.endingFightStartTime = dt;
+            }
+            const t = Math.floor(dt / 1000);
+            if (t > this.tick) {
+
+                const timeElapsed = dt - this.endingFightStartTime;
+                const timeRemaining = 60 * 1000 - timeElapsed;
+                this.tick = t;
+
+                this.ui.setTime(timeRemaining, true);
+
+                if (timeElapsed > (60 * 1000)) {
+                    console.log("Victory.");
+                    pauseRendering();
+                    // Need for leaderboard: xptotal (on gs), weapons (on gs)
+                    this.ui.showVictoryScreen();
+                } else {
+                    this.makeAnyEnemy();
+                    this.makeAnyEnemy();
+                    this.makeAnyEnemy();
+                }
+
+            }
+        }
+    }
+
     private runWorldTick(dt: number) {
 
+        if (this.endingSequenceBeginTime !== null) {
+            return this.runEndingTick(dt);
+        }
+
+        const TIME_UPDATE_FR = 10;
+        if (this.lastTimeUpdateFramesAgo === TIME_UPDATE_FR) {
+            this.ui.setTime(dt);
+            this.lastTimeUpdateFramesAgo = 0;
+        } else {
+            this.lastTimeUpdateFramesAgo++;
+        }
+
         if (this.tick === 1) {
+            this.ui.setEraMessage("Prehistoric Era")
+        } else if (this.tick === 60 * 3) {
+            this.ui.setEraMessage("Ancient History");
+        } else if (this.tick === 60 * 6) {
+            this.ui.setEraMessage("Industrial Revolution");
+        } else if (this.tick === 60 * 9) {
+            this.ui.setEraMessage("1920s")
+        }
+
+        if (this.tick > 1 && this.tick < 5) {
             this.currentSong = stoneageMusic;
             this.currentSong.play();
         } else if (this.tick === 181 * 1) {
@@ -216,6 +288,7 @@ export default class Director {
             this.activateMinuteReached(thisMinute, dt);
             return;
         }
+
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
@@ -470,7 +543,7 @@ export default class Director {
                 let weaponDamage = MathUtils.randInt(weapon.minDamage, weapon.maxDamage);
                 if (weapon.minute) {
                     const thisWeaponsScalar = this.specificWeaponScalars[weapon.minute];
-                    if (!thisWeaponsScalar) throw new Error("Missing weapon scalar??");
+                    if (typeof thisWeaponsScalar === "undefined") throw new Error("Missing weapon scalar??");
                     weaponDamage *= thisWeaponsScalar;
                 }
                 weaponDamage *= this.weaponDamageScalar;
@@ -521,7 +594,11 @@ export default class Director {
         const felixCollide = enemy.collidesWith(felixPosition);
 
         if (felixCollide) {
-            this.felix.takeDamage(dt);
+            const ded = this.felix.takeDamage(dt);
+            if (ded) {
+                this.currentSong.pause();
+                finalLoop.pause();
+            }
         }
     }
 
@@ -566,17 +643,17 @@ export default class Director {
     private getExpectedXPForMinute(m: number) {
         const minutesToExpected: { [k: string]: number } = {
             "1": 30,
-            "2": 50,
-            "3": 70,
-            "4": 90,
-            "5": 120,
-            "6": 150,
-            "7": 200,
-            "8": 250,
-            "9": 300,
-            "10": 400,
-            "11": 500,
-            "12": 600,
+            "2": 40,
+            "3": 50,
+            "4": 60,
+            "5": 70,
+            "6": 80,
+            "7": 100,
+            "8": 120,
+            "9": 140,
+            "10": 160,
+            "11": 180,
+            "12": 200,
         };
 
         const DIV = 1;
@@ -622,11 +699,22 @@ export default class Director {
                         this.applyGeneralUpgrade(upgradeId, scalar);
                     }
                     this.ui.hideUpgradeScreen();
-                    setTimeout(() => {
-                        this.currentSong.play();
-                        upgradeLoop.pause();
-                        resumeRendering();
-                    }, 200);
+                    if (pickedupBag.forMinute === 12) {
+                        setTimeout(() => {
+                            this.endingStarted = true;
+                            this.ui.setEraMessage("Survive for one minute!")
+                            this.currentSong.pause();
+                            upgradeLoop.pause();
+                            finalLoop.play();
+                            resumeRendering();
+                        }, 200);
+                    } else {
+                        setTimeout(() => {
+                            this.currentSong.play();
+                            upgradeLoop.pause();
+                            resumeRendering();
+                        }, 200);
+                    }
                 });
         }
 

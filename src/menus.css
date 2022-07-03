@@ -70,24 +70,27 @@
 }
 
 #help-game-start {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+}
+
+#help-game-start .back-to-main-menu {
+  width: 30rem;
 }
 
 .father-time-help {
   width: 12rem;
 }
 
-#help-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-#help-actions button {
-  display: block;
-  font-size: 3rem;
-  width: 100%;
-  margin: 1rem 0;
+#wake-up-button {
+  background: rgb(0, 100, 120, 0.8);
+  padding: 2rem;
+  font-size: 5rem;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: white;
 }
 
 #how-to-play strong {

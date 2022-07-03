@@ -47,8 +47,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Steggodog",
         textureUrl: steggodogUrl,
-        width: 25,
-        height: 25 * 0.45,
+        width: 30,
+        height: 30 * 0.45,
         frameAmount: 3,
         era: "stoneage",
         reverseFlip: true,
@@ -70,7 +70,9 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         reverseFlip: true,
         animationSpeed: 1000,
         health: 25,
-        speed: 3
+        speed: 3,
+        hitboxPaddingY: -5,
+        hitboxPaddingX: -5
     },
     // Slow, hulking. Get anywhere near and you will feel pain.
     // Todo: add particle effect to describe mammoths stepping range.
@@ -127,7 +129,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 1000,
         health: 30,
         speed: 2,
-        increasedRarity: 0.1
+        increasedRarity: 0.1,
+        hitboxPaddingY: -5
     },
     {
         name: "Viking Cat",
@@ -153,7 +156,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         health: 55,
         speed: 5,
         increasedRarity: 0.4,
-        hitboxPaddingY: -15
+        hitboxPaddingY: -15,
+        hitboxPaddingX: -5
     },
     {
         name: "Chimney Sweep",
@@ -176,13 +180,14 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 50,
         health: 80,
         speed: 3.5,
-        reverseFlip: true
+        reverseFlip: true,
+        hitboxPaddingX: -25
     },
     {
         name: "Rats",
         textureUrl: ratsUrl,
-        width: 15 * 1.332,
-        height: 15,
+        width: 20 * 1.332,
+        height: 20,
         frameAmount: 2,
         era: "industrial",
         animationSpeed: 100,
@@ -211,7 +216,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 500,
         health: 60,
         speed: 2,
-        reverseFlip: true
+        reverseFlip: true,
+        hitboxPaddingY: -2
     },
     {
         name: "Tuba Guy",
@@ -223,8 +229,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 500,
         health: 120,
         speed: 4,
-        hitboxPaddingX: 0,
-        hitboxPaddingY: 2,
+        hitboxPaddingX: -2,
     },
     {
         name: "Wine Bottle",
@@ -235,7 +240,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "prohibition",
         animationSpeed: 200,
         health: 15,
-        speed: 2.5
+        speed: 2.5,
+        hitboxPaddingY: -2
     },
     {
         name: "Trouble Clef",
@@ -247,7 +253,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 750,
         reverseFlip: true,
         health: 100,
-        speed: 3.5
+        speed: 3.5,
+        hitboxPaddingY: -5
     }
 ];
 

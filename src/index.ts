@@ -309,15 +309,11 @@ const startGame = async () => {
             // Major things left to do:
 
             // Easier
-            // Lootlocker Leaderboard - get leaderboard
-            // Game Over screen 
-            // Era lore on timer UI
             // Sounds for certain weapons (arrow, telsa coil, axes?)
             // Upgrade heal bug/show current HP/prevent from showing at full health?
 
             // Harder
             // Balancing full runs
-            // Final wave logic + victory screen
             // Loading assets step? probably
 
             loopHooks.push((dt, elapsed) => {
@@ -331,17 +327,6 @@ const startGame = async () => {
 
             loopHooks.push((dt) => {
                 clockFace.update(dt);
-            });
-
-            const TIME_UPDATE_FR = 10;
-            let lastUpdateFramesAgo = TIME_UPDATE_FR;
-            loopHooks.push((dt) => {
-                if (lastUpdateFramesAgo === TIME_UPDATE_FR) {
-                    uiMethods.setTime(dt);
-                    lastUpdateFramesAgo = 0;
-                } else {
-                    lastUpdateFramesAgo++;
-                }
             });
 
         }
