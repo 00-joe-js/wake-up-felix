@@ -36,24 +36,24 @@ const Help = ({ toMainMenu }: { toMainMenu: Function }) => {
       </h2>
       <br />
       <h2>
-        Defeated enemies drop XP. Father Time needs more XP every minute to help
+        Defeated enemies drop <strong>time rings</strong>. Father Time needs more time rings every minute to help
         you get back! <br />
-        <strong>Try to always be collecting XP!!!</strong>
+        <strong>Try to always be collecting time rings!!!</strong>
       </h2>
       <br />
       <h2>
         Every minute, a number on the clock will dislodge and attack you.{" "}
         <strong>Defeat the number and claim its prize!</strong> The strength of
         your reward will be based on{" "}
-        <strong>how much XP you picked up during that minute</strong>.
+        <strong>how many time rings you picked up during that minute</strong>.
       </h2>
       <br />
       <h2>
         <strong>
-          Move carefully, pick up XP always, and choose your rewards wisely!
+          Move carefully, pick up time rings always, and choose your rewards wisely.
         </strong>
       </h2>
-      <h4>And stop trifling with time!</h4>
+      <h4>And stop trifling with time, Felix!</h4>
       <br />
       <button className="back-to-main-menu" onClick={() => toMainMenu()}>
         Back to Main Menu

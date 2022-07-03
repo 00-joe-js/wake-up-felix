@@ -228,11 +228,14 @@ export default class Director {
                 this.ui.setTime(timeRemaining, true);
 
                 if (timeElapsed > (60 * 1000)) {
-                    console.log("Victory.");
+                    // Victory
                     pauseRendering();
+                    finalLoop.pause();
+                    this.currentSong.pause();
                     // Need for leaderboard: xptotal (on gs), weapons (on gs)
                     this.ui.showVictoryScreen();
                 } else {
+                    this.makeAnyEnemy();
                     this.makeAnyEnemy();
                     this.makeAnyEnemy();
                     this.makeAnyEnemy();
@@ -310,13 +313,14 @@ export default class Director {
 
     private tickToEnemyRate(t: number): number {
 
-        const oneMin = 60;
+        const warmedUp = 20;
         const threeMins = 180;
         const fiveMins = 300;
         const eightMins = 480;
         const tenMins = 600;
+        const lastEraMusicChange = 645;
 
-        if (t < oneMin) {
+        if (t < warmedUp) {
             return 1;
         }
 
@@ -336,7 +340,11 @@ export default class Director {
             return 5;
         }
 
-        return 6;
+        if (t < lastEraMusicChange) {
+            return 6;
+        }
+
+        return 7;
 
     }
 
@@ -381,6 +389,7 @@ export default class Director {
                         this.makeEnemyWithName("Ostrich"),
                         this.makeEnemyWithName("Ostrich"),
                         this.makeEnemyWithName("Ostrich"),
+                        this.makeEnemyWithName("Ostrich"),
                     ];
                     os.forEach(o => {
                         o.object.position.copy(os[0].object.position);
@@ -400,6 +409,7 @@ export default class Director {
                     this.makeEnemyWithName("Viking Cat");
                     this.makeEnemyWithName("Viking Cat");
                     this.makeEnemyWithName("Viking Cat");
+                    this.makeEnemyWithName("Viking Cat");
 
                 }
             ]);
@@ -414,8 +424,6 @@ export default class Director {
                     const os = [
                         this.makeEnemyWithName("Steam Engine"),
                         this.makeEnemyWithName("Steam Engine"),
-                        this.makeEnemyWithName("Steam Engine"),
-                        this.makeEnemyWithName("Steam Engine"),
                     ];
                     os.forEach(o => {
                         o.object.position.copy(os[0].object.position);
@@ -425,6 +433,9 @@ export default class Director {
                 },
                 // Army
                 () => {
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
                     this.makeEnemyWithName("Chimney Sweep");
                     this.makeEnemyWithName("Chimney Sweep");
                     this.makeEnemyWithName("Chimney Sweep");
@@ -462,6 +473,7 @@ export default class Director {
                         this.makeEnemyWithName("Wine Bottle"),
                         this.makeEnemyWithName("Wine Bottle"),
                         this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
                     ];
                     os.forEach(o => {
                         o.object.position.copy(os[0].object.position);
@@ -471,22 +483,29 @@ export default class Director {
                 },
                 // Musics
                 () => {
-                    this.makeEnemyWithName("Tuba Guy");
-                    this.makeEnemyWithName("Tuba Guy");
-                    this.makeEnemyWithName("Tuba Guy");
-                    this.makeEnemyWithName("Tuba Guy");
-                    this.makeEnemyWithName("Tuba Guy");
-                    this.makeEnemyWithName("Tuba Guy");
-                    this.makeEnemyWithName("Trouble Clef");
-                    this.makeEnemyWithName("Trouble Clef");
-                    this.makeEnemyWithName("Trouble Clef");
-                    this.makeEnemyWithName("Trouble Clef");
-                    this.makeEnemyWithName("Trouble Clef");
-                    this.makeEnemyWithName("Trouble Clef");
+                    const os = [this.makeEnemyWithName("Tuba Guy"),
+                    this.makeEnemyWithName("Tuba Guy"),
+                    this.makeEnemyWithName("Tuba Guy"),
+                    this.makeEnemyWithName("Trouble Clef"),
+                    this.makeEnemyWithName("Trouble Clef"),
+                    this.makeEnemyWithName("Trouble Clef"),
+                    this.makeEnemyWithName("Trouble Clef"),
+                    this.makeEnemyWithName("Trouble Clef"),
+                    this.makeEnemyWithName("Trouble Clef"),
+                    ];
+                    os.forEach(o => {
+                        o.object.position.copy(os[0].object.position);
+                        o.object.position.x += MathUtils.randInt(-50, 50);
+                        o.object.position.z += MathUtils.randInt(-50, 50);
+                    });
                 },
                 // Getting Crunk
                 () => {
                     const os = [
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
                         this.makeEnemyWithName("Wine Bottle"),
                         this.makeEnemyWithName("Wine Bottle"),
                         this.makeEnemyWithName("Wine Bottle"),
@@ -642,12 +661,12 @@ export default class Director {
 
     private getExpectedXPForMinute(m: number) {
         const minutesToExpected: { [k: string]: number } = {
-            "1": 30,
-            "2": 40,
-            "3": 50,
-            "4": 60,
-            "5": 70,
-            "6": 80,
+            "1": 40,
+            "2": 50,
+            "3": 60,
+            "4": 70,
+            "5": 80,
+            "6": 90,
             "7": 100,
             "8": 120,
             "9": 140,

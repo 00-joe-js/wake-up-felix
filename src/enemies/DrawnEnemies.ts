@@ -71,6 +71,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 1000,
         health: 25,
         speed: 3,
+        increasedRarity: 0.2,
         hitboxPaddingY: -5,
         hitboxPaddingX: -5
     },
@@ -116,6 +117,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         reverseFlip: true,
         animationSpeed: 100,
         health: 25,
+        increasedRarity: 0.2,
         speed: 3
     },
     {
@@ -173,15 +175,17 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Smoke Stack",
         textureUrl: smokeStackUrl,
-        width: 60 * 1.5,
-        height: 60,
+        width: 70 * 1.5,
+        height: 70,
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
-        health: 80,
+        health: 100,
         speed: 3.5,
         reverseFlip: true,
-        hitboxPaddingX: -25
+        increasedRarity: 0.4,
+        hitboxPaddingX: -30,
+        hitboxPaddingY: -5
     },
     {
         name: "Rats",
@@ -197,14 +201,15 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Steam Engine",
         textureUrl: steamEngineUrl,
-        width: 30 * 2.245,
-        height: 30,
+        width: 55 * 2.245,
+        height: 55,
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
         health: 100,
         speed: 5,
-        reverseFlip: true
+        reverseFlip: true,
+        increasedRarity: 0.2
     },
     {
         name: "Flapper",
@@ -222,13 +227,14 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Tuba Guy",
         textureUrl: tubaGuyUrl,
-        width: 32 * 0.878571429,
-        height: 32,
+        width: 55 * 0.878571429,
+        height: 55,
         frameAmount: 4,
         era: "prohibition",
         animationSpeed: 500,
-        health: 120,
+        health: 150,
         speed: 4,
+        increasedRarity: 0.5,
         hitboxPaddingX: -2,
     },
     {
@@ -253,6 +259,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         animationSpeed: 750,
         reverseFlip: true,
         health: 100,
+        increasedRarity: 0.2,
         speed: 3.5,
         hitboxPaddingY: -5
     }

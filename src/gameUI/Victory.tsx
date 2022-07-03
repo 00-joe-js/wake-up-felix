@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { submitScoreToLeaderboard } from "../LootLocker";
 
 import weaponDescriptions from "./weaponDescriptions";
@@ -6,6 +6,8 @@ import weaponDescriptions from "./weaponDescriptions";
 import { GameState } from ".";
 
 import fatherTimeHappy from "../../assets/father_time_content.png";
+
+import {victoryMusic} from '../Audio';
 
 type Score = {
   member_id: string;
@@ -16,6 +18,8 @@ type Score = {
 };
 
 const Victory = ({ gameState }: { gameState: GameState }) => {
+
+  const containerRef = useRef<HTMLDivElement>(null);
   const [submittingScoreToLeaderboard, setSubmitting] = useState(true);
   const [leaderboardScore, setLeaderboardScore] = useState<Score | null>(null);
   const { totalXp, chosenWeapons } = gameState;
@@ -26,6 +30,7 @@ const Victory = ({ gameState }: { gameState: GameState }) => {
     }
 
     setSubmitting(true);
+    victoryMusic.play();
 
     (async () => {
       const romanNumerals = chosenWeapons.map(
@@ -41,8 +46,21 @@ const Victory = ({ gameState }: { gameState: GameState }) => {
     })();
   }, []);
 
+  useEffect(() => {
+      const i = setInterval(() => { 
+        if (containerRef.current) {
+          const currentOpacity = parseInt(containerRef.current.style.opacity, 10);
+          containerRef.current.style.opacity = (currentOpacity + 0.05).toString();
+          if (currentOpacity >= 1) {
+            clearInterval(i);
+          }
+        }
+      }, 16);
+      return () => clearInterval(i);
+  }, []);
+
   return (
-    <div id="victory-screen">
+    <div id="victory-screen" ref={containerRef}>
       <h1>You made it back, Felix!</h1>
       <img className="father-time" src={fatherTimeHappy} />
       {submittingScoreToLeaderboard && <h2>Submitting your score ...</h2>}

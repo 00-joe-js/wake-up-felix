@@ -327,8 +327,8 @@ export class Five extends Weapon {
     modelMesh: Mesh;
     scene: Scene;
 
-    minDamage = 15;
-    maxDamage = 25;
+    minDamage = 5;
+    maxDamage = 15;
     stunValue = 1500;
     hitDelay = 3000;
 

@@ -123,10 +123,10 @@ const Upgrade = ({
             <img className="father-time" src={fatherTimeUrl} />
             <div>
               <h3>
-                XP collected during this minute: <strong>{xpForThisBag}</strong>
+                Time rings collected during this minute: <strong>{xpForThisBag}</strong>
               </h3>
               <h3>
-                XP needed by Father Time: <strong>{expectedMinuteXp}</strong>
+                Time rings needed by Father Time: <strong>{expectedMinuteXp}</strong>
               </h3>
               <h2>
                 This weapon or upgrade will be{" "}

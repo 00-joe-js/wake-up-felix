@@ -313,7 +313,6 @@ const startGame = async () => {
             // Upgrade heal bug/show current HP/prevent from showing at full health?
 
             // Harder
-            // Balancing full runs
             // Loading assets step? probably
 
             loopHooks.push((dt, elapsed) => {

@@ -13,7 +13,7 @@ export default [
     },
     {
         id: "HEAL_NOW",
-        name: "Healz Plz",
+        name: "Heal Me!",
         description: "Get a heal right now.",
         scalarLabel: (perc: string, scalar: number) => `+${Math.floor(scalar)} HP`
     },
@@ -32,13 +32,13 @@ export default [
     {
         id: "LUCKY",
         name: "Lucky",
-        description: "10% more likely to see rare XP gems.",
+        description: "More likely to see rare XP gems.",
         scalarLabel: (perc: string) => `${perc} usual chance increase`
     },
     {
         id: "FREEZE",
         name: "Stun All Enemies",
-        description: "Every enemy on clock becomes stunned for 15 seconds.",
+        description: "Every enemy on the clock becomes stunned for 15 seconds.",
         scalarLabel: (perc: string) => `${perc} usual freeze duration`
     }
 ];

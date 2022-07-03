@@ -145,7 +145,7 @@ const Timer = ({
 const GemCount = ({ currentGemTotal }: { currentGemTotal: number }) => {
   return (
     <div id="gem-total">
-      <h1>XP: {currentGemTotal}</h1>
+      <h1>Time Rings: {currentGemTotal}</h1>
     </div>
   );
 };
@@ -182,7 +182,7 @@ const UI = ({ gameState }: { gameState: GameState }) => {
   const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
-      {gameState.victorious && <Victory gameState={Object.assign(gameState, { totalXp: 500, chosenWeapons: [1, 5, 9] })} />}
+      {gameState.victorious && <Victory gameState={gameState} />}
       {gameState.gameOver && <GameOver />}
       {gameState.paused && <PauseScreen />}
       {onUpgradeScreen && onSelect && (
