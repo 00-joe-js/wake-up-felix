@@ -17,6 +17,8 @@ import upgrades from "../Baggie/upgrades";
 import weaponDescriptions, { WeaponDescription } from "./weaponDescriptions";
 import shuffleArray from "shuffle-array";
 
+import { submitScoreToLeaderboard } from "../LootLocker";
+
 const Upgrade = ({
   gameState,
   onSelect,
@@ -68,6 +70,7 @@ const Upgrade = ({
 
   useEffect(() => {
     if (minute && xpForThisBag && expectedMinuteXp) {
+      submitScoreToLeaderboard("Joe", xpForThisBag);
       const scalar = xpForThisBag / expectedMinuteXp;
       if (scalar >= 1) {
         if (scalar >= 2) {

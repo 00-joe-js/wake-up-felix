@@ -26,6 +26,7 @@ export type GameState = {
   onUpgradeScreen: number | null;
   upgradeSelectionFn: UpgradeSelectionFn | null;
   expectedMinuteXp: number | null;
+  paused: boolean;
 };
 
 export type UIMethods = {
@@ -39,6 +40,8 @@ export type UIMethods = {
   hideUpgradeScreen: () => void;
   storeCurrentXPInBag: (n: number) => void;
   addChosenWeapon: (m: number) => void;
+  showPauseScreen: () => void;
+  hidePauseScreen: () => void;
 };
 
 const zeroPad = (s: string): string => {
@@ -107,11 +110,25 @@ const GemCount = ({ currentGemTotal }: { currentGemTotal: number }) => {
   );
 };
 
+const PauseScreen = () => {
+  return (
+    <div id="pause">
+      <div>
+        <h1>PAUSED</h1>
+        <h4>
+          Press <strong>Escape</strong> to resume
+        </h4>
+      </div>
+    </div>
+  );
+};
+
 const UI = ({ gameState }: { gameState: GameState }) => {
   const onUpgradeScreen = gameState.onUpgradeScreen;
   const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
+      {gameState.paused && <PauseScreen />}
       {onUpgradeScreen && onSelect && (
         <Upgrade gameState={gameState} onSelect={onSelect} />
       )}
@@ -139,6 +156,7 @@ export default (): UIMethods => {
     chosenWeapons: [],
     onUpgradeScreen: null,
     upgradeSelectionFn: null,
+    paused: false,
   };
 
   const uiContainer = window.getDOMOne("#game-ui");
@@ -214,6 +232,14 @@ export default (): UIMethods => {
     addChosenWeapon(minute: number) {
       gameState.chosenWeapons.push(minute);
       setStateDirty();
-    }
+    },
+    showPauseScreen() {
+      gameState.paused = true;
+      setStateDirty();
+    },
+    hidePauseScreen() {
+      gameState.paused = false;
+      setStateDirty();
+    },
   };
 };

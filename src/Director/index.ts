@@ -25,6 +25,7 @@ const range = (n: number) => {
 
 import AudioClip, { spawnAncient, spawnStoneAge, spawnIndustrial, spawnProhibition, upgradeShow, stoneageMusic, upgradeLoop, ancientMusic, industrialMusic, prohibitionMusic } from "../Audio";
 import shuffleArray from "shuffle-array";
+import { registerSession } from "../LootLocker";
 
 const ERAS = ["stoneage", "ancient", "industrial", "prohibition"];
 
@@ -72,7 +73,7 @@ export default class Director {
 
     private cancelTempUpgradeFns: Function[] = [];
 
-    private currentSong: AudioClip = stoneageMusic;
+    public currentSong: AudioClip = stoneageMusic;
 
     constructor(
         creationTime: number,
@@ -91,6 +92,7 @@ export default class Director {
         this.baggie = new Baggie(this.scene);
         this.gemsManager = new GemsManager(this.scene, this.ui);
         this.increaseSpeed = increaseSpeed;
+        registerSession();
     }
 
     private makeEraEnemy(era: string) {

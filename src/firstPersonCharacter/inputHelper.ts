@@ -1,5 +1,3 @@
-import { Vector2 } from "three";
-
 const CAPTURE_KEY_EVENTS: boolean = false;
 
 export class KeyboardInterface {
@@ -8,6 +6,7 @@ export class KeyboardInterface {
     aDown: boolean;
     sDown: boolean;
     dDown: boolean;
+    escapeDown: boolean;
     ctrlDown: boolean;
     spaceDown: boolean;
 
@@ -21,6 +20,7 @@ export class KeyboardInterface {
         this.dDown = false;
         this.ctrlDown = false;
         this.spaceDown = false;
+        this.escapeDown = false;
 
         this._listener = null;
         this._offListener = null;
@@ -32,7 +32,7 @@ export class KeyboardInterface {
 
         const th: KeyboardInterface = this;
 
-        const { W_KEY_CODE, A_KEY_CODE, S_KEY_CODE, D_KEY_CODE, CTRL_KEY_CODE, SPACE_CODE } = KeyboardInterface;
+        const { W_KEY_CODE, A_KEY_CODE, S_KEY_CODE, D_KEY_CODE, CTRL_KEY_CODE, SPACE_CODE, ESCAPE_CODE } = KeyboardInterface;
 
         const makeListener = (bool: boolean) => {
             return (e: KeyboardEvent) => {
@@ -41,6 +41,8 @@ export class KeyboardInterface {
                     e.stopPropagation();
                 }
                 const kc = e.code;
+
+                console.log(e.code);
 
                 switch (kc) {
                     case W_KEY_CODE:
@@ -60,6 +62,9 @@ export class KeyboardInterface {
                         break;
                     case SPACE_CODE:
                         this.spaceDown = bool;
+                        break;
+                    case ESCAPE_CODE:
+                        this.escapeDown = bool;
                         break;
 
                 }
@@ -86,80 +91,7 @@ export class KeyboardInterface {
     static D_KEY_CODE = "KeyD";
     static CTRL_KEY_CODE = "ShiftLeft";
     static SPACE_CODE = "Space";
-
-}
-
-export class MouseInterface {
-
-    movement: Vector2;
-
-    constructor() {
-        this.movement = new Vector2();
-        document.addEventListener("mousemove", (e) => {
-            this.movement.x += e.movementX;
-            this.movement.y += e.movementY;
-        });
-    }
-
-    zeroMovement() {
-        this.movement = new Vector2(0, 0);
-    }
-
-}
-
-export class GamepadInterface {
-
-    gamepad: Gamepad | null;
-    gamepadAvailable: boolean;
-
-    constructor() {
-        this.gamepad = null;
-        this.gamepadAvailable = false;
-        this.listenForGamepadConnect();
-    }
-
-    waitForGamepadConnect(timeout = 2000) {
-
-        return new Promise((resolve, reject) => {
-            if (this.gamepad) {
-                return resolve(this.gamepad);
-            }
-            const polling = setInterval(() => {
-                if (this.gamepad) {
-                    resolve(this.gamepad);
-                }
-            }, 100);
-            setTimeout(() => {
-                clearInterval(polling);
-                resolve(null);
-            }, timeout);
-        });
-
-    }
-
-    getState() {
-        const gamepad = navigator.getGamepads().find(c => !!c);
-
-        if (!gamepad) return null;
-
-        const buttonValues = gamepad.buttons.map(b => b.value);
-
-        const xDown = buttonValues[3] === 1;
-        const zRDown = buttonValues[7] === 1;
-
-        const moveScale = 1.5;
-        const moveVel = new Vector2(gamepad.axes[0] * moveScale, gamepad.axes[1] * moveScale * -1);
-
-        const lookScale = 40;
-        const lookVel = new Vector2(gamepad.axes[2] * lookScale, gamepad.axes[3] * lookScale);
-        return { lookVel, moveVel, xDown, zRDown };
-    }
-
-    private listenForGamepadConnect() {
-        window.addEventListener("gamepadconnected", (e) => {
-            this.gamepad = navigator.getGamepads().find(c => !!c) || null;
-        });
-    }
+    static ESCAPE_CODE = "Escape";
 
 }
 

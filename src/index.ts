@@ -43,7 +43,7 @@ import SpritePlane from "./SpritePlane";
 
 import felixWalkSheetUrl from "../assets/felix-walk.png";
 
-import { renderLoop } from "./renderer";
+import { pauseRendering, renderLoop, resumeRendering } from "./renderer";
 import FelixCamera from "./felixCamera";
 
 import Clockface from "./clockFace";
@@ -169,6 +169,34 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             let felixFlipped = false;
             let FELIX_SPEED = 1.2;
 
+            let debounceKey = false;
+            loopHooks.push(() => {
+                if (keyboard.escapeDown) {
+                    if (debounceKey === true) return;
+                    const gs = uiMethods.getGameState();
+                    if (gs.onUpgradeScreen !== null) return;
+                    debounceKey = true;
+                    setTimeout(() => {
+                        debounceKey = false;
+                    }, 500);
+                    uiMethods.showPauseScreen();
+                    theDirector.currentSong.pause();
+                    pauseRendering(true, () => {
+                        if (keyboard.escapeDown) {
+                            if (debounceKey === true) return;
+                            debounceKey = true;
+                            setTimeout(() => {
+                                debounceKey = false;
+                            }, 500);
+                            uiMethods.hidePauseScreen();
+                            theDirector.currentSong.play();
+                            resumeRendering();
+                        }
+                    });
+                }
+
+            });
+
             loopHooks.push((dt, elapsed) => {
 
                 const movementToTimeScale = elapsed / 16.66667; // A smooth 60fps.
@@ -283,11 +311,9 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             // Major things left to do:
 
             // Balancing full runs and final wave
-            // Sound+Music implementation
 
             // Lootlocker Leaderboard
             // Start, Help, About, Game Over screens
-            // Escape to pause
             // Good screen sizing
             // Visual upgrades to weapons
 
