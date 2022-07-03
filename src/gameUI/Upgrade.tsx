@@ -27,6 +27,10 @@ const Upgrade = ({
   const { onUpgradeScreen: minute, bagXps, expectedMinuteXp } = gameState;
 
   const threeRandomUpgrades = useMemo(() => {
+    let upgradesCopy = upgrades.slice(0);
+    if (gameState.felixHP === gameState.felixMaxHP) { // Don't offer healing unless it is needed.
+      upgradesCopy = upgradesCopy.filter(u => u.name === "HEAL_NOW")
+    }
     return shuffleArray(upgrades.slice(0)).slice(0, 3);
   }, [minute]);
 
@@ -188,7 +192,7 @@ const Upgrade = ({
                 <h2>{u.name}</h2>
                 <p>{u.description}</p>
                 <span className={`bonus ${extraBonusClass}`}>
-                  {u.scalarLabel(perc, scalar)}
+                  {u.scalarLabel(perc, scalar, gameState.felixHP)}
                   {punc}
                 </span>
               </div>

@@ -22,6 +22,12 @@ import smallhitUrl from "../../assets/small-hit.wav";
 import mediumhitUrl from "../../assets/medium-hit.wav";
 import bighitUrl from "../../assets/big-hit.mp3";
 
+import arrowUrl from "../../assets/arrow.mp3";
+import hammerUrl from "../../assets/hammer.mp3";
+import smokeyUrl from "../../assets/smokey.mp3";
+import swordUrl from "../../assets/sword.mp3";
+import trapUrl from "../../assets/trap.mp3";
+
 // Music
 import stoneageSongUrl from "../../assets/Music-stoneage.mp3";
 import ancientSongUrl from "../../assets/Music-ancient.mp3";
@@ -85,13 +91,18 @@ export const bigHit = new AudioClip(bighitUrl, 0.2, 3);
 
 export const gameOver = new AudioClip(gameOverUrl, 0.75);
 
-export const stoneageMusic = new AudioClip(stoneageSongUrl, 0.1, 0, true);
-export const ancientMusic = new AudioClip(ancientSongUrl, 1);
-export const industrialMusic = new AudioClip(industrialSongUrl, 0.5);
-export const prohibitionMusic = new AudioClip(prohibitionSongUrl, 0.25);
-export const upgradeLoop = new AudioClip(upgradeSongUrl, 1, 0, true);
-export const finalLoop = new AudioClip(finalLoopUrl, 0.5, 0, true);
-export const victoryMusic = new AudioClip(musicVictoryUrl, 0.5, 0, true);
+export const stoneageMusic = new AudioClip(stoneageSongUrl, 0.7, 0, true);
+export const ancientMusic = new AudioClip(ancientSongUrl, 0.7);
+export const industrialMusic = new AudioClip(industrialSongUrl, 0.35);
+export const prohibitionMusic = new AudioClip(prohibitionSongUrl, 0.15);
+export const upgradeLoop = new AudioClip(upgradeSongUrl, 0.9, 0, true);
+export const finalLoop = new AudioClip(finalLoopUrl, 0.25, 0, true);
+export const victoryMusic = new AudioClip(musicVictoryUrl, 0.2, 0, true);
+
+export const arrow = new AudioClip(arrowUrl, 0.2, 0, false);
+export const hammer = new AudioClip(hammerUrl, 1, 0, false);
+export const trap = new AudioClip(trapUrl, 0.3, 0, false);
+export const smokey = new AudioClip(smokeyUrl, 1, 0, false);
+export const sword = new AudioClip(swordUrl, 1, 0, false);
 
 export default AudioClip;
-

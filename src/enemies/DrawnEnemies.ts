@@ -175,17 +175,17 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Smoke Stack",
         textureUrl: smokeStackUrl,
-        width: 70 * 1.5,
-        height: 70,
+        width: 60 * 1.5,
+        height: 60,
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
-        health: 100,
+        health: 80,
         speed: 3.5,
         reverseFlip: true,
         increasedRarity: 0.4,
         hitboxPaddingX: -30,
-        hitboxPaddingY: -5
+        hitboxPaddingY: -10
     },
     {
         name: "Rats",
@@ -206,10 +206,12 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
-        health: 100,
+        health: 90,
         speed: 5,
         reverseFlip: true,
-        increasedRarity: 0.2
+        increasedRarity: 0.2,
+        hitboxPaddingX: -5,
+        hitboxPaddingY: -5,
     },
     {
         name: "Flapper",

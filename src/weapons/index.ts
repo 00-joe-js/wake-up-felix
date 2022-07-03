@@ -7,7 +7,7 @@ import SpritePlane from "../SpritePlane";
 import { rotateAboutPoint, withinDistance2D } from "../utils";
 import TwoDEnemy from "../enemies/2DEnemy";
 import ClockNumEnemy from "../enemies/ClockNum";
-import { bigHit, mediumHit, smallHit } from "../Audio";
+import { arrow, bigHit, mediumHit, smallHit, smokey, sword, trap } from "../Audio";
 
 
 type GameEnemy = TwoDEnemy | ClockNumEnemy;
@@ -111,6 +111,8 @@ export class One extends Weapon {
             const newProjectile = this.modelMesh.clone();
             newProjectile.position.copy(this.group.position);
             this.scene.add(newProjectile);
+            console.log("new??");
+            arrow.play();
             newProjectile.rotation.y = -Math.PI / 2 - Math.PI / 6;
 
             this.activeProjectiles.push({
@@ -237,6 +239,7 @@ export class Three extends Weapon {
         this.scene.add(m);
         m.position.set(felixPos.x + 30, 5, felixPos.y);
         this.traps.push({ mesh: m });
+        trap.play();
         this.lastPlace = dt;
     }
 
@@ -293,14 +296,14 @@ export class Four extends Weapon {
         this.modelMesh = mesh;
         this.group.add(this.modelMesh);
 
-        this.modelMesh.position.x = -30;
+        this.modelMesh.position.x = -35;
         this.modelMesh.scale.set(1.5, 1.5, 1.5);
         rotateAboutPoint(this.modelMesh, new Vector3(0, 0, 0), new Vector3(0, 1, 0), Math.PI / 6 * 4, true);
 
         this.hitboxMesh = new Mesh(new BoxGeometry(12, 12, 12, 1, 1, 1));
         this.hitboxMesh.visible = false;
         this.group.add(this.hitboxMesh);
-        this.hitboxMesh.position.x = -40;
+        this.hitboxMesh.position.x = -35;
         rotateAboutPoint(this.hitboxMesh, new Vector3(0, 0, 0), new Vector3(0, 1, 0), Math.PI / 6 * 4, true);
     }
 
@@ -318,6 +321,7 @@ export class Four extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
+        sword.play();
     }
 }
 
@@ -635,6 +639,7 @@ export class Eight extends Weapon {
                 g.add(smoke);
                 this.scene.add(g);
                 this.activeStacks.push({ group: g, timePlaced: dt });
+                smokey.play();
             }
 
         }

@@ -165,7 +165,7 @@ const startGame = async () => {
 
             let felixWalking = false;
             let felixFlipped = false;
-            let FELIX_SPEED = 1.2;
+            let FELIX_SPEED = 1.3;
 
             let debounceKey = false;
             loopHooks.push(() => {
@@ -309,7 +309,6 @@ const startGame = async () => {
             // Major things left to do:
 
             // Easier
-            // Sounds for certain weapons (arrow, telsa coil, axes?)
             // Upgrade heal bug/show current HP/prevent from showing at full health?
 
             // Harder

@@ -56,7 +56,7 @@ class FelixCamera {
 
         this.camera.rotation.x = -Math.PI / 2;
 
-        this.camera.rotation.x += (Math.PI / 12) + (Math.PI / 12) * (spriteY / 225);
+        this.camera.rotation.x += (Math.PI / 12) + (Math.PI / 12) * (spriteY / 250);
 
         this.camera.fov = 80 + (Math.max(0, spriteY) * 0.01);
         this.camera.updateProjectionMatrix();

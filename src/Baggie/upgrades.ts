@@ -15,7 +15,7 @@ export default [
         id: "HEAL_NOW",
         name: "Heal Me!",
         description: "Get a heal right now.",
-        scalarLabel: (perc: string, scalar: number) => `+${Math.floor(scalar)} HP`
+        scalarLabel: (perc: string, scalar: number, felixHP: number) => `+${Math.floor(scalar)} HP (currently at ${felixHP} HP)`
     },
     {
         id: "SLOWER_ENEMIES",
