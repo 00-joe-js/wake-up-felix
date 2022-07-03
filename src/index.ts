@@ -283,18 +283,13 @@ const getWeaponMeshes = (gltfGroup: Group) => {
             // Major things left to do:
 
             // Balancing full runs and final wave
+            // Sound+Music implementation
 
             // Lootlocker Leaderboard
-            // Sound+Music implementation
             // Start, Help, About, Game Over screens
             // Escape to pause
             // Good screen sizing
-            // Visual upgrades to some weapons
-
-            // baggie shader/texture
-            // 8 smoke shader
-            // 9 lightning shader
-            // 12 clock?
+            // Visual upgrades to weapons
 
             loopHooks.push((dt, elapsed) => {
                 theDirector.update(dt, elapsed);

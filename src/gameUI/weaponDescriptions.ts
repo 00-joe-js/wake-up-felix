@@ -8,7 +8,7 @@ const lib: { [k: string]: WeaponDescription } = {
     "1": {
         roman: "I",
         heading: "Fire an arrow out from the 1:00 angle on a clock.",
-        elaborate: "This arrow doesn't stun enemies much, but it fires fast and has huge range!"
+        elaborate: "This arrow doesn't stun enemies much, and you gotta aim it, but it fires fast, hits hard and has huge range!"
     },
     "2": {
         roman: "II",

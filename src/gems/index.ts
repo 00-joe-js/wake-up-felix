@@ -5,6 +5,7 @@ import { withinDistance2D, everyNthFrame } from "../utils"
 import { flash } from "../renderer/flashShader";
 import { UIMethods } from "../gameUI";
 import FelixCamera from "../felixCamera";
+import { xpPickupHigh, xpPickupNormal } from "../Audio";
 
 const _v3 = new Vector3();
 
@@ -13,7 +14,7 @@ export default class GemsManager {
     private scene: Scene;
     private ui: UIMethods;
 
-    public gemPickupDistance: number = 20;
+    public gemPickupDistance: number = 30;
     public gemRareChance: number = 0;
 
     constructor(scene: Scene, ui: UIMethods) {
@@ -36,22 +37,23 @@ export default class GemsManager {
         this.gemRareChance += v;
     }
 
-    placeGem(x: number, z: number) {
+    placeGem(x: number, z: number, increasedRarityChance: number) {
 
         const g = new Group();
 
         let rand = Math.random();
         rand += this.gemRareChance;
+        rand += increasedRarityChance;
 
         let rarity = 0;
 
-        // Base 15% chance for uncommons.
-        if (rand > .85) {
+        // Base 10% chance for uncommons.
+        if (rand > .9) {
             rarity = 1;
         }
 
-        // Base 5% chance for ultra-rares.
-        if (rand > .95) {
+        // Base 2% chance for ultra-rares.
+        if (rand > .98) {
             rarity = 2;
         }
 
@@ -84,11 +86,16 @@ export default class GemsManager {
                 _v3.set(felixPos.x - g.position.x, 5, felixPos.y - g.position.z);
                 g.position.add(_v3.normalize().multiplyScalar(5));
 
-                if (withinDistance2D(1, g.position.x, felixPos.x, g.position.z, felixPos.y)) {
+                if (withinDistance2D(2, g.position.x, felixPos.x, g.position.z, felixPos.y)) {
                     const rarityDeets = rarityDetails[rarity];
                     flash(rarityDeets.color.toArray(), 0.02, 0.0001);
                     this.scene.remove(g);
                     this.ui.addXP(rarityDeets.amount);
+                    if (rarity === 0) {
+                        xpPickupNormal.play();
+                    } else {
+                        xpPickupHigh.play();
+                    }
                     return true;
                 } else {
                     return false;

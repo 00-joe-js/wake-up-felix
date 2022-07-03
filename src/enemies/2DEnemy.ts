@@ -14,6 +14,7 @@ type EnemyConfig = {
     speed?: number,
     hitboxPaddingX?: number;
     hitboxPaddingY?: number;
+    increasedRarity?: number;
 };
 
 const _v3 = new Vector3();
@@ -27,6 +28,7 @@ export default class TwoDEnemy {
     public health: number = 15;
     public stun: number = 0;
     public isDead: boolean = false;
+    public increasedRarity: number;
 
     private width: number;
     private height: number;
@@ -37,7 +39,7 @@ export default class TwoDEnemy {
     private hitCache: Map<Weapon, { time: number, untilNextAllowableHit: number }> = new Map();
     private reverseFlip: boolean = false;
 
-    constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5, hitboxPaddingX = 0, hitboxPaddingY = 0 }: EnemyConfig) {
+    constructor({ textureUrl, width, height, frameAmount, animationSpeed, health, speed = 5, hitboxPaddingX = 0, hitboxPaddingY = 0, increasedRarity = 0 }: EnemyConfig) {
         this.sprite = new SpritePlane(textureUrl, width, height, 20, frameAmount, animationSpeed);
         this.health = health;
         this.object = this.sprite.mesh;
@@ -47,6 +49,8 @@ export default class TwoDEnemy {
         this.speed = speed;
         this.hitboxPaddingX = hitboxPaddingX;
         this.hitboxPaddingY = hitboxPaddingY;
+
+        this.increasedRarity = increasedRarity;
 
         _v3.set(0, 0, 1);
         _v3.applyAxisAngle(_up, MathUtils.randFloat(0, Math.PI * 2));

@@ -33,6 +33,7 @@ type DrawnEnemyConfig = {
     reverseFlip?: boolean;
     hitboxPaddingX?: number;
     hitboxPaddingY?: number;
+    increasedRarity?: number;
 };
 
 // The plan is to give every enemy of the same type ONE texture.
@@ -52,8 +53,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "stoneage",
         reverseFlip: true,
         animationSpeed: 50,
-        health: 6,
-        speed: 1.25
+        health: 7,
+        speed: 1.5
     },
     // A T-Rex is sturdy, strong, and also fast.
     // These won't make you actively run away like Steggodogs, but you will be on your toes.
@@ -68,7 +69,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "stoneage",
         reverseFlip: true,
         animationSpeed: 1000,
-        health: 14,
+        health: 25,
         speed: 3
     },
     // Slow, hulking. Get anywhere near and you will feel pain.
@@ -85,8 +86,10 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "stoneage",
         reverseFlip: true,
         animationSpeed: 1000,
-        health: 30,
-        speed: 7
+        health: 50,
+        speed: 7,
+        increasedRarity: 0.4,
+        hitboxPaddingY: -10
     },
     // Lots of these ...
     {
@@ -110,7 +113,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "ancient",
         reverseFlip: true,
         animationSpeed: 100,
-        health: 15,
+        health: 25,
         speed: 3
     },
     {
@@ -122,8 +125,9 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "ancient",
         reverseFlip: true,
         animationSpeed: 1000,
-        health: 20,
-        speed: 2
+        health: 30,
+        speed: 2,
+        increasedRarity: 0.1
     },
     {
         name: "Viking Cat",
@@ -134,7 +138,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "ancient",
         reverseFlip: false,
         animationSpeed: 500,
-        health: 30,
+        health: 20,
         speed: 2.5
     },
     {
@@ -146,8 +150,10 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         era: "ancient",
         reverseFlip: true,
         animationSpeed: 500,
-        health: 50,
-        speed: 5
+        health: 55,
+        speed: 5,
+        increasedRarity: 0.4,
+        hitboxPaddingY: -10
     },
     {
         name: "Chimney Sweep",
@@ -157,7 +163,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 6,
         era: "industrial",
         animationSpeed: 100,
-        health: 10,
+        health: 30,
         speed: 2,
     },
     {
@@ -168,7 +174,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
-        health: 10,
+        health: 80,
         speed: 3.5,
         reverseFlip: true
     },
@@ -180,8 +186,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 2,
         era: "industrial",
         animationSpeed: 100,
-        health: 50,
-        speed: 1,
+        health: 20,
+        speed: 2,
     },
     {
         name: "Steam Engine",
@@ -191,8 +197,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
-        health: 30,
-        speed: 2,
+        health: 100,
+        speed: 5,
         reverseFlip: true
     },
     {
@@ -203,8 +209,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 4,
         era: "prohibition",
         animationSpeed: 500,
-        health: 20,
-        speed: 2.5,
+        health: 60,
+        speed: 2,
         reverseFlip: true
     },
     {
@@ -215,7 +221,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 4,
         era: "prohibition",
         animationSpeed: 500,
-        health: 20,
+        health: 120,
         speed: 4,
         hitboxPaddingX: 0,
         hitboxPaddingY: 2,
@@ -228,7 +234,7 @@ export const ENEMIES: DrawnEnemyConfig[] = [
         frameAmount: 5,
         era: "prohibition",
         animationSpeed: 200,
-        health: 5,
+        health: 15,
         speed: 2.5
     },
     {

@@ -5,6 +5,13 @@ import fatherTimeLaugh from "../../assets/father_time_laughter.png";
 import fatherTimeUpset from "../../assets/father_time_upset.png";
 import fatherTimeRage from "../../assets/father_time_rage.png";
 
+import {
+  fatherAngry,
+  fatherHappy,
+  fatherContent,
+  fatherIrritated,
+} from "../Audio";
+
 import { GameState, UpgradeSelectionFn } from ".";
 import upgrades from "../Baggie/upgrades";
 import weaponDescriptions, { WeaponDescription } from "./weaponDescriptions";
@@ -59,16 +66,53 @@ const Upgrade = ({
     }
   }, [opacity]);
 
+  useEffect(() => {
+    if (minute && xpForThisBag && expectedMinuteXp) {
+      const scalar = xpForThisBag / expectedMinuteXp;
+      if (scalar >= 1) {
+        if (scalar >= 2) {
+          fatherHappy.play();
+        } else {
+          fatherContent.play();
+        }
+      } else {
+        if (scalar < 0.5) {
+          fatherAngry.play();
+        } else {
+          fatherIrritated.play();
+        }
+      }
+    }
+  }, [minute, xpForThisBag, expectedMinuteXp]);
+
   if (expectedMinuteXp === null) {
     throw new Error("Should not render without expectedMinuteXp.");
   }
 
-  if (!weaponDescription || !xpForThisBag) return null;
+  if (!weaponDescription || typeof xpForThisBag !== "number") return null;
 
   const scalar = xpForThisBag / expectedMinuteXp;
   const perc = (scalar * 100).toFixed(0) + "%";
   const extraBonusClass = scalar >= 1 ? "good" : "bad";
   const punc = extraBonusClass === "good" ? "!" : " ...";
+
+  const fatherTimeUrl = (() => {
+    if (scalar >= 1) {
+      if (scalar >= 2) {
+        return fatherTimeLaugh;
+      } else {
+        return fatherTimeContent;
+      }
+    } else {
+      if (scalar < 0.5) {
+        return fatherTimeRage;
+      } else {
+        return fatherTimeUpset;
+      }
+    }
+  })();
+
+  const remainingWeaponAmount = 3 - gameState.chosenWeapons.length;
 
   return (
     <div id="upgrade-container" ref={container} style={{ opacity }}>
@@ -76,7 +120,7 @@ const Upgrade = ({
         <h1>You got the {minute}:00 bag!</h1>
         <div className="xp-stats">
           <div className="scaling-result">
-            <img className="father-time" src={fatherTimeContent} />
+            <img className="father-time" src={fatherTimeUrl} />
             <div>
               <h3>
                 XP collected during this minute: <strong>{xpForThisBag}</strong>
@@ -96,27 +140,37 @@ const Upgrade = ({
       <div className="divider" />
 
       <div className="selection-section">
-        <div className="choose-weapon">
-          <div className="weapon-description">
-            <div className="weapon-gif">WEAPON GIF HERE</div>
-            <h3>{weaponDescription.heading}</h3>
-            <p>{weaponDescription.elaborate}</p>
+        {remainingWeaponAmount !== 0 && (
+          <div className="choose-weapon">
+            <div className="weapon-description">
+              <h3>{weaponDescription.heading}</h3>
+              <p>{weaponDescription.elaborate}</p>
+            </div>
+            <h2
+              onClick={() => {
+                if (selectionMade) return;
+                setSelectionMade(true);
+                onSelect(true, null, scalar);
+              }}
+            >
+              Claim <br />
+              <strong>{weaponDescription.roman}</strong>
+              <br /> as your weapon
+              <span className={`bonus ${extraBonusClass}`}>
+                {perc} damage{punc}
+              </span>
+            </h2>
+            <h4 className="remaining-weapons">
+              You can claim {remainingWeaponAmount} more{" "}
+              {remainingWeaponAmount === 1 ? "weapon" : "weapons"}!
+            </h4>
           </div>
-          <h2
-            onClick={() => {
-              if (selectionMade) return;
-              setSelectionMade(true);
-              onSelect(true, null, scalar);
-            }}
-          >
-            Claim <br />
-            <strong>{weaponDescription.roman}</strong>
-            <br /> as your weapon
-          </h2>
-          <span className={`bonus ${extraBonusClass}`}>
-            {perc} damage{punc}
-          </span>
-        </div>
+        )}
+        {remainingWeaponAmount === 0 && (
+          <div className="choose-weapon">
+            <h2>You can't claim any more weapons.</h2>
+          </div>
+        )}
         <div className="divider-vertical" />
         <div className="choose-upgrade">
           <h1>Or, have an upgrade ...</h1>
@@ -134,7 +188,8 @@ const Upgrade = ({
                 <h2>{u.name}</h2>
                 <p>{u.description}</p>
                 <span className={`bonus ${extraBonusClass}`}>
-                  {u.scalarLabel(perc, scalar)}{punc}
+                  {u.scalarLabel(perc, scalar)}
+                  {punc}
                 </span>
               </div>
             );

@@ -7,6 +7,8 @@ import SpritePlane from "../SpritePlane";
 import { rotateAboutPoint, withinDistance2D } from "../utils";
 import TwoDEnemy from "../enemies/2DEnemy";
 import ClockNumEnemy from "../enemies/ClockNum";
+import { bigHit, mediumHit, smallHit } from "../Audio";
+
 
 type GameEnemy = TwoDEnemy | ClockNumEnemy;
 
@@ -37,8 +39,8 @@ export class OGBullet extends Weapon {
 
     stunValue = 1000;
 
-    public minDamage: number = 100;
-    public maxDamage: number = 200;
+    public minDamage: number = 15;
+    public maxDamage: number = 25;
 
     constructor() {
         super();
@@ -49,10 +51,11 @@ export class OGBullet extends Weapon {
     }
 
     update(dt: number, elapsed: number, felixPos: Vector2) {
-        const r = Math.sin(dt / 1000);
-        const c = Math.cos(dt / 1000);
+        const r = Math.sin(dt / 500);
+        const c = Math.cos(dt / 500);
         this.group.position.x = felixPos.x + (r * 100);
-        this.group.position.z = felixPos.y + (Math.sin(dt / 700) * 50);
+        this.group.position.y = 10;
+        this.group.position.z = felixPos.y + (Math.sin(dt / 200) * 50);
         this.sprite.update(dt, c < 0, true);
     }
 
@@ -64,6 +67,7 @@ export class OGBullet extends Weapon {
 
     onEnemyCollide() {
         shake(200);
+        bigHit.play();
     }
 }
 
@@ -72,8 +76,8 @@ export class One extends Weapon {
     modelMesh: Mesh;
 
     stunValue = 20;
-    minDamage: number = 3;
-    maxDamage: number = 6;
+    minDamage: number = 10;
+    maxDamage: number = 15;
 
     minute = 1;
 
@@ -141,6 +145,7 @@ export class One extends Weapon {
     onEnemyCollide(enemy: TwoDEnemy): void {
         this.collisionLight.position.copy(enemy.object.position);
         this.collisionLight.intensity = 50;
+        smallHit.play();
     }
 }
 
@@ -197,6 +202,7 @@ export class Two extends Weapon {
 
     onEnemyCollide(enemy: TwoDEnemy): void {
         shake(500);
+        bigHit.play();
     }
 }
 
@@ -259,6 +265,7 @@ export class Three extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
+        mediumHit.play();
     }
 }
 
@@ -366,6 +373,7 @@ export class Five extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
+        mediumHit.play();
     }
 }
 
@@ -514,7 +522,7 @@ export class Six extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
+        smallHit.play();
     }
 }
 
@@ -557,7 +565,7 @@ export class Seven extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
+        mediumHit.play();
     }
 }
 
@@ -660,7 +668,7 @@ export class Eight extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
+        mediumHit.play();
     }
 }
 
@@ -802,7 +810,7 @@ export class Nine extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
+        smallHit.play();
     }
 }
 
@@ -898,6 +906,7 @@ export class Ten extends Weapon {
     onEnemyCollide(enemy: TwoDEnemy): void {
         this.collisionLight.position.copy(enemy.object.position);
         this.collisionLight.intensity = 50;
+        smallHit.play();
     }
 }
 
@@ -983,7 +992,7 @@ export class Eleven extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
+        bigHit.play();
     }
 }
 
@@ -1061,7 +1070,6 @@ export class Twelve extends Weapon {
     }
 
     onEnemyCollide(enemy: TwoDEnemy): void {
-
-
+        bigHit.play();
     }
 }

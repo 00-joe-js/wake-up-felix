@@ -1,4 +1,4 @@
-import { PerspectiveCamera, OrthographicCamera, Object3D, Vector3, Mesh, PointLight, Scene, Vector2, Box3 } from "three";
+import { PerspectiveCamera, Object3D, PointLight, Scene, Vector2, Box3 } from "three";
 
 import SpritePlane from "../SpritePlane";
 
@@ -6,6 +6,8 @@ import { flash } from "../renderer/flashShader";
 import { shake } from "../renderer";
 
 import type { UIMethods } from "../gameUI";
+
+import { felixHurt } from "../Audio";
 
 class FelixCamera {
 
@@ -25,11 +27,7 @@ class FelixCamera {
 
         this.sprite.mesh.position.x = 0;
         this.sprite.mesh.position.z = 80;
-
-        setTimeout(() => {
-            location.reload();
-        }, 60 * 1000 * 5);
-
+        
         this.camera = new PerspectiveCamera(80, 16 / 9);
         this.camera.position.y = 10;
 
@@ -69,12 +67,13 @@ class FelixCamera {
     }
 
     public takeDamage(dt: number) {
-        if (dt - this.lastDamageTakenTime > 500) {
+        if (dt - this.lastDamageTakenTime > 2000) {
             this.health = this.health - 1;
             this.ui.setFelixHP(this.health);
             this.lastDamageTakenTime = dt;
             flash([1, 0, 0], 0.2, 0.001);
             shake(400);
+            felixHurt.play();
             if (this.health === 0) {
                 // window.location.reload();
             }

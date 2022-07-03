@@ -38,6 +38,7 @@ export type UIMethods = {
   showUpgradeScreen: (n: number, xpE: number, fn: UpgradeSelectionFn) => void;
   hideUpgradeScreen: () => void;
   storeCurrentXPInBag: (n: number) => void;
+  addChosenWeapon: (m: number) => void;
 };
 
 const zeroPad = (s: string): string => {
@@ -111,7 +112,9 @@ const UI = ({ gameState }: { gameState: GameState }) => {
   const onSelect = gameState.upgradeSelectionFn;
   return (
     <div id="game-ui-content">
-      {onUpgradeScreen && onSelect && <Upgrade gameState={gameState} onSelect={onSelect} />}
+      {onUpgradeScreen && onSelect && (
+        <Upgrade gameState={gameState} onSelect={onSelect} />
+      )}
       <Timer time={gameState.elapsedTime} />
       <div id="beneath-timer">
         <HealthBar
@@ -206,6 +209,11 @@ export default (): UIMethods => {
     hideUpgradeScreen() {
       gameState.onUpgradeScreen = null;
       gameState.upgradeSelectionFn = null;
+      setStateDirty();
     },
+    addChosenWeapon(minute: number) {
+      gameState.chosenWeapons.push(minute);
+      setStateDirty();
+    }
   };
 };

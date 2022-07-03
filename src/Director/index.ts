@@ -7,6 +7,7 @@ import TwoDEnemy from "../enemies/2DEnemy";
 import DrawnEnemy, { getRandomEnemyFromEra } from "../enemies/DrawnEnemies";
 import ClockNumEnemy from "../enemies/ClockNum";
 
+
 type GameEnemy = TwoDEnemy | ClockNumEnemy;
 
 import DamagePlane from "../damageNumbers";
@@ -22,7 +23,17 @@ const range = (n: number) => {
     return new Array(n).fill("").map((_, i) => i);
 };
 
-const ERAS = shuffle(["stoneage", "ancient", "industrial", "prohibition"]);
+import AudioClip, { spawnAncient, spawnStoneAge, spawnIndustrial, spawnProhibition, upgradeShow, stoneageMusic, upgradeLoop, ancientMusic, industrialMusic, prohibitionMusic } from "../Audio";
+import shuffleArray from "shuffle-array";
+
+const ERAS = ["stoneage", "ancient", "industrial", "prohibition"];
+
+const eraSpawns: { [k: string]: AudioClip } = {
+    "stoneage": spawnStoneAge,
+    "ancient": spawnAncient,
+    "industrial": spawnIndustrial,
+    "prohibition": spawnProhibition
+};
 
 type BagEntry = { mesh: Mesh, forMinute: number };
 type Arsenal = Map<number, Weapon>;
@@ -61,13 +72,14 @@ export default class Director {
 
     private cancelTempUpgradeFns: Function[] = [];
 
+    private currentSong: AudioClip = stoneageMusic;
+
     constructor(
         creationTime: number,
         scene: Scene,
         felix: FelixCamera,
         ui: UIMethods,
         clockNumMeshes: Mesh<BufferGeometry, MeshStandardMaterial>[],
-        // Upgrade Stuff
         increaseSpeed: Function,
     ) {
         this.startTime = creationTime;
@@ -91,14 +103,15 @@ export default class Director {
         const e = new DrawnEnemy(name);
         this.scene.add(e.object);
         this.allEnemies.push(e);
+        return e;
     }
 
     private getCurrentMinute(dt: number) {
-        return Math.floor(dt / (1000 * 15));
+        return Math.floor(dt / (1000 * 60));
     }
 
     private getCurrentEra(dt: number) {
-        const ERA_TIME = (1000) * (60) * (1);
+        const ERA_TIME = (1000) * (60) * (3);
         const timeSinceStart = dt - this.startTime;
         const eraIndex = Math.floor(timeSinceStart / ERA_TIME);
         const currentEra = ERAS[eraIndex];
@@ -135,7 +148,7 @@ export default class Director {
 
     }
 
-    private activateMinuteReached(newMinute: number) {
+    private activateMinuteReached(newMinute: number, dt: number) {
         this.canonicalGameMinute = newMinute;
         const clockEnemy = this.createClockNumberEnemy();
 
@@ -150,6 +163,13 @@ export default class Director {
 
         this.ui.storeCurrentXPInBag(this.canonicalGameMinute);
 
+        const currentEra = this.getCurrentEra(dt);
+
+        const spawnSound = eraSpawns[currentEra];
+
+        if (spawnSound) {
+            spawnSound.play();
+        }
 
     }
 
@@ -171,19 +191,264 @@ export default class Director {
     }
 
     private runWorldTick(dt: number) {
+
+        if (this.tick === 1) {
+            this.currentSong = stoneageMusic;
+            this.currentSong.play();
+        } else if (this.tick === 181 * 1) {
+            this.currentSong.pause();
+            this.currentSong = ancientMusic;
+            this.currentSong.play();
+        } else if (this.tick === 181 * 2) {
+            this.currentSong.pause();
+            this.currentSong = industrialMusic;
+            this.currentSong.play();
+        } else if (this.tick === 181 * 3) {
+            this.currentSong.pause();
+            this.currentSong = prohibitionMusic;
+            this.currentSong.play();
+        }
+
         const thisMinute = this.getCurrentMinute(dt);
         if (thisMinute > this.canonicalGameMinute) {
-            this.activateMinuteReached(thisMinute);
+            this.activateMinuteReached(thisMinute, dt);
             return;
         }
         const secondRoundedDown = Math.floor(dt / 1000);
         if (secondRoundedDown > this.tick) {
             this.tick = secondRoundedDown;
-            if (this.tick % 2 === 0) {
-                const era = this.getCurrentEra(dt)
-                range(2).forEach(() => this.makeEraEnemy(era));
+
+            if (this.tick % 5 === 0) {
+
+                const era = this.getCurrentEra(dt);
+
+                if (Math.random() < .7) {
+                    range(this.tickToEnemyRate(this.tick)).forEach(() => this.makeEraEnemy(era));
+                } else {
+                    this.activateFunEraEvent(era);
+                }
+
             }
+
         }
+    }
+
+    private tickToEnemyRate(t: number): number {
+
+        const oneMin = 60;
+        const threeMins = 180;
+        const fiveMins = 300;
+        const eightMins = 480;
+        const tenMins = 600;
+
+        if (t < oneMin) {
+            return 2;
+        }
+
+        if (t < threeMins) {
+            return 3;
+        }
+
+        if (t < fiveMins) {
+            return 4;
+        }
+
+        if (t < eightMins) {
+            return 4;
+        }
+
+        if (t < tenMins) {
+            return 6;
+        }
+
+        return 7;
+
+    }
+
+    private activateFunEraEvent(era: string) {
+
+
+        if (era === "stoneage") {
+
+            const eventFns = shuffleArray([
+                // Cavecat clan
+                () => {
+                    const cats = [
+                        this.makeEnemyWithName("Cave Cat"),
+                        this.makeEnemyWithName("Cave Cat"),
+                        this.makeEnemyWithName("Cave Cat")
+                    ];
+                    cats[1].object.position.copy(cats[0].object.position);
+                    cats[1].object.position.x += 30;
+                    cats[2].object.position.copy(cats[0].object.position);
+                    cats[2].object.position.z += 30;
+                },
+                // Steggodawg ambush
+                () => {
+                    this.makeEnemyWithName("Steggodog");
+                    this.makeEnemyWithName("Steggodog");
+                    this.makeEnemyWithName("Steggodog");
+                    this.makeEnemyWithName("Steggodog");
+                    this.makeEnemyWithName("Steggodog");
+                }
+            ]);
+
+            eventFns[0]();
+
+        } else if (era === "ancient") {
+
+            const eventFns = shuffleArray([
+                // Ostrich Herd
+                () => {
+                    const os = [
+                        this.makeEnemyWithName("Ostrich"),
+                        this.makeEnemyWithName("Ostrich"),
+                        this.makeEnemyWithName("Ostrich"),
+                        this.makeEnemyWithName("Ostrich"),
+                        this.makeEnemyWithName("Ostrich"),
+                    ];
+                    os.forEach(o => {
+                        o.object.position.copy(os[0].object.position);
+                        o.object.position.x += MathUtils.randInt(-70, 70);
+                        o.object.position.z += MathUtils.randInt(-70, 70);
+                    });
+                },
+                // Army
+                () => {
+                    this.makeEnemyWithName("Roman Soldier");
+                    this.makeEnemyWithName("Roman Soldier");
+                    this.makeEnemyWithName("Roman Soldier");
+                    this.makeEnemyWithName("Roman Soldier");
+                    this.makeEnemyWithName("Roman Soldier");
+                    this.makeEnemyWithName("Viking Cat");
+                    this.makeEnemyWithName("Viking Cat");
+                    this.makeEnemyWithName("Viking Cat");
+                    this.makeEnemyWithName("Viking Cat");
+                    this.makeEnemyWithName("Viking Cat");
+                    
+                }
+            ]);
+
+            eventFns[0]();
+
+        } else if (era === "industrial") {
+
+            const eventFns = shuffleArray([
+                // Trains
+                () => {
+                    const os = [
+                        this.makeEnemyWithName("Steam Engine"),
+                        this.makeEnemyWithName("Steam Engine"),
+                        this.makeEnemyWithName("Steam Engine"),
+                        this.makeEnemyWithName("Steam Engine"),
+                    ];
+                    os.forEach(o => {
+                        o.object.position.copy(os[0].object.position);
+                        o.object.position.x += MathUtils.randInt(-100, 100);
+                        o.object.position.z += MathUtils.randInt(-100, 100);
+                    });
+                },
+                // Army
+                () => {
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+                    this.makeEnemyWithName("Chimney Sweep");
+
+                },
+                // Rats Ambush
+                () => {
+                    this.makeEnemyWithName("Rats");
+                    this.makeEnemyWithName("Rats");
+                    this.makeEnemyWithName("Rats");
+                    this.makeEnemyWithName("Rats");
+                }
+            ]);
+
+            eventFns[0]();
+
+        } else if (era === "prohibition") {
+
+            const eventFns = shuffleArray([
+                // Girls Night Out
+                () => {
+                    const os = [
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Flapper"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                    ];
+                    os.forEach(o => {
+                        o.object.position.copy(os[0].object.position);
+                        o.object.position.x += MathUtils.randInt(-100, 100);
+                        o.object.position.z += MathUtils.randInt(-100, 100);
+                    });
+                },
+                // Musics
+                () => {
+                    this.makeEnemyWithName("Tuba Guy");
+                    this.makeEnemyWithName("Tuba Guy");
+                    this.makeEnemyWithName("Tuba Guy");
+                    this.makeEnemyWithName("Tuba Guy");
+                    this.makeEnemyWithName("Tuba Guy");
+                    this.makeEnemyWithName("Tuba Guy");
+                    this.makeEnemyWithName("Trouble Clef");
+                    this.makeEnemyWithName("Trouble Clef");
+                    this.makeEnemyWithName("Trouble Clef");
+                    this.makeEnemyWithName("Trouble Clef");
+                    this.makeEnemyWithName("Trouble Clef");
+                    this.makeEnemyWithName("Trouble Clef");
+                },
+                // Getting Crunk
+                () => {
+                    const os = [
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                        this.makeEnemyWithName("Wine Bottle"),
+                    ];
+                    os.forEach(o => {
+                        o.object.position.copy(os[0].object.position);
+                        o.object.position.x += MathUtils.randInt(-100, 100);
+                        o.object.position.z += MathUtils.randInt(-100, 100);
+                    });
+                }
+            ]);
+
+            eventFns[0]();
+
+        }
+ 
     }
 
     private runWeaponMovement(dt: number, elapsed: number, felixPos: Vector2) {
@@ -232,7 +497,7 @@ export default class Director {
                             this.bagCollection.push({ mesh, forMinute: enemy.minute });
                         } else {
                             this.gemFnCollection.push(
-                                this.gemsManager.placeGem(enemy.object.position.x, enemy.object.position.z)
+                                this.gemsManager.placeGem(enemy.object.position.x, enemy.object.position.z, enemy.increasedRarity)
                             );
                         }
 
@@ -298,21 +563,21 @@ export default class Director {
 
     private getExpectedXPForMinute(m: number) {
         const minutesToExpected: { [k: string]: number } = {
-            "1": 100,
-            "2": 200,
-            "3": 300,
-            "4": 400,
-            "5": 500,
-            "6": 600,
-            "7": 700,
-            "8": 800,
-            "9": 900,
-            "10": 1000,
-            "11": 1100,
-            "12": 1200,
+            "1": 30,
+            "2": 50,
+            "3": 70,
+            "4": 90,
+            "5": 120,
+            "6": 150,
+            "7": 200,
+            "8": 250,
+            "9": 300,
+            "10": 400,
+            "11": 500,
+            "12": 600,
         };
 
-        const DIV = 0.05;
+        const DIV = 1;
         Object.keys(minutesToExpected).forEach((k) => {
             minutesToExpected[k] = minutesToExpected[k] * DIV;
         });
@@ -341,17 +606,23 @@ export default class Director {
             pauseRendering();
             this.scene.remove(pickedupBag.mesh);
             this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
+            this.currentSong.pause();
+            upgradeLoop.play();
+            upgradeShow.play();
             this.ui.showUpgradeScreen(
                 pickedupBag.forMinute,
                 this.getExpectedXPForMinute(pickedupBag.forMinute),
                 (choseWeapon: boolean, upgradeId: string | null, scalar: number) => {
                     if (choseWeapon) {
                         this.activateWeapon(pickedupBag.forMinute, scalar);
+                        this.ui.addChosenWeapon(pickedupBag.forMinute);
                     } else if (upgradeId) {
                         this.applyGeneralUpgrade(upgradeId, scalar);
                     }
                     this.ui.hideUpgradeScreen();
                     setTimeout(() => {
+                        this.currentSong.play();
+                        upgradeLoop.pause();
                         resumeRendering();
                     }, 200);
                 });
