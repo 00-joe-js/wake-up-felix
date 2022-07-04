@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import fatherTimeLaugh from "../../assets/father_time_laughter.png";
+import titleScreenImage from "../../assets/titleScreen.png";
 
 import {
   getLeaderboard,
@@ -36,8 +37,8 @@ const Help = ({ toMainMenu }: { toMainMenu: Function }) => {
       </h2>
       <br />
       <h2>
-        Defeated enemies drop <strong>time rings</strong>. Father Time needs more time rings every minute to help
-        you get back! <br />
+        Defeated enemies drop <strong>time rings</strong>. Father Time needs
+        more time rings every minute to help you get back! <br />
         <strong>Try to always be collecting time rings!!!</strong>
       </h2>
       <br />
@@ -50,7 +51,8 @@ const Help = ({ toMainMenu }: { toMainMenu: Function }) => {
       <br />
       <h2>
         <strong>
-          Move carefully, pick up time rings always, and choose your rewards wisely.
+          Move carefully, pick up time rings always, and choose your rewards
+          wisely.
         </strong>
       </h2>
       <h4>And stop trifling with time, Felix!</h4>
@@ -119,7 +121,7 @@ const OpeningMenus = ({ onStartGame }: { onStartGame: Function }) => {
     return (
       <div id="menu-screens">
         <div id="main-menu">
-          <h1>Wake Up, Felix!</h1>
+          <img style={{ width: "60%" }} src={titleScreenImage} />
           <div id="main-menu-actions">
             <h2 onClick={() => setCurrentPage("pre-start")}>Start</h2>
             <h2 onClick={() => setCurrentPage("help")}>How to Play</h2>
@@ -187,42 +189,52 @@ const OpeningMenus = ({ onStartGame }: { onStartGame: Function }) => {
     );
   } else if (currentPage === "pre-start") {
     return (
-      <div id="help-game-start">
-        <div>
-          <h2>
-            <strong>Felix!</strong> Oh, there you go,{" "}
-            <L href="https://www.youtube.com/watch?v=HSXa7LNMO6s">
-              trifling with time again ...
-            </L>
-            <br />
-            <br />
-            <img className="father-time-help" src={fatherTimeLaugh} />
-            <br />
-            <br />
-            Never gets old.
-          </h2>
-          <h1>
-            And now you're stuck in a time dream! <br />
-            You gotta fight and get back to the present!!
-          </h1>
-          <button id="wake-up-button" onClick={() => onStartGame()}>
-            Wake Up!!!
+      <div id="menu-screens">
+        <div id="help-game-start">
+          <div>
+            <h2>
+              <strong>Felix!</strong> Oh, there you go,{" "}
+              <L href="https://www.youtube.com/watch?v=HSXa7LNMO6s">
+                trifling with time again ...
+              </L>
+              <br />
+              <br />
+              <img className="father-time-help" src={fatherTimeLaugh} />
+              <br />
+              <br />
+              Never gets old.
+            </h2>
+            <h1>
+              And now you're stuck in a time dream! <br />
+              You gotta fight and get back to the present!!
+            </h1>
+            <button id="wake-up-button" onClick={() => onStartGame()}>
+              Wake Up!!!
+            </button>
+          </div>
+          <button
+            className="back-to-main-menu"
+            onClick={() => {
+              setCurrentPage("main");
+            }}
+          >
+            Back to Main Menu
           </button>
         </div>
-        <button
-          className="back-to-main-menu"
-          onClick={() => {
-            setCurrentPage("main");
-          }}
-        >
-          Back to Main Menu
-        </button>
       </div>
     );
   } else if (currentPage === "help") {
-    return <Help toMainMenu={() => setCurrentPage("main")} />;
+    return (
+      <div id="menu-screens">
+        <Help toMainMenu={() => setCurrentPage("main")} />
+      </div>
+    );
   } else if (currentPage === "leaderboard") {
-    return <Leaderboard toMainMenu={() => setCurrentPage("main")} />;
+    return (
+      <div id="menu-screens">
+        <Leaderboard toMainMenu={() => setCurrentPage("main")} />
+      </div>
+    );
   }
 
   return null;

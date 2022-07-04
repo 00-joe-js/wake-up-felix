@@ -308,9 +308,6 @@ const startGame = async () => {
 
             // Major things left to do:
 
-            // Easier
-            // Upgrade heal bug/show current HP/prevent from showing at full health?
-
             // Harder
             // Loading assets step? probably
 

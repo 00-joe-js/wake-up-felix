@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
 import felixFacesUrl from "../../assets/felix-faces.png";
+// import filmGrainTile from "../../assets/filmgraintile.jpg";
+
 import Upgrade from "./Upgrade";
 import MenuScreens from "./MenuScreens";
 import Victory from "./Victory";
@@ -209,7 +211,7 @@ export default (): UIMethods => {
     felixHP: 4,
     felixMaxHP: 4,
     gameStarted: false,
-    totalXp: 999,
+    totalXp: 0,
     currentXp: 0,
     expectedMinuteXp: null,
     bagXps: [],
@@ -232,15 +234,15 @@ export default (): UIMethods => {
   const renderLoop = () => {
     if (gameState.gameStarted === false) {
       root.render(
-        <MenuScreens
-          onStartGame={() => {
-            if (gameState.startGame) {
-              gameState.startGame();
-              gameState.gameStarted = true;
-              window.requestAnimationFrame(renderLoop);
-            }
-          }}
-        />
+          <MenuScreens
+            onStartGame={() => {
+              if (gameState.startGame) {
+                gameState.startGame();
+                gameState.gameStarted = true;
+                window.requestAnimationFrame(renderLoop);
+              }
+            }}
+          />
       );
     } else {
       if (stateDirty) {
@@ -286,6 +288,7 @@ export default (): UIMethods => {
     },
     storeCurrentXPInBag(minute) {
       gameState.bagXps.push({ minute, total: gameState.currentXp });
+      gameState.totalXp += gameState.currentXp;
       gameState.currentXp = 0;
       setStateDirty();
     },

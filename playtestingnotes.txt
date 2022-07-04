@@ -1,8 +1,0 @@
-
-
-
-    - version 0.2 on gh pages currently
-
-        - 0.2
-            -- felix is fast? or good speed?
-            -- hover effect on Wake Up! button please

@@ -15,6 +15,7 @@ class FelixCamera {
     public camera: PerspectiveCamera;
 
     public health: number = 4;
+    public maxHealth: number = 4;
 
     private aura: Object3D;
     private ui: UIMethods;
@@ -27,7 +28,7 @@ class FelixCamera {
 
         this.sprite.mesh.position.x = 0;
         this.sprite.mesh.position.z = 80;
-        
+
         this.camera = new PerspectiveCamera(80, 16 / 9);
         this.camera.position.y = 10;
 
@@ -74,7 +75,7 @@ class FelixCamera {
             flash([1, 0, 0], 0.2, 0.001);
             shake(400);
             felixHurt.play();
-            if (this.health === 0) {
+            if (this.health === 0) { // god mode
                 gameOver.play();
                 this.ui.setGameOver();
                 pauseRendering();
@@ -86,6 +87,7 @@ class FelixCamera {
 
     public heal(amount: number) {
         this.health += amount;
+        this.health = Math.min(this.health, this.maxHealth);
         this.ui.setFelixHP(this.health);
     }
 

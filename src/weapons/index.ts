@@ -75,7 +75,7 @@ export class One extends Weapon {
     group: Group;
     modelMesh: Mesh;
 
-    stunValue = 20;
+    stunValue = 50;
     minDamage: number = 10;
     maxDamage: number = 15;
 
@@ -111,7 +111,6 @@ export class One extends Weapon {
             const newProjectile = this.modelMesh.clone();
             newProjectile.position.copy(this.group.position);
             this.scene.add(newProjectile);
-            console.log("new??");
             arrow.play();
             newProjectile.rotation.y = -Math.PI / 2 - Math.PI / 6;
 
@@ -216,8 +215,8 @@ export class Three extends Weapon {
 
     traps: { mesh: Mesh }[] = [];
 
-    minDamage = 6;
-    maxDamage = 8;
+    minDamage = 8;
+    maxDamage = 10;
     stunValue = 500;
     hitDelay = 600;
 
@@ -285,7 +284,7 @@ export class Four extends Weapon {
     minDamage = 15;
     maxDamage = 25;
     stunValue = 1000;
-    hitDelay = 1000;
+    hitDelay = 1500;
 
     minute = 4;
 
@@ -332,9 +331,9 @@ export class Five extends Weapon {
     scene: Scene;
 
     minDamage = 5;
-    maxDamage = 15;
+    maxDamage = 10;
     stunValue = 1500;
-    hitDelay = 3000;
+    hitDelay = 3500;
 
     minute = 5;
 
@@ -582,7 +581,7 @@ export class Eight extends Weapon {
     stunValue = 150;
     minDamage = 5;
     maxDamage = 10;
-    hitDelay = 200;
+    hitDelay = 175;
 
     minute = 8;
 
@@ -682,9 +681,9 @@ export class Nine extends Weapon {
     modelMesh: Mesh;
     scene: Scene;
 
-    stunValue = 200;
-    minDamage = 10;
-    maxDamage = 15;
+    stunValue = 300;
+    minDamage = 8;
+    maxDamage = 13;
     hitDelay = 500;
 
     minute = 9;
@@ -824,8 +823,8 @@ export class Ten extends Weapon {
     modelMesh: Mesh;
 
     stunValue = 250;
-    minDamage: number = 3;
-    maxDamage: number = 6;
+    minDamage: number = 6;
+    maxDamage: number = 10;
     hitDelay = 500;
 
     minute = 10;
@@ -922,8 +921,8 @@ export class Eleven extends Weapon {
     scene: Scene;
 
     stunValue = 300;
-    minDamage: number = 10;
-    maxDamage: number = 20;
+    minDamage: number = 20;
+    maxDamage: number = 25;
 
     minute = 11;
 
@@ -1006,9 +1005,9 @@ export class Twelve extends Weapon {
     modelMesh: Mesh;
     scene: Scene;
 
-    stunValue = 2000;
+    stunValue = 1000;
     minDamage = 40;
-    maxDamage = 50;
+    maxDamage = 70;
     hitDelay = 100;
 
     minute = 12;

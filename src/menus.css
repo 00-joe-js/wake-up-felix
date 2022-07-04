@@ -4,10 +4,14 @@
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
+#graintainer {
+  height: 100%;
+}
+
 #main-menu {
   width: 100%;
   height: 100%;
-  background: rgb(0, 0, 0);
+  background: rgb(2, 2, 2);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -91,6 +95,11 @@
   font-size: 5rem;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: white;
+  transition: 1s all;
+}
+
+#wake-up-button:hover {
+  background: rgb(0, 140, 180, 0.9);
 }
 
 #how-to-play strong {

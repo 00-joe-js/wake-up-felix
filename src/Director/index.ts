@@ -85,6 +85,8 @@ export default class Director {
 
     public currentSong: AudioClip = stoneageMusic;
 
+    private extraPickupsSafeguard: { [k: string]: true } = {};
+
     constructor(
         creationTime: number,
         scene: Scene,
@@ -153,6 +155,7 @@ export default class Director {
 
         // Special effects.
         if (minute === 5) {
+            this.felix.maxHealth = 5;
             this.felix.health += 1;
             this.ui.setFelixHP(this.felix.health);
             this.ui.increaseFelixMaxHP();
@@ -231,6 +234,7 @@ export default class Director {
                     // Victory
                     pauseRendering();
                     finalLoop.pause();
+                    this.ui.storeCurrentXPInBag(13);
                     this.currentSong.pause();
                     // Need for leaderboard: xptotal (on gs), weapons (on gs)
                     this.ui.showVictoryScreen();
@@ -701,40 +705,49 @@ export default class Director {
         if (pickedupBags.length > 0) {
             // Almost always just 1, and if not the next frame will get the next.
             const pickedupBag = pickedupBags[0];
-            pauseRendering();
-            this.scene.remove(pickedupBag.mesh);
-            this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
-            this.currentSong.pause();
-            upgradeLoop.play();
-            upgradeShow.play();
-            this.ui.showUpgradeScreen(
-                pickedupBag.forMinute,
-                this.getExpectedXPForMinute(pickedupBag.forMinute),
-                (choseWeapon: boolean, upgradeId: string | null, scalar: number) => {
-                    if (choseWeapon) {
-                        this.activateWeapon(pickedupBag.forMinute, scalar);
-                        this.ui.addChosenWeapon(pickedupBag.forMinute);
-                    } else if (upgradeId) {
-                        this.applyGeneralUpgrade(upgradeId, scalar);
-                    }
-                    this.ui.hideUpgradeScreen();
-                    if (pickedupBag.forMinute === 12) {
-                        setTimeout(() => {
-                            this.endingStarted = true;
-                            this.ui.setEraMessage("Survive for one minute!")
-                            this.currentSong.pause();
-                            upgradeLoop.pause();
-                            finalLoop.play();
-                            resumeRendering();
-                        }, 200);
-                    } else {
-                        setTimeout(() => {
-                            this.currentSong.play();
-                            upgradeLoop.pause();
-                            resumeRendering();
-                        }, 200);
-                    }
-                });
+
+            if (this.extraPickupsSafeguard[pickedupBag.forMinute] === true) {
+                this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
+                this.scene.remove(pickedupBag.mesh);
+            } else {
+                this.extraPickupsSafeguard[pickedupBag.forMinute] = true;
+                this.bagCollection = this.bagCollection.filter(b => b !== pickedupBag);
+                this.scene.remove(pickedupBag.mesh);
+                pauseRendering();
+                this.currentSong.pause();
+                upgradeLoop.play();
+                upgradeShow.play();
+                this.ui.showUpgradeScreen(
+                    pickedupBag.forMinute,
+                    this.getExpectedXPForMinute(pickedupBag.forMinute),
+                    (choseWeapon: boolean, upgradeId: string | null, scalar: number) => {
+                        if (choseWeapon) {
+                            this.activateWeapon(pickedupBag.forMinute, scalar);
+                            this.ui.addChosenWeapon(pickedupBag.forMinute);
+                        } else if (upgradeId) {
+                            this.applyGeneralUpgrade(upgradeId, scalar);
+                        }
+                        this.ui.hideUpgradeScreen();
+                        if (pickedupBag.forMinute === 12) {
+                            setTimeout(() => {
+                                this.endingStarted = true;
+                                this.ui.setEraMessage("Survive for one minute!")
+                                this.currentSong.pause();
+                                upgradeLoop.pause();
+                                finalLoop.play();
+                                resumeRendering();
+                            }, 200);
+                        } else {
+                            setTimeout(() => {
+                                this.currentSong.play();
+                                upgradeLoop.pause();
+                                resumeRendering();
+                            }, 200);
+                        }
+                    });
+            }
+
+
         }
 
 
