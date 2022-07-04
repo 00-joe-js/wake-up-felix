@@ -164,8 +164,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Chimney Sweep",
         textureUrl: sweepUrl,
-        width: 16,
-        height: 16,
+        width: 20,
+        height: 20,
         frameAmount: 6,
         era: "industrial",
         animationSpeed: 100,
@@ -175,8 +175,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Smoke Stack",
         textureUrl: smokeStackUrl,
-        width: 60 * 1.5,
-        height: 60,
+        width: 50 * 1.5,
+        height: 50,
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
@@ -201,8 +201,8 @@ export const ENEMIES: DrawnEnemyConfig[] = [
     {
         name: "Steam Engine",
         textureUrl: steamEngineUrl,
-        width: 55 * 2.245,
-        height: 55,
+        width: 45 * 2.245,
+        height: 45,
         frameAmount: 3,
         era: "industrial",
         animationSpeed: 50,
