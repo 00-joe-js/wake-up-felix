@@ -7,6 +7,7 @@ import felixFacesUrl from "../../assets/felix-faces.png";
 import Upgrade from "./Upgrade";
 import MenuScreens from "./MenuScreens";
 import Victory from "./Victory";
+import { wakeUpFelix } from "../Audio";
 
 export type UpgradeSelectionFn = (
   choseWeapon: boolean,
@@ -237,6 +238,7 @@ export default (): UIMethods => {
           <MenuScreens
             onStartGame={() => {
               if (gameState.startGame) {
+                wakeUpFelix.play();
                 gameState.startGame();
                 gameState.gameStarted = true;
                 window.requestAnimationFrame(renderLoop);

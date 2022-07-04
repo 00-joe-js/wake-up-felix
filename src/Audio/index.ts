@@ -37,6 +37,8 @@ import upgradeSongUrl from "../../assets/Music-upgrade.mp3";
 import finalLoopUrl from "../../assets/Music-endloop.mp3";
 import musicVictoryUrl from "../../assets/Music-victory.mp3";
 
+import wakeUpFelixUrl from "../../assets/WakeUpFelix.mp3";
+
 class AudioClip {
     private audio: HTMLAudioElement;
     public ready: boolean = false;
@@ -104,5 +106,7 @@ export const hammer = new AudioClip(hammerUrl, 1, 0, false);
 export const trap = new AudioClip(trapUrl, 0.3, 0, false);
 export const smokey = new AudioClip(smokeyUrl, 1, 0, false);
 export const sword = new AudioClip(swordUrl, 1, 0, false);
+
+export const wakeUpFelix = new AudioClip(wakeUpFelixUrl, 1);
 
 export default AudioClip;

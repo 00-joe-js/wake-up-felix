@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import fatherTimeLaugh from "../../assets/father_time_laughter.png";
 import titleScreenImage from "../../assets/titleScreen.png";
+import llLogo from "../../assets/ll.png";
 
 import {
   getLeaderboard,
@@ -9,7 +10,7 @@ import {
   LootLockerScoreRow,
 } from "../LootLocker";
 
-const L = ({ href, children }: { href: string; children: string }) => {
+const L = ({ href, children }: { href: string; children: string | ReactNode }) => {
   return (
     <a href={href} target="_blank" rel="noopener">
       {children}
@@ -103,9 +104,16 @@ const Leaderboard = ({ toMainMenu }: { toMainMenu: Function }) => {
           );
         })}
       </div>
-      <button onClick={() => toMainMenu()} className="back-to-main-menu">
-        Back to Main Menu
-      </button>
+      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+        <button onClick={() => toMainMenu()} className="back-to-main-menu">
+          Back to Main Menu
+        </button>
+        <div>
+          <h2 style={{display: "flex", alignItems: "center"}}>
+            <span style={{paddingRight: "1rem"}}>Powered by</span><L href="https://lootlocker.io"><img src={llLogo} /></L>
+          </h2>
+        </div>
+      </div>
     </div>
   );
 };
@@ -175,6 +183,7 @@ const OpeningMenus = ({ onStartGame }: { onStartGame: Function }) => {
               <li>Shoe Shiner's Drag - Art Hodes' Chicagoans</li>
               <li>Panama Rag - Humphrey Lyttelton</li>
               <li>Froggie Moore - Humphrey Lyttelton</li>
+              <li>Milenberg Joys - Tommy Dorsey And His Orchestra</li>
             </ul>
           </div>
           <button
